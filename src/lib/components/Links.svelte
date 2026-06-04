@@ -6,7 +6,7 @@
 </script>
 
 <section class="sect">
-	<h2 class="sect-title">Links</h2>
+	<h2 class="sect-title">Elsewhere</h2>
 	<ul class="links">
 		{#each items as link (link.label)}
 			<li>

@@ -24,13 +24,13 @@ export const GET = async ({ url }) => {
 	const lang = resolveLang(url.searchParams.get('lang'));
 	const p = profile[lang];
 	const tag = p.tag.replace(/\*/g, '');
-	const subtitle = lang === 'ko' ? '글방' : 'A small room of words';
+
+	const eyebrow = 'OPEN CHAENCE'; // 사이트 우산 — OG 미니 라벨
 	const footerLabel = lang === 'ko' ? '풀숲 · 하늘 · 연못' : 'Grove · Sky · Pond';
 
-	// 사용된 글자만 subset으로 받아옴.
 	const charset = [
 		...new Set(
-			[p.name, p.nameEn, tag, subtitle, footerLabel, 'link-fnup.vercel.app'].join('')
+			[p.name, p.subtitle, tag, eyebrow, footerLabel, 'link-fnup.vercel.app'].join('')
 		)
 	].join('');
 
@@ -50,19 +50,16 @@ export const GET = async ({ url }) => {
 		">
 			<div style="display: flex; align-items: center; gap: 14px;">
 				<div style="width: 14px; height: 14px; border-radius: 9999px; background: #4E6B4A;"></div>
-				<div style="font-size: 26px; color: #4E6B4A; font-weight: 700; letter-spacing: 4px;">
-					${subtitle.toUpperCase()}
+				<div style="font-size: 26px; color: #4E6B4A; font-weight: 700; letter-spacing: 6px;">
+					${eyebrow}
 				</div>
 			</div>
 
-			<div style="display: flex; flex-direction: column; gap: 22px;">
-				<div style="font-size: 140px; font-weight: 700; line-height: 1; letter-spacing: -3px;">
+			<div style="display: flex; flex-direction: column; gap: 28px;">
+				<div style="font-size: 150px; font-weight: 700; line-height: 1; letter-spacing: -3px;">
 					${p.name}
 				</div>
-				<div style="font-size: 34px; color: #4E6B4A; font-style: italic;">
-					${p.nameEn}
-				</div>
-				<div style="font-size: 28px; color: #586863; line-height: 1.5; max-width: 940px;">
+				<div style="font-size: 30px; color: #586863; line-height: 1.5; max-width: 940px;">
 					${tag}
 				</div>
 			</div>

@@ -1,11 +1,11 @@
 <script lang="ts">
 	type Props = {
 		name: string;
-		nameEn: string;
+		subtitle: string;
 		tag: string;
 	};
 
-	let { name, nameEn, tag }: Props = $props();
+	let { name, subtitle, tag }: Props = $props();
 
 	// *…* 를 <em>…</em>으로. 본문 강조의 가장 가벼운 방법.
 	const tagHtml = $derived(tag.replace(/\*(.+?)\*/g, '<em>$1</em>'));
@@ -14,7 +14,7 @@
 <section class="hero">
 	<h1 class="name">
 		{name}
-		<span class="en">{nameEn}</span>
+		<span class="subtitle">{subtitle}</span>
 	</h1>
 	<p class="tag">{@html tagHtml}</p>
 </section>
@@ -40,7 +40,7 @@
 		font-weight: 700;
 		letter-spacing: -0.032em;
 	}
-	.name .en {
+	.name .subtitle {
 		display: block;
 		font-size: 18px;
 		font-weight: 400;
