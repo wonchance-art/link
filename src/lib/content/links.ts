@@ -6,17 +6,14 @@ export type Link = {
 	href: string;
 };
 
+// 외부 SNS·연락처. ko/en 공통.
+const common: Link[] = [
+	{ label: 'Instagram', meta: '@won_cy_', href: 'https://instagram.com/won_cy_' },
+	{ label: 'Blog', meta: 'naver blog', href: 'https://blog.naver.com/won_cy_' },
+	{ label: 'Email', meta: 'won_cy_@naver.com', href: 'mailto:won_cy_@naver.com' }
+];
+
 export const links: Record<Lang, Link[]> = {
-	ko: [
-		{ label: '서재 — 읽은 책', meta: '128권', href: '#' },
-		{ label: '글방 — 쓴 것', meta: '최근 6월 1일', href: '#' },
-		{ label: 'Instagram', meta: '@chaeyeon', href: '#' },
-		{ label: 'Email', href: 'mailto:hello@example.com' }
-	],
-	en: [
-		{ label: 'Reading — finished books', meta: '128', href: '#' },
-		{ label: 'Writing — recent', meta: 'Jun 1', href: '#' },
-		{ label: 'Instagram', meta: '@chaeyeon', href: '#' },
-		{ label: 'Email', href: 'mailto:hello@example.com' }
-	]
+	ko: common,
+	en: common
 };
