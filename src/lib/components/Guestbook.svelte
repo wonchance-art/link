@@ -1,8 +1,9 @@
 <script lang="ts">
 	import type { GuestbookEntry } from '$lib/content/guestbook';
 
-	type Props = { entries: GuestbookEntry[] };
-	let { entries }: Props = $props();
+	type UI = { placeholder: string; submit: string };
+	type Props = { entries: GuestbookEntry[]; ui: UI };
+	let { entries, ui }: Props = $props();
 </script>
 
 <section class="sect">
@@ -14,8 +15,8 @@
 			{/each}
 		</div>
 		<form class="gb-input" onsubmit={(e) => e.preventDefault()}>
-			<input placeholder="한 줄 남기고 가세요 — 닉네임은 자유로이" />
-			<button type="submit">남기기</button>
+			<input placeholder={ui.placeholder} />
+			<button type="submit">{ui.submit}</button>
 		</form>
 	</div>
 </section>

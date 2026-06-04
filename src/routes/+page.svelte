@@ -1,8 +1,11 @@
 <script lang="ts">
+	import { page } from '$app/state';
+
+	import { resolveLang } from '$lib/i18n/lang';
 	import { profile } from '$lib/content/profile';
 	import { links } from '$lib/content/links';
 	import { now } from '$lib/content/now';
-	import { guestbookSeed } from '$lib/content/guestbook';
+	import { guestbookSeed, guestbookUI } from '$lib/content/guestbook';
 
 	import Hero from '$lib/components/Hero.svelte';
 	import About from '$lib/components/About.svelte';
@@ -11,25 +14,43 @@
 	import Guestbook from '$lib/components/Guestbook.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 
-	// description은 *...* 강조 마크업을 벗겨낸 본문.
-	const description = profile.tag.replace(/\*/g, '');
+	import { fadeIn } from '$lib/actions/fadeIn';
+
+	const lang = $derived(resolveLang(page.url.searchParams.get('lang')));
+	const p = $derived(profile[lang]);
+	const l = $derived(links[lang]);
+	const n = $derived(now[lang]);
+	const gbUI = $derived(guestbookUI[lang]);
+
+	// og/description은 *...* 마크업을 벗겨낸 본문.
+	const description = $derived(p.tag.replace(/\*/g, ''));
 </script>
 
 <svelte:head>
-	<title>{profile.name} · 글방</title>
+	<title>{p.name} · 글방</title>
 	<meta name="description" content={description} />
-	<meta property="og:title" content="{profile.name} · 글방" />
+	<meta property="og:title" content="{p.name} · 글방" />
 	<meta property="og:description" content={description} />
 	<meta property="og:type" content="website" />
 </svelte:head>
 
 <main class="page">
-	<Hero name={profile.name} nameEn={profile.nameEn} tag={profile.tag} />
-	<About body={profile.about} />
-	<Links items={links} />
-	<Now updatedLabel={now.updatedLabel} body={now.body} />
-	<Guestbook entries={guestbookSeed} />
-	<Footer />
+	<div use:fadeIn>
+		<Hero name={p.name} nameEn={p.nameEn} tag={p.tag} />
+	</div>
+	<div use:fadeIn>
+		<About body={p.about} />
+	</div>
+	<div use:fadeIn>
+		<Links items={l} />
+	</div>
+	<div use:fadeIn>
+		<Now updatedLabel={n.updatedLabel} body={n.body} />
+	</div>
+	<div use:fadeIn>
+		<Guestbook entries={guestbookSeed} ui={gbUI} />
+	</div>
+	<Footer {lang} />
 </main>
 
 <style>

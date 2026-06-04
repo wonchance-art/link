@@ -1,10 +1,17 @@
+<script lang="ts">
+	import type { Lang } from '$lib/i18n/lang';
+
+	type Props = { lang: Lang };
+	let { lang }: Props = $props();
+</script>
+
 <footer class="foot">
 	<span>© 2026 · chaeyeon</span>
 	<span class="lang">
-		<span class="on">한국어</span>
-		<span>·</span>
-		<span>EN</span>
-		<a href="/rss.xml">RSS</a>
+		<a href="?" class:on={lang === 'ko'} data-sveltekit-noscroll>한국어</a>
+		<span class="sep">·</span>
+		<a href="?lang=en" class:on={lang === 'en'} data-sveltekit-noscroll>EN</a>
+		<a class="rss" href="/rss.xml">RSS</a>
 	</span>
 </footer>
 
@@ -20,18 +27,22 @@
 		color: var(--ink-faint);
 		letter-spacing: 0.02em;
 	}
-	.foot a {
+	.lang a {
 		color: var(--ink-muted);
-		margin-left: 16px;
+		transition: color 200ms ease;
 	}
-	.foot a:hover {
-		color: var(--accent);
-	}
-	.foot .lang span {
-		padding: 0 6px;
-	}
-	.foot .lang .on {
+	.lang a.on {
 		color: var(--accent);
 		font-weight: 600;
+	}
+	.lang .sep {
+		padding: 0 8px;
+		color: var(--ink-faint);
+	}
+	.lang .rss {
+		margin-left: 18px;
+	}
+	.lang a:hover {
+		color: var(--accent);
 	}
 </style>
