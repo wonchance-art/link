@@ -39,9 +39,9 @@
 		font-size: 15px;
 		font-weight: 500;
 		transition:
-			transform 220ms ease,
+			transform 360ms cubic-bezier(0.34, 1.35, 0.64, 1),
 			border-color 220ms ease,
-			box-shadow 220ms ease;
+			box-shadow 320ms ease;
 	}
 	.links a:hover {
 		transform: translateY(-1px);

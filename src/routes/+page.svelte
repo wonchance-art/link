@@ -65,11 +65,13 @@
 	.page {
 		max-width: var(--col-width);
 		margin: 0 auto;
-		padding: 80px 32px 64px;
+		padding: 96px 40px 72px;
+		position: relative;
+		z-index: 1;
 	}
 	@media (max-width: 640px) {
 		.page {
-			padding: 56px 24px 48px;
+			padding: 64px 24px 56px;
 		}
 	}
 </style>

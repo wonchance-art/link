@@ -50,9 +50,9 @@
 		padding: 18px 20px;
 		color: var(--ink);
 		transition:
-			transform 220ms ease,
+			transform 360ms cubic-bezier(0.34, 1.35, 0.64, 1),
 			border-color 220ms ease,
-			box-shadow 220ms ease;
+			box-shadow 320ms ease;
 	}
 	.works li > a:hover {
 		transform: translateY(-1px);

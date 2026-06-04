@@ -1,58 +1,118 @@
 /* === Global base — Grove === */
 
-*, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
 
 html {
-  -webkit-text-size-adjust: 100%;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	-webkit-text-size-adjust: 100%;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
 }
 
 body {
-  font-family: var(--font-sans);
-  color: var(--ink);
-  font-size: var(--t-base);
-  line-height: var(--leading-base);
-  min-height: 100vh;
-  /* 풀숲(좌상) → 하늘(우하) 2축 그라데이션, 스크롤해도 고정 */
-  background:
-    radial-gradient(ellipse 95% 75% at 12% 10%, var(--wash-moss) 0%, transparent 65%),
-    radial-gradient(ellipse 90% 80% at 92% 85%, var(--wash-sky) 0%, transparent 62%),
-    linear-gradient(180deg, #E8EEDF 0%, #E3E9DF 45%, #DCE6EC 100%);
-  background-attachment: fixed;
+	font-family: var(--font-sans);
+	color: var(--ink);
+	font-size: var(--t-base);
+	line-height: var(--leading-base);
+	min-height: 100vh;
+	position: relative;
+	/* 풀숲(좌상) → 하늘(우하) 2축 그라데이션, 스크롤해도 고정 */
+	background:
+		radial-gradient(ellipse 95% 75% at 12% 10%, var(--wash-moss) 0%, transparent 65%),
+		radial-gradient(ellipse 90% 80% at 92% 85%, var(--wash-sky) 0%, transparent 62%),
+		linear-gradient(180deg, #e8eedf 0%, #e3e9df 45%, #dce6ec 100%);
+	background-attachment: fixed;
 }
 
-a { color: inherit; text-decoration: none; }
-button { font-family: inherit; cursor: pointer; }
-input, textarea { font-family: inherit; }
-img, svg { display: block; max-width: 100%; }
+/* 옅은 noise — 디지털 평평함을 깨고 회화적 질감 부여 */
+body::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: 0;
+	opacity: 0.45;
+	mix-blend-mode: multiply;
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.14 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 
-/* === Section utilities — 모든 영역에 공통으로 쓰는 wrapper === */
-.sect { margin-top: 56px; }
+a {
+	color: inherit;
+	text-decoration: none;
+}
+button {
+	font-family: inherit;
+	cursor: pointer;
+}
+input,
+textarea {
+	font-family: inherit;
+}
+img,
+svg {
+	display: block;
+	max-width: 100%;
+}
+
+/* === Section utilities — 잡지 같은 이탤릭 라벨 + 작은 점 마크 === */
+.sect {
+	margin-top: 64px;
+}
 .sect-title {
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  margin: 0 0 20px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+	font-family: var(--font-serif);
+	font-style: italic;
+	font-weight: 400;
+	font-size: 14px;
+	letter-spacing: 0.012em;
+	color: var(--ink-muted);
+	margin: 0 0 22px;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	text-transform: none;
+	font-variation-settings: 'opsz' 14;
+}
+.sect-title::before {
+	content: '';
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--accent);
+	flex: 0 0 auto;
 }
 .sect-title::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--line);
+	content: '';
+	flex: 1;
+	height: 1px;
+	background: var(--line);
+}
+
+/* === View transition — 언어 토글 시 부드러운 cross-fade === */
+@view-transition {
+	navigation: auto;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation-duration: 420ms;
+	animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 모션 약화 환경 존중 */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
 }
