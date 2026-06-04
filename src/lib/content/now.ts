@@ -10,10 +10,10 @@ type NowData = {
 export const now: Record<Lang, NowData> = {
 	ko: {
 		updatedLabel: '6월 5일',
-		body: '도연명의 「귀거래사」를 다시 읽고 있어요. 마당에 토마토 모종 둘. 비 오는 오후를 좋아하게 됐습니다.'
+		body: '부산살이중.'
 	},
 	en: {
 		updatedLabel: 'June 5',
-		body: 'Rereading Tao Yuanming\'s "Return to My Garden." Two tomato seedlings in the yard. I\'ve grown to love rainy afternoons.'
+		body: 'Living in Busan.'
 	}
 };
