@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Link } from '$lib/content/links';
+	import { tilt3d } from '$lib/actions/tilt3d';
 
 	type Props = { items: Link[] };
 	let { items }: Props = $props();
@@ -10,7 +11,7 @@
 	<ul class="links">
 		{#each items as link (link.label)}
 			<li>
-				<a href={link.href}>
+				<a href={link.href} use:tilt3d>
 					<span class="label">{link.label}</span>
 					{#if link.meta}<span class="meta">{link.meta}</span>{/if}
 					<span class="arrow">→</span>
@@ -27,30 +28,44 @@
 		margin: 0;
 		display: grid;
 		gap: 10px;
+		perspective: 1000px;
 	}
 	.links a {
 		display: flex;
 		align-items: center;
-		background: var(--surface);
+		background: rgba(251, 250, 246, 0.55);
+		backdrop-filter: blur(14px) saturate(150%);
+		-webkit-backdrop-filter: blur(14px) saturate(150%);
 		border: 1px solid var(--line);
 		border-radius: 14px;
 		padding: 16px 18px 16px 20px;
 		color: var(--ink);
 		font-size: 15px;
 		font-weight: 500;
-		/* 좌측 1px pond 컬러 strip — Elsewhere의 시각 정체성 */
-		box-shadow: inset 1px 0 0 var(--accent-pond);
+		transform-style: preserve-3d;
+		--hover-y: 0px;
+		transform: rotateX(var(--ty-deg, 0deg)) rotateY(var(--tx-deg, 0deg))
+			translateY(var(--hover-y));
+		/* 좌측 pond strip + 상단 광택 + 부드러운 그림자 */
+		box-shadow:
+			inset 1px 0 0 var(--accent-pond),
+			inset 0 1px 0 rgba(255, 255, 255, 0.5),
+			0 4px 14px -6px rgba(74, 107, 122, 0.1);
 		transition:
-			transform 360ms cubic-bezier(0.34, 1.35, 0.64, 1),
+			transform 420ms cubic-bezier(0.34, 1.35, 0.64, 1),
 			border-color 220ms ease,
-			box-shadow 320ms ease;
+			box-shadow 360ms ease,
+			background 280ms ease;
 	}
 	.links a:hover {
-		transform: translateY(-1px);
+		--hover-y: -2px;
+		background: rgba(251, 250, 246, 0.82);
 		border-color: var(--accent-soft);
 		box-shadow:
 			inset 2px 0 0 var(--accent-pond),
-			0 14px 30px -14px rgba(74, 107, 122, 0.28);
+			inset 0 1px 0 rgba(255, 255, 255, 0.6),
+			0 22px 44px -16px rgba(74, 107, 122, 0.28),
+			0 4px 8px rgba(31, 42, 42, 0.05);
 	}
 	.label {
 		flex: 0 0 auto;

@@ -9,24 +9,33 @@
 
 	const tagHtml = $derived(tag.replace(/\*(.+?)\*/g, '<em>$1</em>'));
 
-	// 마우스 근접에 따라 이름의 가변 폰트 weight 변화.
+	// 마우스 위치로 (1) 이름의 가변 폰트 weight (2) Hero 영역의 spotlight 위치 결정.
 	let nameEl: HTMLElement | null = $state(null);
+	let heroEl: HTMLElement | null = $state(null);
 	let weight = $state(380);
+	let sx = $state(50);
+	let sy = $state(50);
 	let rafId: number | null = null;
 
 	function onPointerMove(e: PointerEvent) {
 		if (rafId !== null) return;
 		rafId = requestAnimationFrame(() => {
 			rafId = null;
-			if (!nameEl) return;
-			const rect = nameEl.getBoundingClientRect();
-			const cx = rect.left + rect.width / 2;
-			const cy = rect.top + rect.height / 2;
-			const dx = e.clientX - cx;
-			const dy = e.clientY - cy;
-			const dist = Math.sqrt(dx * dx + dy * dy);
-			const t = Math.max(0, Math.min(1, 1 - dist / 520));
-			weight = Math.round(380 + t * 340);
+
+			if (nameEl) {
+				const r = nameEl.getBoundingClientRect();
+				const dx = e.clientX - (r.left + r.width / 2);
+				const dy = e.clientY - (r.top + r.height / 2);
+				const dist = Math.sqrt(dx * dx + dy * dy);
+				const t = Math.max(0, Math.min(1, 1 - dist / 520));
+				weight = Math.round(380 + t * 340);
+			}
+
+			if (heroEl) {
+				const r = heroEl.getBoundingClientRect();
+				sx = ((e.clientX - r.left) / r.width) * 100;
+				sy = ((e.clientY - r.top) / r.height) * 100;
+			}
 		});
 	}
 
@@ -41,7 +50,7 @@
 	});
 </script>
 
-<section class="hero">
+<section class="hero" bind:this={heroEl} style:--sx="{sx}%" style:--sy="{sy}%">
 	<span class="mark">Open Chaence &nbsp;·&nbsp; Grove &nbsp;·&nbsp; Sky &nbsp;·&nbsp; Pond</span>
 	<h1 class="name" bind:this={nameEl} style:font-weight={weight}>{name}</h1>
 	<p class="subtitle">{subtitle}</p>
@@ -53,6 +62,29 @@
 		position: relative;
 		margin-bottom: var(--s-7);
 		padding-top: var(--s-2);
+		isolation: isolate;
+	}
+
+	/* 마우스 위치 따라가는 부드러운 spotlight — 영롱한 빛 */
+	.hero::before {
+		content: '';
+		position: absolute;
+		inset: -80px -80px;
+		pointer-events: none;
+		z-index: -1;
+		background: radial-gradient(
+			circle 360px at var(--sx, 50%) var(--sy, 50%),
+			rgba(78, 107, 74, 0.13) 0%,
+			rgba(74, 107, 122, 0.05) 30%,
+			transparent 60%
+		);
+		opacity: 0;
+		transition: opacity 600ms ease;
+		border-radius: 32px;
+		filter: blur(8px);
+	}
+	.hero:hover::before {
+		opacity: 1;
 	}
 
 	/* 잡지 모서리 시그니처 — vertical italic serif */

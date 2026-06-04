@@ -29,20 +29,33 @@ body {
 	line-height: var(--leading-base);
 	min-height: 100vh;
 	position: relative;
-	/* 풀숲 그라데이션 중심이 스크롤에 따라 미세 이동 — 패럴랙스 */
+	/* Aurora — 4축 부유 컬러, 스크롤에 따라 미세 이동. 채도는 wash 톤 안 */
 	background:
 		radial-gradient(
-			ellipse 95% 75% at calc(12% + var(--scroll-progress, 0) * 26%) 10%,
-			var(--wash-moss) 0%,
+			ellipse 70% 60% at calc(15% + var(--scroll-progress, 0) * 28%)
+				calc(12% + var(--scroll-progress, 0) * 10%),
+			rgba(122, 153, 110, 0.24) 0%,
 			transparent 65%
 		),
 		radial-gradient(
-			ellipse 90% 80% at calc(92% - var(--scroll-progress, 0) * 20%)
-				calc(85% + var(--scroll-progress, 0) * 8%),
-			var(--wash-sky) 0%,
-			transparent 62%
+			ellipse 60% 55% at calc(85% - var(--scroll-progress, 0) * 22%)
+				calc(78% + var(--scroll-progress, 0) * 8%),
+			rgba(106, 137, 158, 0.24) 0%,
+			transparent 65%
 		),
-		linear-gradient(180deg, #e8eedf 0%, #e3e9df 45%, #dce6ec 100%);
+		radial-gradient(
+			ellipse 45% 40% at calc(48% + var(--scroll-progress, 0) * 18%)
+				calc(45% - var(--scroll-progress, 0) * 18%),
+			rgba(182, 220, 195, 0.18) 0%,
+			transparent 70%
+		),
+		radial-gradient(
+			ellipse 40% 35% at calc(78% + var(--scroll-progress, 0) * 8%)
+				calc(20% + var(--scroll-progress, 0) * 12%),
+			rgba(160, 192, 210, 0.16) 0%,
+			transparent 70%
+		),
+		linear-gradient(180deg, #e8eedf 0%, #e3e9df 50%, #dce6ec 100%);
 	background-attachment: fixed;
 }
 
@@ -101,6 +114,16 @@ svg {
 	border-radius: 50%;
 	background: var(--accent);
 	flex: 0 0 auto;
+	animation: gentle-pulse 3.6s ease-in-out infinite;
+}
+@keyframes gentle-pulse {
+	0%,
+	100% {
+		box-shadow: 0 0 8px 1px rgba(78, 107, 74, 0.18);
+	}
+	50% {
+		box-shadow: 0 0 18px 4px rgba(78, 107, 74, 0.36);
+	}
 }
 .sect-title::after {
 	content: '';

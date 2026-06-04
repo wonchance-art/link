@@ -16,10 +16,15 @@
 
 <style>
 	.now {
-		background: var(--wash-sky);
+		background: rgba(220, 230, 236, 0.55);
+		backdrop-filter: blur(18px) saturate(160%);
+		-webkit-backdrop-filter: blur(18px) saturate(160%);
 		border-radius: 18px;
 		padding: 34px 30px;
-		border: 1px solid rgba(74, 107, 122, 0.14);
+		border: 1px solid rgba(255, 255, 255, 0.5);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.5),
+			0 10px 28px -10px rgba(74, 107, 122, 0.22);
 	}
 	.now-meta {
 		font-size: 11px;
