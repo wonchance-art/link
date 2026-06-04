@@ -2,6 +2,8 @@
 
 미니멀 명함 × 미니홈피 × 작은 정원. 1페이지 SvelteKit.
 
+**Live**: https://link-fnup.vercel.app
+
 > 글을 쓰고 읽으며 언어를 공부합니다. 풀잎 위에 비친 하늘처럼.
 
 ## Concept

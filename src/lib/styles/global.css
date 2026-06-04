@@ -28,6 +28,26 @@ button { font-family: inherit; cursor: pointer; }
 input, textarea { font-family: inherit; }
 img, svg { display: block; max-width: 100%; }
 
+/* === Section utilities — 모든 영역에 공통으로 쓰는 wrapper === */
+.sect { margin-top: 56px; }
+.sect-title {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 20px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sect-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
 /* 모션 약화 환경 존중 */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
