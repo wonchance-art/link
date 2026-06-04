@@ -34,10 +34,12 @@
 		background: var(--surface);
 		border: 1px solid var(--line);
 		border-radius: 14px;
-		padding: 16px 18px;
+		padding: 16px 18px 16px 20px;
 		color: var(--ink);
 		font-size: 15px;
 		font-weight: 500;
+		/* 좌측 1px pond 컬러 strip — Elsewhere의 시각 정체성 */
+		box-shadow: inset 1px 0 0 var(--accent-pond);
 		transition:
 			transform 360ms cubic-bezier(0.34, 1.35, 0.64, 1),
 			border-color 220ms ease,
@@ -46,7 +48,9 @@
 	.links a:hover {
 		transform: translateY(-1px);
 		border-color: var(--accent-soft);
-		box-shadow: 0 12px 28px -14px var(--accent-soft);
+		box-shadow:
+			inset 2px 0 0 var(--accent-pond),
+			0 14px 30px -14px rgba(74, 107, 122, 0.28);
 	}
 	.label {
 		flex: 0 0 auto;

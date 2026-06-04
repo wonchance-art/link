@@ -7,11 +7,9 @@
 
 	let { name, subtitle, tag }: Props = $props();
 
-	// *…* → <em>…</em>
 	const tagHtml = $derived(tag.replace(/\*(.+?)\*/g, '<em>$1</em>'));
 
 	// 마우스 근접에 따라 이름의 가변 폰트 weight 변화.
-	// 거리 0 → 700, 거리 520+ → 380. 발견되는 디테일.
 	let nameEl: HTMLElement | null = $state(null);
 	let weight = $state(380);
 	let rafId: number | null = null;
@@ -33,7 +31,6 @@
 	}
 
 	$effect(() => {
-		// 마우스(pointer:fine) 환경에서만. 터치는 그대로.
 		const mql = window.matchMedia('(pointer: fine)');
 		if (!mql.matches) return;
 		window.addEventListener('pointermove', onPointerMove);
@@ -45,6 +42,7 @@
 </script>
 
 <section class="hero">
+	<span class="mark">Open Chaence &nbsp;·&nbsp; Grove &nbsp;·&nbsp; Sky &nbsp;·&nbsp; Pond</span>
 	<h1 class="name" bind:this={nameEl} style:font-weight={weight}>{name}</h1>
 	<p class="subtitle">{subtitle}</p>
 	<p class="tag">{@html tagHtml}</p>
@@ -55,6 +53,23 @@
 		position: relative;
 		margin-bottom: var(--s-7);
 		padding-top: var(--s-2);
+	}
+
+	/* 잡지 모서리 시그니처 — vertical italic serif */
+	.mark {
+		position: absolute;
+		right: -12px;
+		top: 2px;
+		writing-mode: vertical-rl;
+		font-family: var(--font-serif);
+		font-style: italic;
+		font-size: 11px;
+		letter-spacing: 0.34em;
+		color: var(--ink-faint);
+		text-transform: uppercase;
+		user-select: none;
+		white-space: nowrap;
+		font-variation-settings: 'opsz' 14;
 	}
 
 	.name {
@@ -105,6 +120,11 @@
 		}
 		.tag {
 			font-size: 15px;
+		}
+		.mark {
+			right: -10px;
+			font-size: 10px;
+			letter-spacing: 0.3em;
 		}
 	}
 </style>

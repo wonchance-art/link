@@ -47,8 +47,10 @@
 		background: var(--surface);
 		border: 1px solid var(--line);
 		border-radius: 14px;
-		padding: 18px 20px;
+		padding: 18px 20px 18px 22px;
 		color: var(--ink);
+		/* 좌측 1px accent(그린) strip — Works의 시각 정체성 */
+		box-shadow: inset 1px 0 0 var(--accent);
 		transition:
 			transform 360ms cubic-bezier(0.34, 1.35, 0.64, 1),
 			border-color 220ms ease,
@@ -57,11 +59,14 @@
 	.works li > a:hover {
 		transform: translateY(-1px);
 		border-color: var(--accent-soft);
-		box-shadow: 0 12px 28px -14px var(--accent-soft);
+		box-shadow:
+			inset 2px 0 0 var(--accent),
+			0 14px 30px -14px var(--accent-soft);
 	}
 	.works li > .pending {
-		opacity: 0.78;
+		opacity: 0.65;
 		cursor: default;
+		box-shadow: inset 1px 0 0 var(--line);
 	}
 	.row {
 		display: flex;
