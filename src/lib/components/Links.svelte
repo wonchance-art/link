@@ -61,6 +61,7 @@
 		font-weight: 400;
 		margin-left: auto;
 		margin-right: 16px;
+		transition: color 280ms ease 40ms;
 	}
 	a:not(:has(.meta)) .arrow {
 		margin-left: auto;
@@ -68,11 +69,14 @@
 	.arrow {
 		color: var(--ink-faint);
 		transition:
-			transform 200ms ease,
-			color 200ms ease;
+			transform 420ms cubic-bezier(0.34, 1.35, 0.64, 1) 100ms,
+			color 320ms ease 100ms;
+	}
+	a:hover .meta {
+		color: var(--ink-muted);
 	}
 	a:hover .arrow {
-		color: var(--accent);
-		transform: translateX(3px);
+		color: var(--accent-pond);
+		transform: translateX(4px);
 	}
 </style>

@@ -18,6 +18,10 @@ html {
 	text-rendering: optimizeLegibility;
 }
 
+:root {
+	--scroll-progress: 0;
+}
+
 body {
 	font-family: var(--font-sans);
 	color: var(--ink);
@@ -25,10 +29,19 @@ body {
 	line-height: var(--leading-base);
 	min-height: 100vh;
 	position: relative;
-	/* 풀숲(좌상) → 하늘(우하) 2축 그라데이션, 스크롤해도 고정 */
+	/* 풀숲 그라데이션 중심이 스크롤에 따라 미세 이동 — 패럴랙스 */
 	background:
-		radial-gradient(ellipse 95% 75% at 12% 10%, var(--wash-moss) 0%, transparent 65%),
-		radial-gradient(ellipse 90% 80% at 92% 85%, var(--wash-sky) 0%, transparent 62%),
+		radial-gradient(
+			ellipse 95% 75% at calc(12% + var(--scroll-progress, 0) * 26%) 10%,
+			var(--wash-moss) 0%,
+			transparent 65%
+		),
+		radial-gradient(
+			ellipse 90% 80% at calc(92% - var(--scroll-progress, 0) * 20%)
+				calc(85% + var(--scroll-progress, 0) * 8%),
+			var(--wash-sky) 0%,
+			transparent 62%
+		),
 		linear-gradient(180deg, #e8eedf 0%, #e3e9df 45%, #dce6ec 100%);
 	background-attachment: fixed;
 }

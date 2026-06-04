@@ -3,6 +3,7 @@
 	import '$lib/styles/tokens.css';
 	import '$lib/styles/global.css';
 	import favicon from '$lib/assets/favicon.svg';
+	import { scrollProgress } from '$lib/actions/scrollProgress';
 
 	let { children } = $props();
 
@@ -16,6 +17,9 @@
 			});
 		});
 	});
+
+	// 스크롤에 따라 --scroll-progress 갱신 → 배경 그라데이션 미세 시프트.
+	$effect(() => scrollProgress());
 </script>
 
 <svelte:head>

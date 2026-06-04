@@ -81,6 +81,7 @@
 		font-size: 16px;
 		font-weight: 600;
 		color: var(--ink);
+		transition: color 320ms ease;
 	}
 	.trail {
 		display: flex;
@@ -93,16 +94,23 @@
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
 		white-space: nowrap;
+		transition: color 320ms ease 60ms;
 	}
 	.arrow {
 		color: var(--ink-faint);
 		transition:
-			transform 200ms ease,
-			color 200ms ease;
+			transform 420ms cubic-bezier(0.34, 1.35, 0.64, 1) 140ms,
+			color 320ms ease 140ms;
+	}
+	.works li > a:hover .title {
+		color: var(--accent-deep);
+	}
+	.works li > a:hover .date {
+		color: var(--ink-muted);
 	}
 	.works li > a:hover .arrow {
 		color: var(--accent);
-		transform: translateX(3px);
+		transform: translateX(4px);
 	}
 	.desc {
 		font-size: 14px;
