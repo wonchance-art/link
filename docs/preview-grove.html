@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grove — 숲에 비친 빛과 그늘</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  :root {
+    /* ===== 풀숲 · 하늘 · 연못 =====
+       그린 메인 · 블루 보조. 같은 명도 축 안에서 어우러진다. */
+
+    /* 배경 워시 — 풀숲 / 하늘 */
+    --wash-moss:     #E5EDDF;   /* 메인 풀밭 */
+    --wash-sky:      #DCE6EC;   /* 옅은 하늘 (Now 영역) */
+    --wash-pond:     #E3E8EC;   /* 옅은 연못 (Guestbook 영역 — 하늘의 자매 톤) */
+
+    /* 잉크 — 그린-블루 끼의 딥 톤 */
+    --ink:           #1F2A2A;   /* 본문 — 풀그늘+물그늘 */
+    --ink-muted:     #586863;   /* 보조 */
+    --ink-faint:     #98A19B;   /* 메타 */
+
+    /* 액센트 — 그린(숲) + 블루(연못) */
+    --accent:        #4E6B4A;   /* 깊은 모스 — 메인 (숲) */
+    --accent-deep:   #2F4A3B;   /* 가장 깊은 풀잎 */
+    --accent-pond:   #4A6B7A;   /* 연못 — 보조 (블루) */
+    --accent-soft:   rgba(78, 107, 74, 0.20);
+
+    /* 라인 */
+    --line:          rgba(42, 53, 39, 0.08);
+    --surface:       #FBFAF6;   /* 따뜻한 오프-화이트 */
+
+    --font-sans: 'Pretendard Variable', -apple-system, sans-serif;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    /* 풀숲(좌상) → 하늘(우하) 2축 흐름 */
+    background:
+      radial-gradient(ellipse 95% 75% at 12% 10%, var(--wash-moss) 0%, transparent 65%),
+      radial-gradient(ellipse 90% 80% at 92% 85%, var(--wash-sky) 0%, transparent 62%),
+      linear-gradient(180deg, #E8EEDF 0%, #E3E9DF 45%, #DCE6EC 100%);
+    min-height: 100vh;
+  }
+
+  .page {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 80px 32px 64px;
+  }
+  @media (max-width: 640px) {
+    .page { padding: 56px 24px 48px; }
+  }
+
+  /* === Hero === */
+  .hero { margin-bottom: 64px; }
+  .hero .name {
+    font-family: var(--font-sans);
+    font-size: 52px;
+    font-weight: 500;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin: 0 0 16px;
+    transition: font-weight 420ms ease, letter-spacing 420ms ease;
+  }
+  .hero .name:hover {
+    font-weight: 700;
+    letter-spacing: -0.032em;
+  }
+  .hero .name .en {
+    display: block;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+    margin-top: 8px;
+    font-style: italic;
+  }
+  .hero .tag {
+    font-size: 16px;
+    color: var(--ink-muted);
+    line-height: 1.75;
+    margin: 0;
+    max-width: 420px;
+  }
+  .hero .tag em {
+    font-style: normal;
+    color: var(--accent-deep);
+    font-weight: 600;
+  }
+
+  /* === Section === */
+  .sect { margin-top: 56px; }
+  .sect-title {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 20px;
+    font-weight: 500;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sect-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* === About === */
+  .about p {
+    font-size: 16px;
+    line-height: 1.85;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  /* === Links === */
+  .links { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .links a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 18px;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 500;
+    transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+    backdrop-filter: blur(8px);
+  }
+  .links a:hover {
+    transform: translateY(-1px);
+    border-color: var(--accent-soft);
+    box-shadow: 0 12px 28px -14px var(--accent-soft);
+  }
+  .links a .meta {
+    font-size: 12px;
+    color: var(--ink-faint);
+    font-weight: 400;
+    margin-left: auto;
+    margin-right: 16px;
+  }
+  .links a .arrow {
+    color: var(--ink-faint);
+    transition: transform 200ms ease, color 200ms ease;
+  }
+  .links a:hover .arrow {
+    color: var(--accent);
+    transform: translateX(3px);
+  }
+
+  /* === Now (하늘 워시 — 숲에서 올려다본 하늘) === */
+  .now {
+    background: var(--wash-sky);
+    border-radius: 16px;
+    padding: 22px 24px;
+    border: 1px solid rgba(74, 107, 122, 0.14);
+  }
+  .now-meta {
+    font-size: 11px;
+    color: var(--accent-pond);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin: 0 0 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .now-meta::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 var(--accent);
+    animation: pulse 2.6s infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 var(--accent-soft); }
+    70%  { box-shadow: 0 0 0 10px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+  .now p {
+    font-size: 15px;
+    color: var(--ink);
+    line-height: 1.75;
+    margin: 0;
+  }
+
+  /* === Guestbook (옅은 연못 워시 — 하늘의 자매 톤) === */
+  .gb {
+    background: var(--wash-pond);
+    border-radius: 16px;
+    padding: 22px 24px;
+    border: 1px solid rgba(74, 107, 122, 0.10);
+  }
+  .gb-items { display: grid; gap: 10px; margin-bottom: 14px; }
+  .gb-item {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+  .gb-item b {
+    color: var(--accent-pond);
+    font-weight: 600;
+    margin-right: 8px;
+  }
+  .gb-input {
+    display: flex; gap: 8px;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 6px 8px 6px 14px;
+    border: 1px solid var(--line);
+  }
+  .gb-input input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--ink);
+    outline: none;
+  }
+  .gb-input input::placeholder { color: var(--ink-faint); }
+  .gb-input button {
+    background: var(--accent);
+    color: var(--surface);
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  /* === Footer === */
+  .foot {
+    margin-top: 80px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--ink-faint);
+    letter-spacing: 0.02em;
+  }
+  .foot a { color: var(--ink-muted); text-decoration: none; margin-left: 16px; }
+  .foot a:hover { color: var(--accent); }
+  .foot .lang span { padding: 0 6px; }
+  .foot .lang .on { color: var(--accent); font-weight: 600; }
+
+  /* === Palette note === */
+  .palette-note {
+    margin-top: 64px;
+    padding: 20px 24px;
+    background: rgba(251, 250, 246, 0.55);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--ink-muted);
+    backdrop-filter: blur(6px);
+  }
+  .palette-note h3 {
+    margin: 0 0 12px;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .swatches {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
+  }
+  .swatches span {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .swatches i {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+    font-style: normal;
+  }
+</style>
+</head>
+<body>
+
+<main class="page">
+
+  <section class="hero">
+    <h1 class="name">
+      이채연
+      <span class="en">Chaeyeon · 글방</span>
+    </h1>
+    <p class="tag">글을 쓰고 읽으며 언어를 공부합니다. 사람과 자연, 그리고 사람과 사람 사이의 <em>깊은 연대</em>에 마음이 머뭅니다.</p>
+  </section>
+
+  <section class="sect">
+    <h2 class="sect-title">About</h2>
+    <div class="about">
+      <p>천천히 읽고 천천히 씁니다. 풀잎 위에 비친 하늘처럼, 글도 여러 결이 어우러지기를 바랍니다.</p>
+    </div>
+  </section>
+
+  <section class="sect">
+    <h2 class="sect-title">Links</h2>
+    <ul class="links">
+      <li><a href="#">서재 — 읽은 책 <span class="meta">128권</span><span class="arrow">→</span></a></li>
+      <li><a href="#">글방 — 쓴 것 <span class="meta">최근 6월 1일</span><span class="arrow">→</span></a></li>
+      <li><a href="#">Instagram <span class="meta">@chaeyeon</span><span class="arrow">→</span></a></li>
+      <li><a href="#">Email <span class="arrow">→</span></a></li>
+    </ul>
+  </section>
+
+  <section class="sect">
+    <h2 class="sect-title">Now</h2>
+    <div class="now">
+      <p class="now-meta">Updated · 6월 5일</p>
+      <p>도연명의 「귀거래사」를 다시 읽고 있어요. 마당에 토마토 모종 둘. 비 오는 오후를 좋아하게 됐습니다.</p>
+    </div>
+  </section>
+
+  <section class="sect">
+    <h2 class="sect-title">Guestbook</h2>
+    <div class="gb">
+      <div class="gb-items">
+        <div class="gb-item"><b>풀잎</b>오늘 글이 마음에 오래 남았어요.</div>
+        <div class="gb-item"><b>유월</b>비 오는 오후를 좋아하시다니, 저랑 비슷하네요 :)</div>
+        <div class="gb-item"><b>익명</b>좋은 하루 보내세요.</div>
+      </div>
+      <form class="gb-input" onsubmit="event.preventDefault();">
+        <input placeholder="한 줄 남기고 가세요 — 닉네임은 자유로이">
+        <button type="submit">남기기</button>
+      </form>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>© 2026 · chaeyeon</span>
+    <span class="lang">
+      <span class="on">한국어</span>
+      <span>·</span>
+      <span>EN</span>
+      <a href="#">RSS</a>
+    </span>
+  </footer>
+
+  <aside class="palette-note">
+    <h3>Palette — 풀숲 · 하늘 · 연못</h3>
+    <p>녹색이 메인, 블루가 보조. 같은 명도 축 안에 머물러 부조화 없이 어우러진다. 풀잎과 그 위에 비친 하늘 — 사용자가 처음 말한 세 단어를 그대로 옮긴 톤. Now(하늘)와 Guestbook(옅은 연못)이 자매 톤으로 영역을 분리한다.</p>
+    <div class="swatches">
+      <span><i style="background:#4E6B4A"></i> #4E6B4A 깊은 모스 (메인)</span>
+      <span><i style="background:#2F4A3B"></i> #2F4A3B 가장 깊은 풀잎</span>
+      <span><i style="background:#4A6B7A"></i> #4A6B7A 연못 (보조)</span>
+      <span><i style="background:#E5EDDF"></i> #E5EDDF 풀밭 워시</span>
+      <span><i style="background:#DCE6EC"></i> #DCE6EC 하늘 워시 (Now)</span>
+      <span><i style="background:#E3E8EC"></i> #E3E8EC 옅은 연못 (Guestbook)</span>
+      <span><i style="background:#1F2A2A"></i> #1F2A2A 잉크</span>
+    </div>
+  </aside>
+
+</main>
+
+</body>
+</html>

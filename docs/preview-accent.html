@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>컬러 시안 — Forest · Pond · Harmony</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Pretendard Variable', -apple-system, sans-serif;
+    background: #E8EBE5;
+    color: #1F2A24;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .lab-header {
+    text-align: center;
+    padding: 56px 24px 24px;
+  }
+  .lab-header h1 {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #5D6B62;
+    margin: 0 0 8px;
+  }
+  .lab-header p {
+    font-size: 14px;
+    color: #9AA59E;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    padding: 24px 24px 80px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  @media (max-width: 980px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  /* === 카드 ============================ */
+  .card {
+    /* 기본값 — 각 variant가 덮어씀 */
+    --bg:        #F4F6F1;
+    --surface:   #FFFFFF;
+    --ink:       #1F2A24;
+    --ink-muted: #5D6B62;
+    --ink-faint: #9AA59E;
+    --line:      rgba(31, 42, 36, 0.08);
+
+    background: var(--bg);
+    border-radius: 22px;
+    padding: 48px 32px 40px;
+    box-shadow: 0 1px 0 rgba(31,42,36,0.02), 0 30px 60px -30px rgba(31,42,36,0.18);
+    transition: transform 240ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .card:hover { transform: translateY(-3px); }
+
+  .label {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 36px;
+    font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .label .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .label .swatch {
+    margin-left: auto;
+    display: flex; gap: 4px;
+  }
+  .label .swatch span {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+  }
+
+  /* Hero */
+  .hero h2 {
+    font-family: 'Pretendard Variable', serif;
+    font-size: 36px;
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+    font-weight: 500;
+    margin: 0 0 14px;
+    color: var(--ink);
+    transition: font-weight 360ms ease, letter-spacing 360ms ease, color 360ms ease;
+  }
+  .card:hover .hero h2 {
+    font-weight: 700;
+    letter-spacing: -0.028em;
+  }
+  .hero .tag {
+    font-size: 15px;
+    color: var(--ink-muted);
+    line-height: 1.65;
+    margin: 0;
+  }
+  .hero .tag em {
+    font-style: normal;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Sections */
+  .sect {
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .sect-title {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 14px;
+    font-weight: 500;
+  }
+
+  /* About */
+  .about p {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  /* Links */
+  .links { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .links a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 500;
+    transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+  }
+  .links a:hover {
+    transform: translateY(-1px);
+    border-color: var(--link-hover, var(--accent-soft));
+    box-shadow: 0 8px 20px -10px var(--accent-soft);
+  }
+  .links a .arrow {
+    color: var(--ink-faint);
+    transition: transform 200ms ease, color 200ms ease;
+  }
+  .links a:hover .arrow {
+    color: var(--link-hover, var(--accent));
+    transform: translateX(3px);
+  }
+
+  /* Now */
+  .now {
+    background: var(--now-wash, var(--accent-wash));
+    border-radius: 14px;
+    padding: 18px 20px;
+  }
+  .now-meta {
+    font-size: 11px;
+    color: var(--now-accent, var(--accent));
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 0 0 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .now-meta::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--now-accent, var(--accent));
+    box-shadow: 0 0 0 0 var(--now-accent, var(--accent));
+    animation: pulse 2.4s infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 var(--accent-soft); }
+    70%  { box-shadow: 0 0 0 9px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+  .now p {
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  /* Guestbook (Phase 2 미리보기) */
+  .gb {
+    margin-top: 8px;
+    display: grid; gap: 8px;
+  }
+  .gb-item {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--ink-muted);
+    line-height: 1.55;
+  }
+  .gb-item b {
+    color: var(--gb-accent, var(--accent));
+    font-weight: 600;
+    margin-right: 6px;
+  }
+
+  /* Footer */
+  .foot {
+    margin-top: 28px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+  .foot a { color: var(--ink-muted); text-decoration: none; }
+  .foot a:hover { color: var(--accent); }
+
+  /* ============= Variant A: Forest (풀숲) ============= */
+  .v-forest {
+    --bg:          #F4F6F1;
+    --accent:      #6B8068;
+    --accent-soft: rgba(107, 128, 104, 0.22);
+    --accent-wash: #E8EEE3;
+  }
+  .v-forest .hero h2 { color: #3F5340; }
+
+  /* ============= Variant B: Pond (연못) =============== */
+  .v-pond {
+    --bg:          #F0F3F5;
+    --accent:      #3D6373;
+    --accent-soft: rgba(61, 99, 115, 0.22);
+    --accent-wash: #E0E9EE;
+  }
+  .v-pond .hero h2 { color: #1E4252; }
+
+  /* ============= Variant C: Harmony (조화) ============ */
+  .v-harmony {
+    --bg:          #F2F4EE;
+    --accent:      #6B8068;          /* 풀잎 — 기본 액센트 */
+    --accent-soft: rgba(107, 128, 104, 0.22);
+    --accent-wash: #E8EEE3;
+    --link-hover:  #3D6373;          /* 링크는 연못색으로 깊어짐 */
+    --now-accent:  #6B89A0;          /* Now는 하늘색 */
+    --now-wash:    #E5ECF1;
+    --gb-accent:   #3D6373;          /* 방명록 닉은 연못 */
+  }
+  .v-harmony .hero h2 { color: #2E3D33; }
+  .v-harmony .hero .tag em { color: #3D6373; }
+
+</style>
+</head>
+<body>
+
+<div class="lab-header">
+  <h1>컬러 시안 — Forest · Pond · Harmony</h1>
+  <p>풀숲 · 연못 · 하늘의 자연 쿨톤. 카드에 마우스 올리면 이름 폰트가 두꺼워지는 키네틱.</p>
+</div>
+
+<div class="grid">
+
+  <!-- =============== FOREST =============== -->
+  <article class="card v-forest">
+    <div class="label">
+      <span class="dot"></span> Forest · 풀숲
+      <span class="swatch">
+        <span style="background:#6B8068"></span>
+        <span style="background:#3F5340"></span>
+        <span style="background:#E8EEE3"></span>
+      </span>
+    </div>
+
+    <div class="hero">
+      <h2>이채연 · Chaeyeon</h2>
+      <p class="tag">글을 쓰고 읽으며 언어를 공부합니다.<br>지금은 <em>사람과 자연 사이의 말</em>을 모으는 중.</p>
+    </div>
+
+    <div class="sect about">
+      <p class="sect-title">About</p>
+      <p>천천히 읽고 천천히 씁니다. 사람과 자연, 그리고 사람과 사람 사이의 깊은 연대에 마음이 머뭅니다.</p>
+    </div>
+
+    <div class="sect">
+      <p class="sect-title">Links</p>
+      <ul class="links">
+        <li><a href="#">서재 · Reading log <span class="arrow">→</span></a></li>
+        <li><a href="#">글방 · Writing <span class="arrow">→</span></a></li>
+        <li><a href="#">Instagram <span class="arrow">→</span></a></li>
+        <li><a href="#">Email <span class="arrow">→</span></a></li>
+      </ul>
+    </div>
+
+    <div class="sect">
+      <p class="sect-title">Now</p>
+      <div class="now">
+        <p class="now-meta">Updated · 6월 5일</p>
+        <p>도연명의 「귀거래사」 다시 읽기. 마당에 토마토 모종 두 그루.</p>
+      </div>
+    </div>
+
+    <div class="sect">
+      <p class="sect-title">Guestbook</p>
+      <div class="gb">
+        <div class="gb-item"><b>풀잎</b>오늘 글이 마음에 오래 남아요.</div>
+        <div class="gb-item"><b>익명</b>좋은 하루 되세요 :)</div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span>© 2026 · 한국어 / EN</span>
+      <a href="#">RSS</a>
+    </div>
+  </article>
+
+  <!-- =============== POND =============== -->
+  <article class="card v-pond">
+    <div class="label">
+      <span class="dot"></span> Pond · 연못
+      <span class="swatch">
+        <span style="background:#3D6373"></span>
+        <span style="background:#1E4252"></span>
+        <span style="background:#E0E9EE"></span>
+      </span>
+    </div>
+
+    <div class="hero">
+      <h2>이채연 · Chaeyeon</h2>
+      <p class="tag">글을 쓰고 읽으며 언어를 공부합니다.<br>지금은 <em>사람과 자연 사이의 말</em>을 모으는 중.</p>
+    </div>
+
+    <div class="sect about">
+      <p class="sect-title">About</p>
+      <p>천천히 읽고 천천히 씁니다. 사람과 자연, 그리고 사람과 사람 사이의 깊은 연대에 마음이 머뭅니다.</p>
+    </div>
+
+    <div class="sect">
+      <p class="sect-title">Links</p>
+      <ul class="links">
+        <li><a href="#">서재 · Reading log <span class="arrow">→</span></a></li>
+        <li><a href="#">글방 · Writing <span class="arrow">→</span></a></li>
+        <li><a href="#">Instagram <span class="arrow">→</span></a></li>
+        <li><a href="#">Email <span class="arrow">→</span></a></li>
+      </ul>
+    </div>
+
+    <div class="sect">
+      <p class="sect-title">Now</p>
+      <div class="now">
+        <p class="now-meta">Updated · 6월 5일</p>
+        <p>도연명의 「귀거래사」 다시 읽기. 마당에 토마토 모종 두 그루.</p>
+      </div>
+    </div>
+
+    <div class="sect">
+      <p class="sect-title">Guestbook</p>
+      <div class="gb">
+        <div class="gb-item"><b>풀잎</b>오늘 글이 마음에 오래 남아요.</div>
+        <div class="gb-item"><b>익명</b>좋은 하루 되세요 :)</div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span>© 2026 · 한국어 / EN</span>
+      <a href="#">RSS</a>
+    </div>
+  </article>
+
+  <!-- =============== HARMONY =============== -->
+  <article class="card v-harmony">
+    <div class="label">
+      <span class="dot"></span> Harmony · 조화
+      <span class="swatch">
+        <span style="background:#6B8068" title="풀잎"></span>
+        <span style="background:#6B89A0" title="하늘"></span>
+        <span style="background:#3D6373" title="연못"></span>
+      </span>
+    </div>
+
+    <div class="hero">
+      <h2>이채연 · Chaeyeon</h2>
+      <p class="tag">글을 쓰고 읽으며 언어를 공부합니다.<br>지금은 <em>사람과 자연 사이의 말</em>을 모으는 중.</p>
+    </div>
+
+    <div class="sect about">
+      <p class="sect-title">About</p>
+      <p>천천히 읽고 천천히 씁니다. 사람과 자연, 그리고 사람과 사람 사이의 깊은 연대에 마음이 머뭅니다.</p>
+    </div>
+
+    <div class="sect">
+      <p class="sect-title">Links · 풀잎</p>
+      <ul class="links">
+        <li><a href="#">서재 · Reading log <span class="arrow">→</span></a></li>
+        <li><a href="#">글방 · Writing <span class="arrow">→</span></a></li>
+        <li><a href="#">Instagram <span class="arrow">→</span></a></li>
+        <li><a href="#">Email <span class="arrow">→</span></a></li>
+      </ul>
+    </div>
+
+    <div class="sect">
+      <p class="sect-title">Now · 하늘</p>
+      <div class="now">
+        <p class="now-meta">Updated · 6월 5일</p>
+        <p>도연명의 「귀거래사」 다시 읽기. 마당에 토마토 모종 두 그루.</p>
+      </div>
+    </div>
+
+    <div class="sect">
+      <p class="sect-title">Guestbook · 연못</p>
+      <div class="gb">
+        <div class="gb-item"><b>풀잎</b>오늘 글이 마음에 오래 남아요.</div>
+        <div class="gb-item"><b>익명</b>좋은 하루 되세요 :)</div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span>© 2026 · 한국어 / EN</span>
+      <a href="#">RSS</a>
+    </div>
+  </article>
+
+</div>
+
+</body>
+</html>

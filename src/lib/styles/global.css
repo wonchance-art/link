@@ -1,0 +1,38 @@
+/* === Global base — Grove === */
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  font-size: var(--t-base);
+  line-height: var(--leading-base);
+  min-height: 100vh;
+  /* 풀숲(좌상) → 하늘(우하) 2축 그라데이션, 스크롤해도 고정 */
+  background:
+    radial-gradient(ellipse 95% 75% at 12% 10%, var(--wash-moss) 0%, transparent 65%),
+    radial-gradient(ellipse 90% 80% at 92% 85%, var(--wash-sky) 0%, transparent 62%),
+    linear-gradient(180deg, #E8EEDF 0%, #E3E9DF 45%, #DCE6EC 100%);
+  background-attachment: fixed;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+input, textarea { font-family: inherit; }
+img, svg { display: block; max-width: 100%; }
+
+/* 모션 약화 환경 존중 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

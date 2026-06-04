@@ -1,0 +1,57 @@
+/* === Grove 팔레트 — 풀숲 · 하늘 · 연못 ===
+   그린(숲) 메인 + 블루(하늘·연못) 보조. 같은 명도 축에 머물러 부조화 없음. */
+
+:root {
+  /* ===== Color ===== */
+
+  /* 액센트 */
+  --accent:        #4E6B4A;             /* 메인 — 깊은 모스 (숲) */
+  --accent-deep:   #2F4A3B;             /* 가장 깊은 풀잎 (강조) */
+  --accent-pond:   #4A6B7A;             /* 보조 — 연못 (블루) */
+  --accent-soft:   rgba(78, 107, 74, 0.20);
+
+  /* 배경 워시 */
+  --wash-moss:     #E5EDDF;             /* 메인 풀밭 */
+  --wash-sky:      #DCE6EC;             /* 하늘 — Now 영역 */
+  --wash-pond:     #E3E8EC;             /* 옅은 연못 — Guestbook 영역 */
+
+  /* 잉크 */
+  --ink:           #1F2A2A;
+  --ink-muted:     #586863;
+  --ink-faint:     #98A19B;
+  --line:          rgba(31, 42, 36, 0.08);
+
+  /* Surface */
+  --surface:       #FBFAF6;             /* 따뜻한 오프-화이트 카드 */
+
+  /* ===== Typography ===== */
+  --font-sans: 'Pretendard Variable', -apple-system, BlinkMacSystemFont,
+               system-ui, 'Segoe UI', Roboto, sans-serif;
+
+  /* sizes — 1.250 (Major Third) scale */
+  --t-xs:   0.75rem;     /* 12 */
+  --t-sm:   0.875rem;    /* 14 */
+  --t-base: 1rem;        /* 16 */
+  --t-md:   1.25rem;     /* 20 */
+  --t-lg:   1.5625rem;   /* 25 */
+  --t-xl:   1.953rem;    /* 31 */
+  --t-2xl:  2.441rem;    /* 39 */
+  --t-3xl:  3.052rem;    /* 49 — Hero */
+
+  --leading-tight: 1.2;
+  --leading-base:  1.7;
+  --leading-loose: 1.85;
+
+  /* ===== Spacing (8px base) ===== */
+  --s-1: 8px;
+  --s-2: 16px;
+  --s-3: 24px;
+  --s-4: 32px;
+  --s-5: 48px;
+  --s-6: 64px;
+  --s-7: 96px;
+  --s-8: 128px;
+
+  /* ===== Layout ===== */
+  --col-width: 600px;
+}

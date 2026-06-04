@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Monet · Water Lilies — The Clouds</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  :root {
+    /* ===== 모네 「수련 — 구름」에서 추출한 팔레트 ===== */
+    /* 수면의 라벤더-인디고 베이스에 라일락·청록·크림이 번지는 톤 */
+
+    /* 배경 (수면) — 라벤더·스카이·크림 3축 */
+    --wash-lavender: #E2DEEA;   /* 라벤더 워시 */
+    --wash-sky:      #DDE5EC;   /* 옅은 스카이 */
+    --wash-cream:    #EFE9DD;   /* 크림 (구름 빛) */
+
+    /* 잉크 (그늘 깊이) */
+    --ink:           #2D3548;   /* 본문 — 딥 인디고 */
+    --ink-muted:     #5E6A82;   /* 보조 — 그레이 블루 */
+    --ink-faint:     #9BA1B2;   /* 메타 */
+
+    /* 액센트 — 인디고 메인 + 라일락 보조 */
+    --accent:        #4F5F84;   /* 그늘진 인디고-퍼플 — 메인 */
+    --accent-deep:   #2F3E63;   /* 가장 깊은 그늘 */
+    --accent-lilac:  #8E89AE;   /* 라일락 보조 */
+    --accent-soft:   rgba(79, 95, 132, 0.18);
+
+    /* 라인 */
+    --line:          rgba(45, 53, 72, 0.08);
+
+    /* 본문 카드 */
+    --surface:       #FBFAF6;   /* 따뜻한 오프-화이트 */
+
+    /* 폰트 */
+    --font-sans: 'Pretendard Variable', -apple-system, sans-serif;
+  }
+
+  /* 본문 — 모네 수면처럼 미세한 그라데이션 */
+  body {
+    font-family: var(--font-sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(ellipse 90% 70% at 15% 10%, var(--wash-lavender) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 70% at 90% 25%, var(--wash-sky) 0%, transparent 55%),
+      radial-gradient(ellipse 85% 70% at 80% 95%, var(--wash-cream) 0%, transparent 60%),
+      linear-gradient(180deg, #E5E2EC 0%, #DEE2EB 50%, #EBE7DC 100%);
+    min-height: 100vh;
+  }
+
+  /* === 컨테이너: 실제 사이트 크기 === */
+  .page {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 80px 32px 64px;
+  }
+  @media (max-width: 640px) {
+    .page { padding: 56px 24px 48px; }
+  }
+
+  /* === Hero === */
+  .hero {
+    margin-bottom: 64px;
+  }
+  .hero .name {
+    font-family: var(--font-sans);
+    font-size: 52px;
+    font-weight: 500;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin: 0 0 16px;
+    transition: font-weight 420ms ease, letter-spacing 420ms ease;
+  }
+  .hero .name:hover {
+    font-weight: 700;
+    letter-spacing: -0.032em;
+  }
+  .hero .name .en {
+    display: block;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+    margin-top: 8px;
+    font-style: italic;
+  }
+  .hero .tag {
+    font-size: 16px;
+    color: var(--ink-muted);
+    line-height: 1.75;
+    margin: 0;
+    max-width: 420px;
+  }
+  .hero .tag em {
+    font-style: normal;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* === Section === */
+  .sect {
+    margin-top: 56px;
+  }
+  .sect-title {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 20px;
+    font-weight: 500;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sect-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* === About === */
+  .about p {
+    font-size: 16px;
+    line-height: 1.85;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  /* === Links === */
+  .links { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .links a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 18px;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 500;
+    transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+    backdrop-filter: blur(8px);
+  }
+  .links a:hover {
+    transform: translateY(-1px);
+    border-color: var(--accent-soft);
+    box-shadow: 0 12px 28px -14px var(--accent-soft);
+  }
+  .links a .meta {
+    font-size: 12px;
+    color: var(--ink-faint);
+    font-weight: 400;
+    margin-left: auto;
+    margin-right: 16px;
+  }
+  .links a .arrow {
+    color: var(--ink-faint);
+    transition: transform 200ms ease, color 200ms ease;
+  }
+  .links a:hover .arrow {
+    color: var(--accent);
+    transform: translateX(3px);
+  }
+
+  /* === Now (라벤더 워시) === */
+  .now {
+    background: var(--wash-lavender);
+    border-radius: 16px;
+    padding: 22px 24px;
+    border: 1px solid rgba(142, 137, 174, 0.16);
+  }
+  .now-meta {
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin: 0 0 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .now-meta::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 var(--accent);
+    animation: pulse 2.6s infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 var(--accent-soft); }
+    70%  { box-shadow: 0 0 0 10px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+  .now p {
+    font-size: 15px;
+    color: var(--ink);
+    line-height: 1.75;
+    margin: 0;
+  }
+
+  /* === Guestbook (워시 없음 — 평평하게, 라인만) === */
+  .gb-items { display: grid; gap: 10px; margin-bottom: 14px; }
+  .gb-item {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+  .gb-item b {
+    color: var(--accent-lilac);
+    font-weight: 600;
+    margin-right: 8px;
+  }
+  .gb-input {
+    display: flex; gap: 8px;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 6px 8px 6px 14px;
+    border: 1px solid var(--line);
+  }
+  .gb-input input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--ink);
+    outline: none;
+  }
+  .gb-input input::placeholder { color: var(--ink-faint); }
+  .gb-input button {
+    background: var(--accent);
+    color: var(--surface);
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  /* === Footer === */
+  .foot {
+    margin-top: 80px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--ink-faint);
+    letter-spacing: 0.02em;
+  }
+  .foot a { color: var(--ink-muted); text-decoration: none; margin-left: 16px; }
+  .foot a:hover { color: var(--accent); }
+  .foot .lang span { padding: 0 6px; }
+  .foot .lang .on { color: var(--accent); font-weight: 600; }
+
+  /* === Note (페이지 하단 작은 메모) === */
+  .palette-note {
+    margin-top: 64px;
+    padding: 20px 24px;
+    background: rgba(251, 250, 246, 0.55);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--ink-muted);
+    backdrop-filter: blur(6px);
+  }
+  .palette-note h3 {
+    margin: 0 0 12px;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .swatches {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
+  }
+  .swatches span {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .swatches i {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+    font-style: normal;
+  }
+</style>
+</head>
+<body>
+
+<main class="page">
+
+  <section class="hero">
+    <h1 class="name">
+      이채연
+      <span class="en">Chaeyeon · 글방</span>
+    </h1>
+    <p class="tag">글을 쓰고 읽으며 언어를 공부합니다. 사람과 자연, 그리고 사람과 사람 사이의 <em>깊은 연대</em>에 마음이 머뭅니다.</p>
+  </section>
+
+  <section class="sect">
+    <h2 class="sect-title">About</h2>
+    <div class="about">
+      <p>천천히 읽고 천천히 씁니다. 오래 두면 물에 색이 번지듯, 글도 그렇다고 생각해요.</p>
+    </div>
+  </section>
+
+  <section class="sect">
+    <h2 class="sect-title">Links</h2>
+    <ul class="links">
+      <li><a href="#">서재 — 읽은 책 <span class="meta">128권</span><span class="arrow">→</span></a></li>
+      <li><a href="#">글방 — 쓴 것 <span class="meta">최근 6월 1일</span><span class="arrow">→</span></a></li>
+      <li><a href="#">Instagram <span class="meta">@chaeyeon</span><span class="arrow">→</span></a></li>
+      <li><a href="#">Email <span class="arrow">→</span></a></li>
+    </ul>
+  </section>
+
+  <section class="sect">
+    <h2 class="sect-title">Now</h2>
+    <div class="now">
+      <p class="now-meta">Updated · 6월 5일</p>
+      <p>도연명의 「귀거래사」를 다시 읽고 있어요. 마당에 토마토 모종 둘. 비 오는 오후를 좋아하게 됐습니다.</p>
+    </div>
+  </section>
+
+  <section class="sect">
+    <h2 class="sect-title">Guestbook</h2>
+    <div class="gb">
+      <div class="gb-items">
+        <div class="gb-item"><b>풀잎</b>오늘 글이 마음에 오래 남았어요.</div>
+        <div class="gb-item"><b>유월</b>비 오는 오후를 좋아하시다니, 저랑 비슷하네요 :)</div>
+        <div class="gb-item"><b>익명</b>좋은 하루 보내세요.</div>
+      </div>
+      <form class="gb-input" onsubmit="event.preventDefault();">
+        <input placeholder="한 줄 남기고 가세요 — 닉네임은 자유로이">
+        <button type="submit">남기기</button>
+      </form>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>© 2026 · chaeyeon</span>
+    <span class="lang">
+      <span class="on">한국어</span>
+      <span>·</span>
+      <span>EN</span>
+      <a href="#">RSS</a>
+    </span>
+  </footer>
+
+  <aside class="palette-note">
+    <h3>Palette — Monet, Water Lilies: The Clouds (1920–26)</h3>
+    <p>수면의 라벤더-인디고 베이스 위에 라일락·크림이 번지는 색감. 단색이 아니라 여러 색이 어우러져 한 인상을 만든다 — 「The Clouds」 패널에 충실한 톤(청록은 옆 「Green Reflections」 패널의 것이라 제외).</p>
+    <div class="swatches">
+      <span><i style="background:#4F5F84"></i> #4F5F84 인디고</span>
+      <span><i style="background:#8E89AE"></i> #8E89AE 라일락</span>
+      <span><i style="background:#E2DEEA"></i> #E2DEEA 라벤더 워시</span>
+      <span><i style="background:#DDE5EC"></i> #DDE5EC 스카이 워시</span>
+      <span><i style="background:#EFE9DD"></i> #EFE9DD 크림</span>
+      <span><i style="background:#2D3548"></i> #2D3548 잉크</span>
+    </div>
+  </aside>
+
+</main>
+
+</body>
+</html>
