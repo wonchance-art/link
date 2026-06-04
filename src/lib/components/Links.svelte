@@ -67,6 +67,14 @@
 			0 22px 44px -16px rgba(74, 107, 122, 0.28),
 			0 4px 8px rgba(31, 42, 42, 0.05);
 	}
+	/* 탭/터치 시 미세 눌림 — 모바일 feedback */
+	.links a:active {
+		--hover-y: 0px;
+		--tx-deg: 0deg;
+		--ty-deg: 0deg;
+		transform: scale(0.985);
+		transition: transform 140ms ease;
+	}
 	.label {
 		flex: 0 0 auto;
 	}

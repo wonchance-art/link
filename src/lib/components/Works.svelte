@@ -77,6 +77,14 @@
 			0 22px 44px -16px var(--accent-soft),
 			0 4px 8px rgba(31, 42, 42, 0.05);
 	}
+	/* 탭/터치 시 미세 눌림 — 모바일 feedback */
+	.works li > a:active {
+		--hover-y: 0px;
+		--tx-deg: 0deg;
+		--ty-deg: 0deg;
+		transform: scale(0.985);
+		transition: transform 140ms ease;
+	}
 	.works li > .pending {
 		opacity: 0.65;
 		cursor: default;

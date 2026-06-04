@@ -60,7 +60,7 @@
 <style>
 	.hero {
 		position: relative;
-		margin-bottom: var(--s-7);
+		margin-bottom: clamp(80px, 14vw, 128px);
 		padding-top: var(--s-2);
 		isolation: isolate;
 	}
