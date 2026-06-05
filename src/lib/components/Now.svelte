@@ -57,25 +57,25 @@
 			box-shadow: 0 0 0 0 transparent;
 		}
 	}
-	/* 본문 — 잡지 인용구 같은 큰 serif italic */
+	/* 본문 — 잡지 인용구 같은 serif italic, 콘텐츠 분량에 맞춤 */
 	.now-body {
 		font-family: var(--font-serif);
 		font-style: italic;
 		font-weight: 400;
 		font-variation-settings: 'opsz' 144;
 		font-feature-settings: 'liga', 'dlig';
-		font-size: clamp(28px, 4.6vw, 38px);
+		font-size: clamp(22px, 3.4vw, 30px);
 		color: var(--ink);
-		line-height: 1.25;
+		line-height: 1.3;
 		letter-spacing: -0.012em;
 		margin: 0;
 	}
 	@media (max-width: 640px) {
 		.now {
-			padding: 28px 24px;
+			padding: 26px 22px;
 		}
 		.now-body {
-			font-size: 26px;
+			font-size: 22px;
 		}
 	}
 </style>

@@ -10,10 +10,11 @@
 
 <style>
 	.body {
-		font-size: 17px;
-		line-height: 1.88;
+		font-size: 18px;
+		line-height: 1.9;
 		color: var(--ink);
 		margin: 0;
+		max-width: 480px;
 	}
 	/* 잡지 drop cap — 첫 글자 큰 serif italic, accent-deep */
 	.body::first-letter {

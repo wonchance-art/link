@@ -60,7 +60,15 @@
 
 <section class="hero" bind:this={heroEl} style:--sx="{sx}%" style:--sy="{sy}%">
 	<div class="left">
-		<h1 class="name" bind:this={nameEl} style:font-weight={weight}>{p.name}</h1>
+		<h1 class="name" bind:this={nameEl} style:font-weight={weight}>
+			{#each [...p.name] as char, i (i)}
+				{#if char === ' '}
+					<span class="space" style:--i={i}> </span>
+				{:else}
+					<span class="char" style:--i={i}>{char}</span>
+				{/if}
+			{/each}
+		</h1>
 		<p class="tag">{@html tagHtml}</p>
 	</div>
 
@@ -135,6 +143,33 @@
 		font-feature-settings: 'ss01';
 		word-break: break-word;
 		overflow-wrap: break-word;
+	}
+
+	/* Name 글자별 stagger entrance — 모바일 시그니처 모먼트 */
+	.name .char,
+	.name .space {
+		display: inline-block;
+		opacity: 0;
+		transform: translateY(28px);
+		animation: char-rise 820ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+		animation-delay: calc(var(--i, 0) * 55ms + 80ms);
+	}
+	.name .space {
+		white-space: pre;
+	}
+	@keyframes char-rise {
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.name .char,
+		.name .space {
+			opacity: 1;
+			transform: none;
+			animation: none;
+		}
 	}
 
 	.tag {
