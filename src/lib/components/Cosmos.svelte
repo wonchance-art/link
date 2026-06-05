@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { makeStars } from '$lib/cosmos/stars';
 
+	type Props = { landPath: string };
+	let { landPath }: Props = $props();
+
 	const stars = makeStars(80);
 
 	let zoomed = $state(false);
@@ -67,7 +70,14 @@
 <div class="stage" bind:this={stageEl} class:zoomed>
 	<div class="stars" aria-hidden="true">
 		{#each stars as s, i (i)}
-			<span style:left="{s.x}%" style:top="{s.y}%" style:width="{s.r}px" style:height="{s.r}px" style:opacity={s.o}></span>
+			<span
+				style:left="{s.x}%"
+				style:top="{s.y}%"
+				style:width="{s.r}px"
+				style:height="{s.r}px"
+				style:--o={s.o}
+				style:animation-delay="{s.tw}s"
+			></span>
 		{/each}
 	</div>
 
@@ -116,21 +126,10 @@
 		<!-- 지구 확대 → 땅 / 바다 (텍스트 없이, 직접 드러내지 않음) -->
 		<div class="world" style:--sx="{startX}px" style:--sy="{startY}px">
 			<a class="sea" href="/sea" aria-label="바다"></a>
-			<svg class="land-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+			<svg class="land-svg" viewBox="0 0 100 100">
 				<a href="/land" aria-label="땅">
-					<!-- 땅 비율을 높여 지구다운 대륙감 -->
-					<path
-						d="M26 16 C40 9 58 11 68 19 C76 25 72 35 79 43 C86 51 78 59 67 57 C58 55 53 66 42 64 C31 62 28 50 24 43 C19 36 20 26 24 20 C25 18 24 17 26 16 Z"
-					/>
-					<path
-						d="M11 27 C18 21 27 23 28 32 C29 41 22 48 25 57 C28 66 20 74 12 69 C5 64 7 53 8 44 C9 36 5 31 11 27 Z"
-					/>
-					<path
-						d="M55 67 C67 62 84 65 86 76 C88 87 73 92 62 89 C53 87 49 79 51 74 C53 70 52 69 55 67 Z"
-					/>
-					<path
-						d="M71 19 C78 14 88 16 89 24 C90 32 83 37 76 35 C70 33 67 25 71 19 Z"
-					/>
+					<!-- 실제 지리 데이터(Natural Earth) 정사영 — 진짜 지구 대륙 -->
+					<path d={landPath} />
 				</a>
 			</svg>
 			<span class="sphere" aria-hidden="true"></span>
@@ -162,6 +161,22 @@
 		position: absolute;
 		border-radius: 50%;
 		background: #fff;
+		opacity: var(--o, 0.5);
+		animation: twinkle 6s ease-in-out infinite;
+	}
+	@keyframes twinkle {
+		0%,
+		100% {
+			opacity: var(--o, 0.5);
+		}
+		50% {
+			opacity: calc(var(--o, 0.5) * 0.4);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.stars span {
+			animation: none;
+		}
 	}
 
 	.system {

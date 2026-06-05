@@ -2,6 +2,8 @@
 	import { page } from '$app/state';
 	import Cosmos from '$lib/components/Cosmos.svelte';
 
+	let { data } = $props();
+
 	const ogUrl = $derived(`${page.url.origin}/og?lang=ko`);
 	const title = '원채연 — Open Chaence';
 	const description = '어둠 속 몇 개의 빛. 태양과 지구와 달 — 이성, 자기, 감성.';
@@ -22,4 +24,4 @@
 	<meta name="twitter:image" content={ogUrl} />
 </svelte:head>
 
-<Cosmos />
+<Cosmos landPath={data.landPath} />

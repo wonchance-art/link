@@ -15,6 +15,8 @@
 		"@sveltejs/adapter-vercel": "^6.3.3",
 		"@sveltejs/kit": "^2.57.0",
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",
+		"@types/d3-geo": "^3.1.0",
+		"@types/topojson-client": "^3.1.5",
 		"svelte": "^5.55.2",
 		"svelte-check": "^4.4.6",
 		"typescript": "^6.0.2",
@@ -22,7 +24,10 @@
 	},
 	"dependencies": {
 		"@resvg/resvg-js": "^2.6.2",
+		"d3-geo": "^3.1.1",
 		"satori": "^0.26.0",
-		"satori-html": "^0.3.2"
+		"satori-html": "^0.3.2",
+		"topojson-client": "^3.1.0",
+		"world-atlas": "^2.0.2"
 	}
 }
