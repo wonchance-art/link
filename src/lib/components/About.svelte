@@ -1,43 +1,36 @@
 <script lang="ts">
-	import type { Lang } from '$lib/i18n/lang';
+	type Props = { body: string };
+	let { body }: Props = $props();
 
-	type Props = { body: string; lang: Lang };
-	let { body, lang }: Props = $props();
-
-	const main = $derived(lang === 'ko' ? '소개' : 'About');
-	const sub = $derived(lang === 'ko' ? 'About' : '소개');
+	// *…* → bloom em
+	const html = $derived(body.replace(/\*(.+?)\*/g, '<em>$1</em>'));
 </script>
 
-<section class="sect">
-	<h2 class="sect-title">
-		{main}
-		<span class="sub">{sub}</span>
-	</h2>
-	<p class="body">{body}</p>
-</section>
+<p class="lead">{@html html}</p>
 
 <style>
-	.body {
-		font-size: 18px;
-		line-height: 1.9;
+	.lead {
+		font-size: clamp(20px, 2.8vw, 28px);
+		line-height: 1.62;
+		letter-spacing: -0.01em;
 		color: var(--ink);
 		margin: 0;
-		max-width: 480px;
+		max-width: 620px;
+		font-weight: 380;
 	}
-	.body::first-letter {
+	.lead :global(em) {
 		font-family: var(--font-serif);
 		font-style: italic;
-		font-size: 2.2em;
-		font-weight: 500;
-		line-height: 0.9;
-		float: left;
-		margin: 4px 10px -2px 0;
 		color: var(--accent-deep);
+		font-weight: 500;
 		font-variation-settings: 'opsz' 144;
+		font-feature-settings: 'liga', 'dlig';
+		transition:
+			color 280ms ease,
+			letter-spacing 280ms ease;
 	}
-	:global(html[lang='ko']) .body::first-letter {
-		font-style: normal;
-		font-weight: 600;
-		letter-spacing: -0.02em;
+	.lead :global(em:hover) {
+		color: var(--accent);
+		letter-spacing: 0.008em;
 	}
 </style>

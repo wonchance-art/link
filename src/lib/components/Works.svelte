@@ -1,181 +1,139 @@
 <script lang="ts">
 	import type { Work } from '$lib/content/works';
-	import type { Lang } from '$lib/i18n/lang';
-	import { tilt3d } from '$lib/actions/tilt3d';
 
-	type Props = { items: Work[]; lang: Lang };
-	let { items, lang }: Props = $props();
-
-	const main = $derived(lang === 'ko' ? '작업' : 'Works');
-	const sub = $derived(lang === 'ko' ? 'Works' : '작업');
+	type Props = { items: Work[] };
+	let { items }: Props = $props();
 </script>
 
-{#snippet body(work: Work)}
-	<div class="row">
-		<span class="title">{work.title}</span>
-		<span class="trail">
-			{#if work.date}<span class="date">{work.date}</span>{/if}
-			{#if work.href}<span class="arrow">→</span>{/if}
-		</span>
-	</div>
-	{#if work.description}
-		<p class="desc">{work.description}</p>
-	{/if}
-{/snippet}
-
-<section class="sect sect-major">
-	<h2 class="sect-title">
-		{main}
-		<span class="sub">{sub}</span>
-	</h2>
-	<ul class="works">
-		{#each items as work, i (work.title + (work.href ?? ''))}
-			<li class:featured={i === 0}>
-				{#if work.href}
-					<a href={work.href} use:tilt3d>{@render body(work)}</a>
-				{:else}
-					<div class="card pending">{@render body(work)}</div>
-				{/if}
-			</li>
-		{/each}
-	</ul>
-</section>
+<div class="works">
+	{#each items as work, i (work.title + (work.href ?? i))}
+		{#if work.href}
+			<a class="work" href={work.href} target="_blank" rel="noopener noreferrer">
+				<span class="num">{String(i + 1).padStart(2, '0')}</span>
+				<span class="main">
+					<span class="head">
+						<h3 class="title">{work.title}</h3>
+						<span class="go" aria-hidden="true">→</span>
+					</span>
+					{#if work.description}<p class="desc">{work.description}</p>{/if}
+				</span>
+				<span class="vine" aria-hidden="true"></span>
+			</a>
+		{:else}
+			<div class="work pending">
+				<span class="num">{String(i + 1).padStart(2, '0')}</span>
+				<span class="main">
+					<span class="head">
+						<h3 class="title">{work.title}</h3>
+						{#if work.date}<span class="tag">{work.date}</span>{/if}
+					</span>
+					{#if work.description}<p class="desc">{work.description}</p>{/if}
+				</span>
+			</div>
+		{/if}
+	{/each}
+</div>
 
 <style>
 	.works {
-		list-style: none;
-		padding: 0;
-		margin: 0;
+		display: flex;
+		flex-direction: column;
+	}
+	.work {
+		position: relative;
 		display: grid;
-		gap: 12px;
-		perspective: 1000px;
-	}
-	.works li > a,
-	.works li > .card {
-		display: block;
-		background: rgba(251, 250, 246, 0.55);
-		backdrop-filter: blur(14px) saturate(150%);
-		-webkit-backdrop-filter: blur(14px) saturate(150%);
-		border: 1px solid var(--line);
-		border-radius: 14px;
-		padding: 22px 24px 24px 26px;
+		grid-template-columns: 38px 1fr;
+		column-gap: 18px;
+		align-items: start;
+		padding: 26px 0 28px;
 		color: var(--ink);
-		transform-style: preserve-3d;
-		--hover-y: 0px;
-		transform: rotateX(var(--ty-deg, 0deg)) rotateY(var(--tx-deg, 0deg))
-			translateY(var(--hover-y));
-		box-shadow:
-			inset 1px 0 0 var(--accent),
-			inset 0 1px 0 rgba(255, 255, 255, 0.5),
-			0 6px 18px -8px rgba(78, 107, 74, 0.16);
-		transition:
-			transform 420ms cubic-bezier(0.34, 1.35, 0.64, 1),
-			border-color 220ms ease,
-			box-shadow 360ms ease,
-			background 280ms ease;
+		border-top: 1px solid var(--line);
 	}
-	/* Featured (첫 번째) — 잡지 헤드라인 카드 */
-	.works li.featured > a,
-	.works li.featured > .card {
-		padding: 30px 30px 32px 32px;
-		background: rgba(251, 250, 246, 0.7);
-		box-shadow:
-			inset 2px 0 0 var(--accent),
-			inset 0 1px 0 rgba(255, 255, 255, 0.55),
-			0 12px 28px -12px rgba(78, 107, 74, 0.22);
+	.work:first-child {
+		border-top: 0;
 	}
-	.works li > a:hover {
-		--hover-y: -2px;
-		background: rgba(251, 250, 246, 0.82);
-		border-color: var(--accent-soft);
-		box-shadow:
-			inset 2px 0 0 var(--accent),
-			inset 0 1px 0 rgba(255, 255, 255, 0.6),
-			0 22px 44px -16px var(--accent-soft),
-			0 4px 8px rgba(31, 42, 42, 0.05);
+	.num {
+		font-size: 12px;
+		font-variant-numeric: tabular-nums;
+		letter-spacing: 0.1em;
+		color: var(--ink-faint);
+		padding-top: 0.7em;
+		transition: color 320ms ease;
 	}
-	.works li.featured > a:hover {
-		box-shadow:
-			inset 3px 0 0 var(--accent),
-			inset 0 1px 0 rgba(255, 255, 255, 0.65),
-			0 26px 50px -18px var(--accent-soft),
-			0 6px 12px rgba(31, 42, 42, 0.06);
-	}
-	.works li > a:active {
-		--hover-y: 0px;
-		--tx-deg: 0deg;
-		--ty-deg: 0deg;
-		transform: scale(0.985);
-		transition: transform 140ms ease;
-	}
-	.works li > .pending {
-		opacity: 0.65;
-		cursor: default;
-		box-shadow:
-			inset 1px 0 0 var(--line),
-			inset 0 1px 0 rgba(255, 255, 255, 0.4);
-	}
-	.works li.featured > .pending {
-		box-shadow:
-			inset 2px 0 0 var(--line),
-			inset 0 1px 0 rgba(255, 255, 255, 0.45);
-	}
-	.row {
+	.head {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
-		gap: 12px;
-	}
-	.row:not(:only-child) {
-		margin-bottom: 8px;
+		gap: 16px;
 	}
 	.title {
-		font-size: 18px;
-		font-weight: 600;
-		letter-spacing: -0.012em;
+		font-family: var(--font-sans);
+		font-size: clamp(28px, 6vw, 54px);
+		font-weight: 400;
+		line-height: 1.02;
+		letter-spacing: -0.035em;
 		color: var(--ink);
-		transition: color 320ms ease;
-	}
-	.featured .title {
-		font-size: 22px;
-		letter-spacing: -0.018em;
-	}
-	.trail {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		color: var(--ink-faint);
-	}
-	.date {
-		font-size: 11px;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-		white-space: nowrap;
-		transition: color 320ms ease 60ms;
-	}
-	.arrow {
-		color: var(--ink-faint);
+		margin: 0;
 		transition:
-			transform 420ms cubic-bezier(0.34, 1.35, 0.64, 1) 140ms,
-			color 320ms ease 140ms;
+			font-weight 360ms cubic-bezier(0.22, 1, 0.36, 1),
+			letter-spacing 360ms ease,
+			color 320ms ease;
 	}
-	.works li > a:hover .title {
-		color: var(--accent-deep);
-	}
-	.works li > a:hover .date {
-		color: var(--ink-muted);
-	}
-	.works li > a:hover .arrow {
-		color: var(--accent);
-		transform: translateX(4px);
+	.go {
+		font-size: clamp(20px, 3vw, 30px);
+		color: var(--ink-faint);
+		flex: 0 0 auto;
+		transition:
+			transform 420ms cubic-bezier(0.34, 1.35, 0.64, 1),
+			color 320ms ease;
 	}
 	.desc {
 		font-size: 15px;
 		color: var(--ink-muted);
-		line-height: 1.65;
-		margin: 0;
+		line-height: 1.6;
+		margin: 12px 0 0;
+		max-width: 460px;
 	}
-	.featured .desc {
-		font-size: 16px;
+	.tag {
+		font-size: 11px;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--ink-faint);
+		white-space: nowrap;
+		flex: 0 0 auto;
+		padding-top: 0.5em;
+	}
+
+	/* 덩굴 밑줄 — 호버 시 왼쪽에서 자라남 */
+	.vine {
+		position: absolute;
+		left: 0;
+		bottom: 14px;
+		height: 2px;
+		width: 0;
+		background: linear-gradient(90deg, var(--accent), var(--accent-pond));
+		transition: width 520ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+	.work:hover .vine {
+		width: 100%;
+	}
+	.work:hover .title {
+		font-weight: 680;
+		letter-spacing: -0.042em;
+		color: var(--accent-deep);
+	}
+	.work:hover .num {
+		color: var(--accent);
+	}
+	.work:hover .go {
+		color: var(--accent);
+		transform: translate(5px, -3px);
+	}
+
+	.pending {
+		opacity: 0.66;
+	}
+	.pending .title {
+		color: var(--ink-muted);
 	}
 </style>

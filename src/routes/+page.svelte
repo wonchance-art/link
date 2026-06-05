@@ -8,6 +8,7 @@
 	import { now } from '$lib/content/now';
 
 	import Hero from '$lib/components/Hero.svelte';
+	import Mark from '$lib/components/Mark.svelte';
 	import About from '$lib/components/About.svelte';
 	import Now from '$lib/components/Now.svelte';
 	import Works from '$lib/components/Works.svelte';
@@ -24,11 +25,8 @@
 
 	const description = $derived(p.tag.replace(/\*/g, ''));
 	const ogUrl = $derived(`${page.url.origin}/og?lang=${lang}`);
-
-	// 사이트 우산(Open Chaence)을 title에도 노출.
 	const title = $derived(`${p.name} — ${p.subtitle}`);
 
-	// JSON-LD Person schema — 검색엔진/링크 미리보기에 정체성 제공.
 	const personSchema = $derived({
 		'@context': 'https://schema.org',
 		'@type': 'Person',
@@ -60,34 +58,43 @@
 </svelte:head>
 
 <main class="page">
-	<!-- Hero는 글자 stagger가 자체 entrance — fadeIn wrapper 안 씌움 -->
 	<Hero profile={p} />
-	<div use:fadeIn={{ delay: 90 }}>
-		<About body={p.about} {lang} />
-	</div>
-	<div use:fadeIn={{ delay: 180 }}>
-		<Now updatedLabel={n.updatedLabel} body={n.body} {lang} />
-	</div>
-	<div use:fadeIn={{ delay: 260 }}>
-		<Works items={w} {lang} />
-	</div>
-	<div use:fadeIn={{ delay: 340 }}>
-		<Links items={l} {lang} />
-	</div>
+
+	<section class="block" use:fadeIn={{ delay: 0 }}>
+		<Mark index="01" ko="소개" en="About" {lang} />
+		<About body={p.about} />
+	</section>
+
+	<section class="block" use:fadeIn={{ delay: 0 }}>
+		<Mark index="02" ko="지금" en="Now" {lang} />
+		<Now updatedLabel={n.updatedLabel} body={n.body} />
+	</section>
+
+	<section class="block major" use:fadeIn={{ delay: 0 }}>
+		<Mark index="03" ko="작업" en="Works" {lang} />
+		<Works items={w} />
+	</section>
+
+	<section class="block" use:fadeIn={{ delay: 0 }}>
+		<Mark index="04" ko="그 외" en="Elsewhere" {lang} />
+		<Links items={l} />
+	</section>
+
 	<Footer {lang} />
 </main>
 
 <style>
 	.page {
-		max-width: var(--col-width);
+		max-width: 720px;
 		margin: 0 auto;
-		padding: 96px 40px 72px;
+		padding: clamp(56px, 10vw, 104px) clamp(24px, 6vw, 56px) 72px;
 		position: relative;
 		z-index: 1;
 	}
-	@media (max-width: 640px) {
-		.page {
-			padding: 64px 24px 56px;
-		}
+	.block {
+		margin-top: clamp(64px, 11vw, 104px);
+	}
+	.block.major {
+		margin-top: clamp(88px, 14vw, 144px);
 	}
 </style>
