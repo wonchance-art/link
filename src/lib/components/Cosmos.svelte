@@ -1,10 +1,16 @@
 <script lang="ts">
-	import { makeStars } from '$lib/cosmos/stars';
+	import { makeStars, makeBandStars } from '$lib/cosmos/stars';
+	import { gratitudeStars, type GratitudeStar } from '$lib/cosmos/gratitude';
 
 	type Props = { landPath: string };
 	let { landPath }: Props = $props();
 
-	const stars = makeStars(90);
+	const stars = makeStars(64);
+	const bandStars = makeBandStars(120);
+
+	// 감사의 별 — 호버/클릭
+	let hoveredStar = $state<string | null>(null);
+	let openedStar = $state<GratitudeStar | null>(null);
 
 	let zoomedBody = $state<null | 'sun' | 'earth' | 'moon'>(null);
 	let hovered = $state<null | 'sun' | 'earth' | 'moon'>(null);
@@ -111,6 +117,16 @@
 <div class="stage" bind:this={stageEl} class:zoomed={zoomedBody}>
 	<div class="milkyway" aria-hidden="true"></div>
 	<div class="stars" aria-hidden="true">
+		{#each bandStars as s, i (`b${i}`)}
+			<span
+				style:left="{s.x}%"
+				style:top="{s.y}%"
+				style:width="{s.r}px"
+				style:height="{s.r}px"
+				style:--o={s.o}
+				style:animation-delay="{s.tw}s"
+			></span>
+		{/each}
 		{#each stars as s, i (i)}
 			<span
 				style:left="{s.x}%"
@@ -124,6 +140,25 @@
 	</div>
 
 	{#if !zoomedBody}
+		<!-- 감사의 별들 — 은하(나의 세계)를 이루는, 누르면 글이 뜨는 별 -->
+		<div class="gstars">
+			{#each gratitudeStars as g (g.id)}
+				<button
+					class="gstar"
+					class:active={openedStar?.id === g.id}
+					style:left="{g.x}%"
+					style:top="{g.y}%"
+					onmouseenter={() => (hoveredStar = g.id)}
+					onmouseleave={() => (hoveredStar = null)}
+					onclick={() => (openedStar = g)}
+					aria-label={g.name}
+				>
+					<span class="g-dot"></span>
+					<span class="g-name" class:show={hoveredStar === g.id}>{g.name}</span>
+				</button>
+			{/each}
+		</div>
+
 		<div class="system">
 			<!-- 태양 = 이성 -->
 			<button
@@ -164,6 +199,16 @@
 		<div class="label" class:show={hovered}>
 			{#if hovered === 'sun'}이성{:else if hovered === 'earth'}자기{:else if hovered === 'moon'}감성{/if}
 		</div>
+
+		<!-- 별을 누르면 그 글이 뜬다 -->
+		{#if openedStar}
+			<button class="star-backdrop" onclick={() => (openedStar = null)} aria-label="닫기"></button>
+			<div class="star-card">
+				<p class="sc-name">{openedStar.name}</p>
+				<p class="sc-note">{openedStar.note}</p>
+				<button class="sc-close" onclick={() => (openedStar = null)}>닫기</button>
+			</div>
+		{/if}
 	{:else}
 		<!-- 확대 뷰: 바깥(검정) 클릭 시 우주로 -->
 		<button class="zoom-backdrop" onclick={closeZoom} aria-label="우주로 돌아가기"></button>
@@ -357,6 +402,146 @@
 	}
 	.label.show {
 		opacity: 1;
+	}
+
+	/* === 감사의 별 — 누르면 글 === */
+	.gstars {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+	}
+	.gstar {
+		position: absolute;
+		transform: translate(-50%, -50%);
+		width: 26px;
+		height: 26px;
+		display: grid;
+		place-items: center;
+		border: 0;
+		background: transparent;
+		padding: 0;
+		cursor: pointer;
+	}
+	.g-dot {
+		width: 3px;
+		height: 3px;
+		border-radius: 50%;
+		background: #eaf0ff;
+		box-shadow: 0 0 6px 1px rgba(200, 214, 255, 0.5);
+		transition:
+			transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+			box-shadow 320ms ease;
+		animation: gtwinkle 4.5s ease-in-out infinite;
+	}
+	@keyframes gtwinkle {
+		0%,
+		100% {
+			opacity: 0.85;
+		}
+		50% {
+			opacity: 0.5;
+		}
+	}
+	.gstar:hover .g-dot,
+	.gstar.active .g-dot {
+		transform: scale(2.4);
+		box-shadow:
+			0 0 12px 3px rgba(200, 214, 255, 0.7),
+			0 0 26px 8px rgba(120, 140, 220, 0.35);
+		animation: none;
+		opacity: 1;
+	}
+	.g-name {
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		transform: translate(-50%, 4px);
+		white-space: nowrap;
+		font-family: var(--font-serif);
+		font-style: italic;
+		font-size: 14px;
+		color: rgba(233, 236, 242, 0.92);
+		opacity: 0;
+		transition: opacity 240ms ease;
+		pointer-events: none;
+		text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+	}
+	.g-name.show {
+		opacity: 1;
+	}
+
+	/* 별의 글 카드 */
+	.star-backdrop {
+		position: absolute;
+		inset: 0;
+		z-index: 6;
+		border: 0;
+		background: rgba(6, 7, 12, 0.55);
+		backdrop-filter: blur(3px);
+		cursor: zoom-out;
+		animation: fade 280ms ease;
+	}
+	@keyframes fade {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+	.star-card {
+		position: absolute;
+		z-index: 7;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		width: min(420px, 86vw);
+		padding: 34px 32px 26px;
+		background: rgba(16, 19, 30, 0.9);
+		border: 1px solid rgba(160, 180, 240, 0.18);
+		border-radius: 18px;
+		box-shadow: 0 30px 80px -24px rgba(0, 0, 0, 0.7);
+		animation: card-rise 420ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+	@keyframes card-rise {
+		from {
+			transform: translate(-50%, calc(-50% + 14px));
+			opacity: 0;
+		}
+		to {
+			transform: translate(-50%, -50%);
+			opacity: 1;
+		}
+	}
+	.sc-name {
+		font-size: 13px;
+		letter-spacing: 0.1em;
+		color: #aebfe8;
+		margin: 0 0 16px;
+	}
+	.sc-note {
+		font-family: var(--font-serif);
+		font-style: italic;
+		font-size: 21px;
+		line-height: 1.55;
+		color: #eef1f7;
+		margin: 0 0 24px;
+	}
+	.sc-close {
+		border: 1px solid rgba(233, 236, 242, 0.18);
+		background: transparent;
+		color: rgba(233, 236, 242, 0.8);
+		border-radius: 999px;
+		padding: 7px 18px;
+		font-size: 13px;
+		cursor: pointer;
+		transition:
+			background 200ms ease,
+			color 200ms ease;
+	}
+	.sc-close:hover {
+		background: rgba(233, 236, 242, 0.1);
+		color: #fff;
 	}
 
 	/* === 천체 확대 (공용) === */
