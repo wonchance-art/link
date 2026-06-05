@@ -164,6 +164,8 @@
 		line-height: 1.78;
 		margin: 0;
 		max-width: 460px;
+		opacity: 0;
+		animation: fade-in 700ms ease-out 720ms forwards;
 	}
 	.tag :global(em) {
 		font-family: var(--font-serif);
@@ -182,6 +184,21 @@
 		gap: 16px;
 		padding-top: 12px;
 		font-family: var(--font-sans);
+		opacity: 0;
+		animation: fade-in 700ms ease-out 900ms forwards;
+	}
+
+	@keyframes fade-in {
+		to {
+			opacity: 1;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.tag,
+		.meta {
+			opacity: 1;
+			animation: none;
+		}
 	}
 
 	.meta .brand {

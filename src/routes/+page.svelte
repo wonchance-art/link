@@ -60,9 +60,8 @@
 </svelte:head>
 
 <main class="page">
-	<div use:fadeIn={{ delay: 0 }}>
-		<Hero profile={p} />
-	</div>
+	<!-- Hero는 글자 stagger가 자체 entrance — fadeIn wrapper 안 씌움 -->
+	<Hero profile={p} />
 	<div use:fadeIn={{ delay: 90 }}>
 		<About body={p.about} {lang} />
 	</div>

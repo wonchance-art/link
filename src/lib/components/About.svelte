@@ -27,11 +27,11 @@
 	.body::first-letter {
 		font-family: var(--font-serif);
 		font-style: italic;
-		font-size: 2.6em;
+		font-size: 2.2em;
 		font-weight: 500;
-		line-height: 1;
+		line-height: 0.9;
 		float: left;
-		margin: 6px 12px -4px 0;
+		margin: 4px 10px -2px 0;
 		color: var(--accent-deep);
 		font-variation-settings: 'opsz' 144;
 	}

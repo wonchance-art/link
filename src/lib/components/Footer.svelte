@@ -46,7 +46,7 @@
 		font-family: var(--font-serif);
 		font-style: italic;
 		font-weight: 400;
-		font-size: 36px;
+		font-size: 28px;
 		color: var(--accent);
 		letter-spacing: -0.01em;
 		font-variation-settings: 'opsz' 144;
@@ -118,7 +118,7 @@
 			padding-top: 40px;
 		}
 		.brand {
-			font-size: 30px;
+			font-size: 24px;
 		}
 	}
 </style>
