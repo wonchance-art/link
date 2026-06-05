@@ -6,7 +6,7 @@
 	let { landPath }: Props = $props();
 
 	const stars = makeStars(64);
-	const bandStars = makeBandStars(120);
+	const bandStars = makeBandStars(150);
 
 	// 감사의 별 — 호버/클릭
 	let hoveredStar = $state<string | null>(null);
@@ -258,21 +258,21 @@
 	.milkyway {
 		/* 은하좌표계(직선 띠)를 대각선 직선으로 가로지름. 가장자리 페더링 */
 		position: absolute;
-		left: -32%;
-		right: -32%;
-		top: 3%;
-		height: 50%;
+		left: -42%;
+		right: -42%;
+		top: -2%;
+		height: 64%;
 		pointer-events: none;
 		background: url('/milkyway.jpg') center / 100% 100% no-repeat;
-		transform: rotate(-24deg);
+		transform: rotate(-40deg);
 		transform-origin: center;
 		/* 남보라로 물들이고 은은하게 */
 		filter: blur(2px) sepia(0.5) hue-rotate(205deg) saturate(1.6) brightness(0.86) contrast(1.05);
 		opacity: 0.52;
 		mix-blend-mode: screen;
 		/* 직사각형 경계를 부드럽게 페이드 */
-		-webkit-mask: radial-gradient(ellipse 80% 66% at 50% 50%, #000 26%, transparent 86%);
-		mask: radial-gradient(ellipse 80% 66% at 50% 50%, #000 26%, transparent 86%);
+		-webkit-mask: radial-gradient(ellipse 82% 58% at 50% 50%, #000 22%, transparent 88%);
+		mask: radial-gradient(ellipse 82% 58% at 50% 50%, #000 22%, transparent 88%);
 	}
 
 	/* 별 — 순수한 점 */

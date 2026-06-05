@@ -29,7 +29,7 @@ export function makeStars(count = 90, seed = 20260606): Star[] {
 // 은하수 아치 중심선 — 화면에 표시되는 NASA 은하수 띠(아치)와 맞춤.
 // 좌우로 갈수록 내려가는 포물선 아치. (x: 0~100 → y %)
 export function galaxyArchY(x: number): number {
-	return 28 - 0.44 * (x - 50);
+	return 30 - 0.84 * (x - 50);
 }
 
 // 은하수 아치를 따라 모여 있는 별들 — "별의 강".
