@@ -102,8 +102,9 @@
 		margin-bottom: 6px;
 	}
 	.title {
-		font-size: 16px;
+		font-size: 17px;
 		font-weight: 600;
+		letter-spacing: -0.012em;
 		color: var(--ink);
 		transition: color 320ms ease;
 	}

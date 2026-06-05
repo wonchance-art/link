@@ -43,19 +43,19 @@
 </svelte:head>
 
 <main class="page">
-	<div use:fadeIn>
+	<div use:fadeIn={{ delay: 0 }}>
 		<Hero name={p.name} subtitle={p.subtitle} tag={p.tag} />
 	</div>
-	<div use:fadeIn>
+	<div use:fadeIn={{ delay: 90 }}>
 		<About body={p.about} />
 	</div>
-	<div use:fadeIn>
+	<div use:fadeIn={{ delay: 180 }}>
 		<Now updatedLabel={n.updatedLabel} body={n.body} />
 	</div>
-	<div use:fadeIn>
+	<div use:fadeIn={{ delay: 260 }}>
 		<Works items={w} />
 	</div>
-	<div use:fadeIn>
+	<div use:fadeIn={{ delay: 340 }}>
 		<Links items={l} />
 	</div>
 	<Footer {lang} />

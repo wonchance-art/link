@@ -53,7 +53,10 @@
 <section class="hero" bind:this={heroEl} style:--sx="{sx}%" style:--sy="{sy}%">
 	<span class="mark">Open Chaence &nbsp;·&nbsp; Grove &nbsp;·&nbsp; Sky &nbsp;·&nbsp; Pond</span>
 	<h1 class="name" bind:this={nameEl} style:font-weight={weight}>{name}</h1>
-	<p class="subtitle">{subtitle}</p>
+	<p class="subtitle">
+		<span class="line" aria-hidden="true"></span>
+		{subtitle}
+	</p>
 	<p class="tag">{@html tagHtml}</p>
 </section>
 
@@ -118,6 +121,9 @@
 	}
 
 	.subtitle {
+		display: flex;
+		align-items: center;
+		gap: 16px;
 		font-family: var(--font-serif);
 		font-variation-settings: 'opsz' 144;
 		font-size: 26px;
@@ -127,6 +133,13 @@
 		margin: 0 0 36px;
 		letter-spacing: 0.005em;
 		line-height: 1.2;
+	}
+	.subtitle .line {
+		width: 28px;
+		height: 1px;
+		background: var(--accent);
+		opacity: 0.55;
+		flex: 0 0 auto;
 	}
 
 	.tag {
@@ -149,6 +162,10 @@
 		.subtitle {
 			font-size: 22px;
 			margin-bottom: 28px;
+			gap: 12px;
+		}
+		.subtitle .line {
+			width: 20px;
 		}
 		.tag {
 			font-size: 15px;
