@@ -61,7 +61,7 @@
 
 <main class="page">
 	<div use:fadeIn={{ delay: 0 }}>
-		<Hero name={p.name} subtitle={p.subtitle} tag={p.tag} />
+		<Hero profile={p} {lang} />
 	</div>
 	<div use:fadeIn={{ delay: 90 }}>
 		<About body={p.about} />

@@ -1,15 +1,23 @@
 <script lang="ts">
+	import type { ProfileData } from '$lib/content/profile';
+	import type { Lang } from '$lib/i18n/lang';
+
 	type Props = {
-		name: string;
-		subtitle: string;
-		tag: string;
+		profile: ProfileData;
+		lang: Lang;
 	};
 
-	let { name, subtitle, tag }: Props = $props();
+	let { profile: p, lang }: Props = $props();
 
-	const tagHtml = $derived(tag.replace(/\*(.+?)\*/g, '<em>$1</em>'));
+	const tagHtml = $derived(p.tag.replace(/\*(.+?)\*/g, '<em>$1</em>'));
 
-	// 마우스 위치로 (1) 이름의 가변 폰트 weight (2) Hero 영역의 spotlight 위치 결정.
+	const labels = $derived({
+		place: lang === 'ko' ? '장소' : 'Place',
+		field: lang === 'ko' ? '분야' : 'Field',
+		updated: lang === 'ko' ? '갱신' : 'Updated'
+	});
+
+	// 마우스 위치로 (1) 이름의 가변 폰트 weight (2) Hero 영역의 spotlight 위치.
 	let nameEl: HTMLElement | null = $state(null);
 	let heroEl: HTMLElement | null = $state(null);
 	let weight = $state(380);
@@ -51,13 +59,29 @@
 </script>
 
 <section class="hero" bind:this={heroEl} style:--sx="{sx}%" style:--sy="{sy}%">
-	<span class="mark">Open Chaence &nbsp;·&nbsp; Grove &nbsp;·&nbsp; Sky &nbsp;·&nbsp; Pond</span>
-	<h1 class="name" bind:this={nameEl} style:font-weight={weight}>{name}</h1>
-	<p class="subtitle">
-		<span class="line" aria-hidden="true"></span>
-		{subtitle}
-	</p>
-	<p class="tag">{@html tagHtml}</p>
+	<div class="left">
+		<h1 class="name" bind:this={nameEl} style:font-weight={weight}>{p.name}</h1>
+		<p class="tag">{@html tagHtml}</p>
+	</div>
+
+	<aside class="meta" aria-label="Site info">
+		<span class="brand">{p.subtitle}</span>
+		<hr class="rule" aria-hidden="true" />
+		<dl>
+			<dt>{labels.place}</dt>
+			<dd>{p.location}</dd>
+			<dt>{labels.field}</dt>
+			<dd>{p.field}</dd>
+			<dt>{labels.updated}</dt>
+			<dd>{p.updated}</dd>
+		</dl>
+		<hr class="rule" aria-hidden="true" />
+		<span class="palette" aria-hidden="true">
+			<span style:background="var(--accent)"></span>
+			<span style:background="var(--accent-pond)"></span>
+			<span style:background="var(--ink-faint)"></span>
+		</span>
+	</aside>
 </section>
 
 <style>
@@ -66,10 +90,13 @@
 		margin-bottom: clamp(80px, 14vw, 128px);
 		padding-top: var(--s-2);
 		isolation: isolate;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 140px;
+		column-gap: 40px;
+		align-items: start;
 	}
 
-	/* 마우스 위치 따라가는 부드러운 spotlight — 영롱한 빛.
-	   호버 안 해도 항상 옅게 켜져 있어 정 가운데에 미세 글로우. */
+	/* spotlight — 항상 옅게 켜져 있고, 호버 시 강해짐 */
 	.hero::before {
 		content: '';
 		position: absolute;
@@ -91,57 +118,23 @@
 		opacity: 1;
 	}
 
-	/* 잡지 모서리 시그니처 — vertical italic serif */
-	.mark {
-		position: absolute;
-		right: -12px;
-		top: 2px;
-		writing-mode: vertical-rl;
-		font-family: var(--font-serif);
-		font-style: italic;
-		font-size: 11px;
-		letter-spacing: 0.34em;
-		color: var(--ink-faint);
-		text-transform: uppercase;
-		user-select: none;
-		white-space: nowrap;
-		font-variation-settings: 'opsz' 14;
+	.left {
+		min-width: 0;
 	}
 
 	.name {
 		font-family: var(--font-sans);
-		font-size: clamp(64px, 12vw, 128px);
+		font-size: clamp(56px, 10.5vw, 116px);
 		font-weight: 400;
-		line-height: 0.92;
+		line-height: 0.94;
 		letter-spacing: -0.045em;
 		color: var(--ink);
-		margin: 0 0 28px;
+		margin: 0 0 32px;
 		transition: font-weight 260ms cubic-bezier(0.4, 0, 0.2, 1);
 		cursor: default;
 		font-feature-settings: 'ss01';
-	}
-
-	.subtitle {
-		display: flex;
-		align-items: center;
-		gap: 16px;
-		font-family: var(--font-serif);
-		font-variation-settings: 'opsz' 144;
-		font-feature-settings: 'liga', 'dlig';
-		font-size: 26px;
-		font-weight: 400;
-		font-style: italic;
-		color: var(--accent);
-		margin: 0 0 36px;
-		letter-spacing: 0.005em;
-		line-height: 1.2;
-	}
-	.subtitle .line {
-		width: 28px;
-		height: 1px;
-		background: var(--accent);
-		opacity: 0.55;
-		flex: 0 0 auto;
+		word-break: break-word;
+		overflow-wrap: break-word;
 	}
 
 	.tag {
@@ -157,25 +150,119 @@
 		color: var(--accent-deep);
 		font-weight: 500;
 		font-variation-settings: 'opsz' 14;
+		font-feature-settings: 'liga', 'dlig';
 		font-size: 1.08em;
 	}
 
+	/* === Metadata column — 잡지 표지 식 우측 정보 === */
+	.meta {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding-top: 12px;
+		font-family: var(--font-sans);
+	}
+
+	.meta .brand {
+		font-family: var(--font-serif);
+		font-style: italic;
+		font-size: 17px;
+		font-weight: 400;
+		color: var(--accent);
+		letter-spacing: 0.005em;
+		line-height: 1.2;
+		font-variation-settings: 'opsz' 144;
+		font-feature-settings: 'liga', 'dlig';
+	}
+
+	.meta .rule {
+		border: 0;
+		height: 1px;
+		background: var(--line);
+		margin: 0;
+	}
+
+	.meta dl {
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+	.meta dt {
+		font-size: 9px;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--ink-faint);
+		font-weight: 500;
+	}
+	.meta dt:not(:first-of-type) {
+		margin-top: 12px;
+	}
+	.meta dd {
+		margin: 0;
+		font-size: 12px;
+		color: var(--ink-muted);
+		letter-spacing: 0.01em;
+		margin-top: 3px;
+	}
+
+	.meta .palette {
+		display: flex;
+		gap: 5px;
+	}
+	.meta .palette span {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		display: inline-block;
+		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+	}
+
+	/* === Mobile: stack — 위에 meta(가로 row), 아래에 name+tag === */
 	@media (max-width: 640px) {
-		.subtitle {
-			font-size: 22px;
-			margin-bottom: 28px;
-			gap: 12px;
+		.hero {
+			grid-template-columns: 1fr;
+			row-gap: 28px;
 		}
-		.subtitle .line {
-			width: 20px;
+		.meta {
+			order: -1; /* meta가 name 위로 */
+			flex-direction: row;
+			align-items: center;
+			gap: 14px;
+			flex-wrap: wrap;
+			padding-top: 0;
+		}
+		.meta .brand {
+			font-size: 15px;
+		}
+		.meta .rule {
+			display: none;
+		}
+		.meta dl {
+			flex-direction: row;
+			gap: 14px;
+			margin: 0;
+		}
+		.meta dt {
+			display: none;
+		}
+		.meta dd {
+			margin-top: 0;
+			font-size: 11px;
+		}
+		.meta dd:not(:first-of-type)::before {
+			content: '·';
+			color: var(--ink-faint);
+			margin-right: 8px;
+		}
+		.meta .palette {
+			margin-left: auto;
+		}
+		.name {
+			font-size: clamp(56px, 16vw, 88px);
 		}
 		.tag {
 			font-size: 15px;
-		}
-		.mark {
-			right: -10px;
-			font-size: 10px;
-			letter-spacing: 0.3em;
 		}
 	}
 </style>
