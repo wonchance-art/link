@@ -39,6 +39,13 @@
 		<Links items={l} />
 	</section>
 
+	<section class="invite" use:fadeIn={{ delay: 0 }}>
+		<a href="/">
+			<span class="invite-sub">{lang === 'ko' ? '이 모든 것이 떠오른 자리' : 'where all of this began'}</span>
+			<span class="invite-main">{lang === 'ko' ? '우주로 들어가기' : 'enter the cosmos'} <span class="arrow">→</span></span>
+		</a>
+	</section>
+
 	<Footer {lang} />
 </main>
 
@@ -99,5 +106,46 @@
 	}
 	.block.major {
 		margin-top: 0;
+	}
+
+	/* 우주(예술 경험)로 자연스럽게 초대 */
+	.invite {
+		margin-top: clamp(88px, 14vw, 140px);
+		padding-top: 44px;
+		border-top: 1px solid var(--line);
+	}
+	.invite a {
+		display: inline-flex;
+		flex-direction: column;
+		gap: 8px;
+		text-decoration: none;
+	}
+	.invite-sub {
+		font-family: var(--font-serif);
+		font-style: italic;
+		font-size: 15px;
+		color: var(--ink-faint);
+		transition: color 240ms ease;
+	}
+	.invite-main {
+		font-size: clamp(24px, 4.4vw, 40px);
+		font-weight: 500;
+		letter-spacing: -0.02em;
+		color: var(--ink);
+		transition: color 240ms ease;
+	}
+	.invite-main .arrow {
+		display: inline-block;
+		color: var(--accent);
+		transition: transform 360ms cubic-bezier(0.34, 1.35, 0.64, 1);
+	}
+	.invite a:hover .invite-sub {
+		color: var(--accent);
+	}
+	.invite a:hover .invite-main {
+		color: var(--accent-deep);
+	}
+	.invite a:hover .arrow {
+		transform: translateX(6px);
 	}
 </style>
