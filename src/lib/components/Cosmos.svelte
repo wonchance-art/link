@@ -448,29 +448,11 @@
 		height: 3px;
 		border-radius: 50%;
 		background: #eaf0ff;
-		box-shadow: 0 0 6px 1px rgba(200, 214, 255, 0.5);
-		transition:
-			transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
-			box-shadow 320ms ease;
-		animation: gtwinkle 4.5s ease-in-out infinite;
-	}
-	@keyframes gtwinkle {
-		0%,
-		100% {
-			opacity: 0.85;
-		}
-		50% {
-			opacity: 0.5;
-		}
+		transition: transform 300ms ease;
 	}
 	.gstar:hover .g-dot,
 	.gstar.active .g-dot {
-		transform: scale(2.4);
-		box-shadow:
-			0 0 12px 3px rgba(200, 214, 255, 0.7),
-			0 0 26px 8px rgba(120, 140, 220, 0.35);
-		animation: none;
-		opacity: 1;
+		transform: scale(2);
 	}
 	.g-name {
 		position: absolute;
