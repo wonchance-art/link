@@ -50,6 +50,7 @@
 		color: var(--accent);
 		letter-spacing: -0.01em;
 		font-variation-settings: 'opsz' 144;
+		font-feature-settings: 'liga', 'dlig';
 		line-height: 1;
 	}
 	.mark-dots {

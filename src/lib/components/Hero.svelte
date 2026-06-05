@@ -68,7 +68,8 @@
 		isolation: isolate;
 	}
 
-	/* 마우스 위치 따라가는 부드러운 spotlight — 영롱한 빛 */
+	/* 마우스 위치 따라가는 부드러운 spotlight — 영롱한 빛.
+	   호버 안 해도 항상 옅게 켜져 있어 정 가운데에 미세 글로우. */
 	.hero::before {
 		content: '';
 		position: absolute;
@@ -81,7 +82,7 @@
 			rgba(74, 107, 122, 0.05) 30%,
 			transparent 60%
 		);
-		opacity: 0;
+		opacity: 0.32;
 		transition: opacity 600ms ease;
 		border-radius: 32px;
 		filter: blur(8px);
@@ -126,6 +127,7 @@
 		gap: 16px;
 		font-family: var(--font-serif);
 		font-variation-settings: 'opsz' 144;
+		font-feature-settings: 'liga', 'dlig';
 		font-size: 26px;
 		font-weight: 400;
 		font-style: italic;

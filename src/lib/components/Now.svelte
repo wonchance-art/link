@@ -63,6 +63,7 @@
 		font-style: italic;
 		font-weight: 400;
 		font-variation-settings: 'opsz' 144;
+		font-feature-settings: 'liga', 'dlig';
 		font-size: clamp(28px, 4.6vw, 38px);
 		color: var(--ink);
 		line-height: 1.25;
