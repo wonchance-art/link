@@ -116,7 +116,8 @@
 
 <div class="stage" bind:this={stageEl} class:zoomed={zoomedBody}>
 	<div class="milkyway" aria-hidden="true"></div>
-	<div class="stars" aria-hidden="true">
+	<!-- 은하 띠 별: 은하수와 같은 회전 프레임 → 화면 비율 무관하게 정확히 정렬 -->
+	<div class="galaxy-frame band-stars" aria-hidden="true">
 		{#each bandStars as s, i (`b${i}`)}
 			<span
 				style:left="{s.x}%"
@@ -127,6 +128,8 @@
 				style:animation-delay="{s.tw}s"
 			></span>
 		{/each}
+	</div>
+	<div class="stars" aria-hidden="true">
 		{#each stars as s, i (i)}
 			<span
 				style:left="{s.x}%"
@@ -141,7 +144,7 @@
 
 	{#if !zoomedBody}
 		<!-- 감사의 별들 — 은하(나의 세계)를 이루는, 누르면 글이 뜨는 별 -->
-		<div class="gstars">
+		<div class="galaxy-frame gstars">
 			{#each gratitudeStars as g (g.id)}
 				<button
 					class="gstar"
@@ -267,8 +270,8 @@
 		transform: rotate(-40deg);
 		transform-origin: center;
 		/* 남보라로 물들이고 은은하게 */
-		filter: blur(2px) sepia(0.5) hue-rotate(205deg) saturate(1.6) brightness(0.86) contrast(1.05);
-		opacity: 0.52;
+		filter: blur(2.5px) sepia(0.5) hue-rotate(205deg) saturate(1.5) brightness(0.72) contrast(1.02);
+		opacity: 0.3;
 		mix-blend-mode: screen;
 		/* 직사각형 경계를 부드럽게 페이드 */
 		-webkit-mask: radial-gradient(ellipse 82% 58% at 50% 50%, #000 22%, transparent 88%);
@@ -300,6 +303,30 @@
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.stars span {
+			animation: none;
+		}
+	}
+
+	/* 은하 프레임 — 은하수 이미지와 동일한 회전. 안의 별이 은하수와 정확히 정렬 */
+	.galaxy-frame {
+		position: absolute;
+		left: -42%;
+		right: -42%;
+		top: 18%;
+		height: 64%;
+		transform: rotate(-40deg);
+		transform-origin: center;
+		pointer-events: none;
+	}
+	.band-stars span {
+		position: absolute;
+		border-radius: 50%;
+		background: #fff;
+		opacity: var(--o, 0.5);
+		animation: twinkle 6s ease-in-out infinite;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.band-stars span {
 			animation: none;
 		}
 	}
@@ -406,21 +433,20 @@
 
 	/* === 감사의 별 — 누르면 글 === */
 	.gstars {
-		position: absolute;
-		inset: 0;
-		z-index: 1;
+		z-index: 2;
 	}
 	.gstar {
 		position: absolute;
 		transform: translate(-50%, -50%);
-		width: 26px;
-		height: 26px;
+		width: 30px;
+		height: 30px;
 		display: grid;
 		place-items: center;
 		border: 0;
 		background: transparent;
 		padding: 0;
 		cursor: pointer;
+		pointer-events: auto;
 	}
 	.g-dot {
 		width: 3px;
@@ -455,7 +481,9 @@
 		position: absolute;
 		top: 100%;
 		left: 50%;
-		transform: translate(-50%, 4px);
+		/* 프레임이 -40도 회전하므로 +40도로 라벨을 바로 세움 */
+		transform: translate(-50%, 4px) rotate(40deg);
+		transform-origin: top center;
 		white-space: nowrap;
 		font-family: var(--font-serif);
 		font-style: italic;

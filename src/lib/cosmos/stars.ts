@@ -26,23 +26,17 @@ export function makeStars(count = 90, seed = 20260606): Star[] {
 	return stars;
 }
 
-// 은하수 아치 중심선 — 화면에 표시되는 NASA 은하수 띠(아치)와 맞춤.
-// 좌우로 갈수록 내려가는 포물선 아치. (x: 0~100 → y %)
-export function galaxyArchY(x: number): number {
-	return 50 - 0.84 * (x - 50);
-}
-
-// 은하수 아치를 따라 모여 있는 별들 — "별의 강".
-export function makeBandStars(count = 130, seed = 88): Star[] {
+// 은하 프레임(은하수 이미지와 같은 회전 transform) 안의 좌표.
+// 가로 중심선 y=50 = 은하수 띠. 별을 그 둘레에 두면 프레임 회전 시
+// 은하수와 정확히 겹친다 (화면 비율과 무관).
+export function makeBandStars(count = 150, seed = 88): Star[] {
 	const rng = mulberry32(seed);
 	const stars: Star[] = [];
 	for (let i = 0; i < count; i++) {
 		const x = rng() * 100;
-		const baseY = galaxyArchY(x); // 아치 곡선
-		// 합으로 근사한 정규분포 → 띠 가까이 밀집
-		const spread = (rng() + rng() + rng() - 1.5) * 13;
-		const y = baseY + spread;
-		const near = 1 - Math.min(1, Math.abs(spread) / 20);
+		const spread = (rng() + rng() + rng() - 1.5) * 18;
+		const y = 50 + spread;
+		const near = 1 - Math.min(1, Math.abs(spread) / 27);
 		stars.push({
 			x,
 			y,
