@@ -142,9 +142,6 @@
 		{/each}
 	</div>
 
-	<!-- 진입 단서: 처음 한 번만 떠올랐다 사라짐 -->
-	<p class="intro" aria-hidden="true">천천히 둘러보세요 — 모든 빛은 누를 수 있습니다</p>
-
 	{#if !zoomedBody}
 		<!-- 감사의 별들 — 은하(나의 세계)를 이루는, 누르면 글이 뜨는 별 -->
 		<div class="galaxy-frame gstars">
@@ -236,8 +233,6 @@
 				<span class="sphere" aria-hidden="true"></span>
 			</a>
 		{/if}
-
-		<button class="back" onclick={closeZoom}>← 우주</button>
 	{/if}
 </div>
 
@@ -429,46 +424,6 @@
 		opacity: 1;
 	}
 
-	/* 진입 단서 — 한 번 떠올랐다 사라짐 */
-	.intro {
-		position: absolute;
-		left: 50%;
-		bottom: 56px;
-		transform: translateX(-50%);
-		margin: 0;
-		padding: 0 24px;
-		font-family: var(--font-serif);
-		font-style: italic;
-		font-size: 15px;
-		letter-spacing: 0.02em;
-		color: rgba(233, 236, 242, 0.62);
-		text-align: center;
-		max-width: 90vw;
-		pointer-events: none;
-		opacity: 0;
-		z-index: 1;
-		animation: intro-fade 9s ease-in-out forwards;
-	}
-	@keyframes intro-fade {
-		0% {
-			opacity: 0;
-		}
-		16% {
-			opacity: 0.66;
-		}
-		72% {
-			opacity: 0.66;
-		}
-		100% {
-			opacity: 0;
-		}
-	}
-	@media (prefers-reduced-motion: reduce) {
-		.intro {
-			animation: none;
-			opacity: 0.55;
-		}
-	}
 
 	/* === 감사의 별 — 누르면 글 === */
 	.gstars {
@@ -721,26 +676,4 @@
 			inset 16px 18px 50px rgba(255, 255, 255, 0.08);
 	}
 
-	.back {
-		position: absolute;
-		top: 30px;
-		left: 32px;
-		border: 0;
-		background: transparent;
-		color: rgba(233, 236, 242, 0.6);
-		font-size: 14px;
-		cursor: pointer;
-		transition: color 200ms ease;
-		z-index: 3;
-	}
-	.back:hover {
-		color: #fff;
-	}
-
-	@media (max-width: 640px) {
-		.back {
-			top: 22px;
-			left: 22px;
-		}
-	}
 </style>
