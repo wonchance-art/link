@@ -6,7 +6,6 @@
 
 	const tagHtml = $derived(p.tag.replace(/\*(.+?)\*/g, '<em>$1</em>'));
 
-	// 마우스 위치로 (1) 이름의 가변 폰트 weight (2) Hero 영역의 spotlight 위치.
 	let nameEl: HTMLElement | null = $state(null);
 	let heroEl: HTMLElement | null = $state(null);
 	let weight = $state(380);
@@ -18,7 +17,6 @@
 		if (rafId !== null) return;
 		rafId = requestAnimationFrame(() => {
 			rafId = null;
-
 			if (nameEl) {
 				const r = nameEl.getBoundingClientRect();
 				const dx = e.clientX - (r.left + r.width / 2);
@@ -27,7 +25,6 @@
 				const t = Math.max(0, Math.min(1, 1 - dist / 520));
 				weight = Math.round(380 + t * 340);
 			}
-
 			if (heroEl) {
 				const r = heroEl.getBoundingClientRect();
 				sx = ((e.clientX - r.left) / r.width) * 100;
@@ -48,6 +45,19 @@
 </script>
 
 <section class="hero" bind:this={heroEl} style:--sx="{sx}%" style:--sy="{sy}%">
+	<!-- 시그니처 마크 — Open Chaence의 시각 정체성 (잎 + 점 페이드) -->
+	<svg class="signature" viewBox="0 0 44 22" aria-hidden="true">
+		<path
+			d="M3 11 Q 7 3, 13 5 Q 15 11, 11 18 Q 5 17, 3 11 Z"
+			fill="currentColor"
+			opacity="0.88"
+		/>
+		<line x1="8" y1="5.5" x2="11" y2="17" stroke="currentColor" stroke-width="0.6" opacity="0.55" />
+		<circle cx="22" cy="11" r="1.5" fill="currentColor" opacity="0.55" />
+		<circle cx="29" cy="11" r="1.2" fill="currentColor" opacity="0.4" />
+		<circle cx="36" cy="11" r="0.9" fill="currentColor" opacity="0.28" />
+	</svg>
+
 	<div class="left">
 		<h1 class="name" bind:this={nameEl} style:font-weight={weight}>
 			{#each [...p.name] as char, i (i)}
@@ -70,10 +80,31 @@
 			<li>{p.updated}</li>
 		</ul>
 		<hr class="rule" aria-hidden="true" />
-		<span class="palette" aria-hidden="true">
-			<span style:background="var(--accent)"></span>
-			<span style:background="var(--accent-pond)"></span>
-			<span style:background="var(--ink-faint)"></span>
+		<span class="ornaments" aria-hidden="true">
+			<svg viewBox="0 0 20 18" class="leaf">
+				<path
+					d="M2 9 Q 6 2, 11 4 Q 13 9, 9 16 Q 4 15, 2 9 Z"
+					fill="var(--accent)"
+					opacity="0.88"
+				/>
+				<line
+					x1="6"
+					y1="4.5"
+					x2="9"
+					y2="15.5"
+					stroke="var(--accent-deep)"
+					stroke-width="0.5"
+					opacity="0.55"
+				/>
+			</svg>
+			<svg viewBox="0 0 20 18" class="leaf">
+				<path
+					d="M2 10 Q 6 3, 11 5 Q 13 10, 9 16 Q 4 15, 2 10 Z"
+					fill="var(--accent-pond)"
+					opacity="0.72"
+				/>
+			</svg>
+			<span class="dot"></span>
 		</span>
 	</aside>
 </section>
@@ -82,7 +113,7 @@
 	.hero {
 		position: relative;
 		margin-bottom: clamp(80px, 14vw, 128px);
-		padding-top: var(--s-2);
+		padding-top: 40px;
 		isolation: isolate;
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) 140px;
@@ -90,7 +121,46 @@
 		align-items: start;
 	}
 
-	/* spotlight — 항상 옅게 켜져 있고, 호버 시 강해짐 */
+	/* === 시그니처 마크 — Hero 좌상단 (Open Chaence 시각 정체성) === */
+	.signature {
+		position: absolute;
+		top: 4px;
+		left: 0;
+		width: 44px;
+		height: 22px;
+		color: var(--accent-deep);
+		opacity: 0;
+		animation: fade-in 700ms ease-out 500ms forwards;
+	}
+
+	/* === 추상 wash blob — 모네 수면 같은 색 번짐 (배경 깊이) === */
+	.hero::after {
+		content: '';
+		position: absolute;
+		inset: -100px;
+		pointer-events: none;
+		z-index: -2;
+		background:
+			radial-gradient(
+				ellipse 360px 240px at 78% 65%,
+				rgba(78, 107, 74, 0.12) 0%,
+				transparent 70%
+			),
+			radial-gradient(
+				ellipse 280px 220px at 68% 25%,
+				rgba(74, 107, 122, 0.09) 0%,
+				transparent 70%
+			),
+			radial-gradient(
+				ellipse 200px 280px at 92% 85%,
+				rgba(122, 153, 110, 0.07) 0%,
+				transparent 70%
+			);
+		filter: blur(30px);
+		opacity: 0.9;
+	}
+
+	/* spotlight (이전) — 마우스 따라가는 빛 */
 	.hero::before {
 		content: '';
 		position: absolute;
@@ -131,7 +201,6 @@
 		overflow-wrap: break-word;
 	}
 
-	/* Name 글자별 stagger entrance — 모바일 시그니처 모먼트 */
 	.name .char,
 	.name .space {
 		display: inline-block;
@@ -147,14 +216,6 @@
 		to {
 			opacity: 1;
 			transform: translateY(0);
-		}
-	}
-	@media (prefers-reduced-motion: reduce) {
-		.name .char,
-		.name .space {
-			opacity: 1;
-			transform: none;
-			animation: none;
 		}
 	}
 
@@ -177,7 +238,7 @@
 		font-size: 1.08em;
 	}
 
-	/* === Metadata column — 잡지 표지 식 우측 정보 === */
+	/* === Metadata column === */
 	.meta {
 		display: flex;
 		flex-direction: column;
@@ -194,9 +255,13 @@
 		}
 	}
 	@media (prefers-reduced-motion: reduce) {
+		.name .char,
+		.name .space,
 		.tag,
-		.meta {
+		.meta,
+		.signature {
 			opacity: 1;
+			transform: none;
 			animation: none;
 		}
 	}
@@ -235,26 +300,37 @@
 		line-height: 1.45;
 	}
 
-	.meta .palette {
+	/* === Ornaments — 잎 두 장 + 점 (이전 palette 3색 점 대체) === */
+	.meta .ornaments {
 		display: flex;
-		gap: 5px;
+		align-items: center;
+		gap: 6px;
 	}
-	.meta .palette span {
-		width: 8px;
-		height: 8px;
+	.meta .ornaments .leaf {
+		width: 16px;
+		height: 14px;
+	}
+	.meta .ornaments .dot {
+		width: 7px;
+		height: 7px;
 		border-radius: 50%;
-		display: inline-block;
-		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+		background: var(--ink-faint);
+		opacity: 0.55;
 	}
 
-	/* === Mobile: stack — 위에 meta(가로 row), 아래에 name+tag === */
 	@media (max-width: 640px) {
 		.hero {
 			grid-template-columns: 1fr;
 			row-gap: 28px;
+			padding-top: 36px;
+		}
+		.signature {
+			width: 38px;
+			height: 19px;
+			top: 2px;
 		}
 		.meta {
-			order: -1; /* meta가 name 위로 */
+			order: -1;
 			flex-direction: row;
 			align-items: center;
 			gap: 14px;
@@ -280,7 +356,7 @@
 			color: var(--ink-faint);
 			margin-right: 8px;
 		}
-		.meta .palette {
+		.meta .ornaments {
 			margin-left: auto;
 		}
 		.name {
