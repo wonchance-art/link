@@ -208,37 +208,28 @@
 		font-family: var(--font-sans);
 	}
 
-	/* 은하수 — 별 뒤로 흐릿하지만 또렷이 보이는 띠 */
+	/* 은하수 — 진하지만 뿌연 안개. 흐린 느낌 유지(강한 blur, 날카로운 코어 없음) */
 	.milkyway {
 		position: absolute;
-		inset: -10%;
+		inset: -18%;
 		pointer-events: none;
 		opacity: 1;
 		background:
-			/* 성운 광점 (강화) */
-			radial-gradient(ellipse 30% 14% at 27% 35%, rgba(206, 209, 238, 0.22), transparent 72%),
-			radial-gradient(ellipse 27% 12% at 50% 50%, rgba(230, 214, 226, 0.3), transparent 72%),
-			radial-gradient(ellipse 35% 16% at 74% 65%, rgba(199, 211, 240, 0.2), transparent 72%),
-			radial-gradient(ellipse 22% 10% at 62% 58%, rgba(162, 206, 228, 0.16), transparent 72%),
-			/* 은하 코어 — 밝은 좁은 띠 */
+			/* 성운 광점 — 넓고 부드럽게 */
+			radial-gradient(ellipse 38% 20% at 26% 34%, rgba(206, 209, 238, 0.2), transparent 76%),
+			radial-gradient(ellipse 34% 18% at 52% 52%, rgba(230, 214, 226, 0.26), transparent 76%),
+			radial-gradient(ellipse 42% 22% at 75% 66%, rgba(199, 211, 240, 0.18), transparent 76%),
+			radial-gradient(ellipse 26% 14% at 62% 58%, rgba(162, 206, 228, 0.14), transparent 76%),
+			/* 넓고 부드러운 띠 (좁은 밝은 코어 없음) */
 			linear-gradient(
 				118deg,
-				transparent 43%,
-				rgba(224, 216, 228, 0.18) 49%,
-				rgba(236, 228, 236, 0.26) 50.5%,
-				rgba(224, 216, 228, 0.18) 52%,
-				transparent 57%
-			),
-			/* 넓은 띠 */
-			linear-gradient(
-				118deg,
-				transparent 37%,
-				rgba(194, 200, 226, 0.12) 46%,
-				rgba(214, 204, 218, 0.16) 50%,
-				rgba(194, 200, 226, 0.12) 54%,
-				transparent 63%
+				transparent 28%,
+				rgba(198, 203, 228, 0.1) 43%,
+				rgba(216, 207, 221, 0.15) 50%,
+				rgba(198, 203, 228, 0.1) 57%,
+				transparent 72%
 			);
-		filter: blur(10px);
+		filter: blur(26px);
 	}
 
 	/* 별 — 순수한 점 */
