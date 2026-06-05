@@ -211,15 +211,23 @@
 	/* 은하수 — NASA Deep Star Maps(퍼블릭 도메인)의 실제 은하수 띠.
 	   대각선으로 돌리고 남보라로 그레이딩, 은은하게. */
 	.milkyway {
+		/* 은하수 전체 띠가 위쪽을 아치로 가로지름. 가장자리는 페더링으로 자연스럽게 */
 		position: absolute;
-		inset: -35%;
+		left: -22%;
+		right: -22%;
+		top: -10%;
+		height: 64%;
 		pointer-events: none;
-		background: url('/milkyway.jpg') center / cover no-repeat;
-		transform: rotate(-25deg) scale(1.3);
-		/* 남보라로 물들이고(sepia→hue-rotate) 부드럽게 */
-		filter: blur(1.5px) sepia(0.5) hue-rotate(205deg) saturate(1.8) brightness(1.45) contrast(1.12);
-		opacity: 0.9;
+		background: url('/milkyway.jpg') center / 100% 100% no-repeat;
+		transform: rotate(-14deg);
+		transform-origin: center;
+		/* 남보라로 물들이고 은은하게 */
+		filter: blur(2px) sepia(0.5) hue-rotate(205deg) saturate(1.6) brightness(0.82) contrast(1.04);
+		opacity: 0.5;
 		mix-blend-mode: screen;
+		/* 직사각형 경계를 부드럽게 페이드 */
+		-webkit-mask: radial-gradient(ellipse 72% 90% at 50% 36%, #000 24%, transparent 88%);
+		mask: radial-gradient(ellipse 72% 90% at 50% 36%, #000 24%, transparent 88%);
 	}
 
 	/* 별 — 순수한 점 */
