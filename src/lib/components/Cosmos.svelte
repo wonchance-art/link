@@ -157,7 +157,6 @@
 					aria-label={g.name}
 				>
 					<span class="g-dot"></span>
-					<span class="g-name" class:show={hoveredStar === g.id}>{g.name}</span>
 				</button>
 			{/each}
 		</div>
@@ -199,8 +198,8 @@
 			</div>
 		</div>
 
-		<div class="label" class:show={hovered}>
-			{#if hovered === 'sun'}이성{:else if hovered === 'earth'}자기{:else if hovered === 'moon'}감성{/if}
+		<div class="label" class:show={hovered || hoveredStar}>
+			{#if hovered === 'sun'}이성{:else if hovered === 'earth'}자기{:else if hovered === 'moon'}감성{:else if hoveredStar}{gratitudeStars.find((g) => g.id === hoveredStar)?.name}{/if}
 		</div>
 
 		<!-- 별을 누르면 그 글이 뜬다 -->
