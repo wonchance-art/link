@@ -5,6 +5,18 @@
 
 	let zoomed = $state(false);
 	let hovered = $state<null | 'sun' | 'earth' | 'moon'>(null);
+	// 지구 확대 시작 좌표(점이 있던 자리) — 화면 중심 기준 오프셋
+	let startX = $state(0);
+	let startY = $state(0);
+
+	function zoomEarth() {
+		if (earthSystemEl) {
+			const r = earthSystemEl.getBoundingClientRect();
+			startX = Math.round(r.left - window.innerWidth / 2);
+			startY = Math.round(r.top - window.innerHeight / 2);
+		}
+		zoomed = true;
+	}
 
 	let stageEl: HTMLDivElement | null = $state(null);
 	let earthSystemEl: HTMLDivElement | null = $state(null);
@@ -78,7 +90,7 @@
 					class="hit earth"
 					onmouseenter={() => (hovered = 'earth')}
 					onmouseleave={() => (hovered = null)}
-					onclick={() => (zoomed = true)}
+					onclick={zoomEarth}
 					aria-label="지구 · 자기 — 눌러서 들어가기"
 				>
 					<span class="dot"></span>
@@ -102,11 +114,21 @@
 		</div>
 	{:else}
 		<!-- 지구 확대 → 땅 / 바다 (텍스트 없이, 직접 드러내지 않음) -->
-		<div class="world">
+		<div class="world" style:--sx="{startX}px" style:--sy="{startY}px">
 			<a class="sea" href="/sea" aria-label="바다"></a>
-			<a class="land land-1" href="/land" aria-label="땅"></a>
-			<a class="land land-2" href="/land" aria-hidden="true" tabindex="-1"></a>
-			<a class="land land-3" href="/land" aria-hidden="true" tabindex="-1"></a>
+			<svg class="land-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+				<a href="/land" aria-label="땅">
+					<path
+						d="M16 30 C20 19 37 14 48 21 C56 26 53 35 60 39 C67 43 64 53 54 55 C45 57 44 67 35 65 C25 63 19 52 17 44 C15 38 13 35 16 30 Z"
+					/>
+					<path
+						d="M66 49 C74 45 85 49 87 58 C89 67 82 73 84 79 C86 86 75 87 69 82 C61 76 59 67 61 59 C62 54 62 52 66 49 Z"
+					/>
+					<path
+						d="M39 73 C45 69 54 71 57 78 C60 85 53 91 46 91 C39 91 33 86 34 79 C34 75 36 75 39 73 Z"
+					/>
+				</a>
+			</svg>
 			<span class="sphere" aria-hidden="true"></span>
 		</div>
 		<button class="back" onclick={() => (zoomed = false)}>← 우주</button>
@@ -248,12 +270,13 @@
 		transform: translate(-50%, -50%);
 		border-radius: 50%;
 		overflow: hidden;
-		animation: world-in 760ms cubic-bezier(0.22, 1, 0.36, 1);
+		/* 점이 있던 자리(--sx,--sy)에서 중앙으로 커진다 */
+		animation: world-in 820ms cubic-bezier(0.22, 1, 0.36, 1);
 	}
 	@keyframes world-in {
 		from {
-			transform: translate(-50%, -50%) scale(0.04);
-			opacity: 0.4;
+			transform: translate(calc(-50% + var(--sx, 0px)), calc(-50% + var(--sy, 0px))) scale(0.03);
+			opacity: 0.5;
 		}
 		to {
 			transform: translate(-50%, -50%) scale(1);
@@ -267,48 +290,22 @@
 		background: #4f7ea2;
 		cursor: pointer;
 	}
-	/* 땅 = 초록 대륙 (clip-path 실루엣) */
-	.land {
+	/* 땅 = 부드러운 SVG 대륙 — 칠해진 곳만 클릭, 나머지는 바다로 통과 */
+	.land-svg {
 		position: absolute;
-		background: #6c8b5c;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+	}
+	.land-svg path {
+		fill: #6c8b5c;
+		pointer-events: auto;
 		cursor: pointer;
-		transition: filter 260ms ease;
+		transition: fill 260ms ease;
 	}
-	.land:hover {
-		filter: brightness(1.08);
-	}
-	.land-1 {
-		left: 9%;
-		top: 12%;
-		width: 47%;
-		height: 44%;
-		clip-path: polygon(
-			22% 6%,
-			52% 0%,
-			68% 18%,
-			62% 38%,
-			78% 52%,
-			58% 72%,
-			40% 64%,
-			46% 92%,
-			24% 78%,
-			14% 48%,
-			4% 26%
-		);
-	}
-	.land-2 {
-		right: 7%;
-		top: 40%;
-		width: 38%;
-		height: 40%;
-		clip-path: polygon(34% 8%, 66% 2%, 88% 30%, 80% 56%, 92% 74%, 54% 90%, 30% 70%, 12% 38%);
-	}
-	.land-3 {
-		left: 30%;
-		bottom: 6%;
-		width: 26%;
-		height: 24%;
-		clip-path: polygon(28% 14%, 72% 6%, 90% 46%, 64% 88%, 26% 74%, 8% 42%);
+	.land-svg a:hover path {
+		fill: #7c9c6a;
 	}
 	/* 구체감 — 한쪽이 살짝 어두워지는 옅은 음영 (플랫 유지, 둥글게만) */
 	.sphere {
