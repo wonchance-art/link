@@ -6,14 +6,7 @@
 </script>
 
 <footer class="foot">
-	<div class="sign">
-		<span class="brand">Open Chaence</span>
-		<span class="mark-dots" aria-hidden="true">
-			<span class="dot"></span>
-			<span class="dot"></span>
-			<span class="dot"></span>
-		</span>
-	</div>
+	<p class="brand"><span class="stroke" aria-hidden="true"></span>Open Chaence</p>
 	<div class="meta">
 		<span class="copy">© 2026 · chaeyeon</span>
 		<span class="lang">
@@ -27,57 +20,38 @@
 
 <style>
 	.foot {
-		margin-top: 128px;
-		padding-top: 48px;
+		margin-top: clamp(96px, 16vw, 168px);
+		padding-top: 40px;
 		border-top: 1px solid var(--line);
 		display: flex;
 		flex-direction: column;
-		gap: 26px;
+		gap: 28px;
 	}
 
-	/* 상단 사인 — 큰 시그니처 brand + 3색 점 */
-	.sign {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 16px;
-	}
 	.brand {
+		display: flex;
+		align-items: center;
+		gap: 16px;
 		font-family: var(--font-serif);
 		font-style: italic;
 		font-weight: 400;
-		font-size: 28px;
+		font-size: 24px;
 		color: var(--accent);
-		letter-spacing: -0.01em;
+		letter-spacing: 0.004em;
 		font-variation-settings: 'opsz' 144;
 		font-feature-settings: 'liga', 'dlig';
+		margin: 0;
 		line-height: 1;
 	}
-	.mark-dots {
-		display: flex;
-		gap: 6px;
-		flex: 0 0 auto;
-	}
-	.mark-dots .dot {
-		width: 7px;
-		height: 7px;
-		border-radius: 50%;
+	.brand .stroke {
 		display: inline-block;
-	}
-	.mark-dots .dot:nth-child(1) {
-		background: var(--accent);
-		opacity: 0.75;
-	}
-	.mark-dots .dot:nth-child(2) {
-		background: var(--accent-pond);
-		opacity: 0.65;
-	}
-	.mark-dots .dot:nth-child(3) {
-		background: var(--ink-faint);
-		opacity: 0.5;
+		width: 40px;
+		height: 1.5px;
+		flex: 0 0 auto;
+		border-radius: 2px;
+		background: linear-gradient(90deg, var(--accent), var(--accent-pond));
 	}
 
-	/* 하단 메타 */
 	.meta {
 		display: flex;
 		align-items: center;
@@ -110,15 +84,5 @@
 	}
 	.rss:hover {
 		color: var(--accent);
-	}
-
-	@media (max-width: 640px) {
-		.foot {
-			margin-top: 96px;
-			padding-top: 40px;
-		}
-		.brand {
-			font-size: 24px;
-		}
 	}
 </style>
