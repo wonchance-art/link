@@ -9,7 +9,6 @@
 
 	import Hero from '$lib/components/Hero.svelte';
 	import Mark from '$lib/components/Mark.svelte';
-	import About from '$lib/components/About.svelte';
 	import Now from '$lib/components/Now.svelte';
 	import Works from '$lib/components/Works.svelte';
 	import Links from '$lib/components/Links.svelte';
@@ -61,22 +60,17 @@
 	<Hero profile={p} />
 
 	<section class="block" use:fadeIn={{ delay: 0 }}>
-		<Mark index="01" ko="소개" en="About" {lang} />
-		<About body={p.about} />
-	</section>
-
-	<section class="block" use:fadeIn={{ delay: 0 }}>
-		<Mark index="02" ko="지금" en="Now" {lang} />
+		<Mark index="01" ko="지금" en="Now" {lang} />
 		<Now updatedLabel={n.updatedLabel} body={n.body} />
 	</section>
 
 	<section class="block major" use:fadeIn={{ delay: 0 }}>
-		<Mark index="03" ko="작업" en="Works" {lang} />
+		<Mark index="02" ko="작업" en="Works" {lang} />
 		<Works items={w} />
 	</section>
 
 	<section class="block" use:fadeIn={{ delay: 0 }}>
-		<Mark index="04" ko="그 외" en="Elsewhere" {lang} />
+		<Mark index="03" ko="그 외" en="Elsewhere" {lang} />
 		<Links items={l} />
 	</section>
 
