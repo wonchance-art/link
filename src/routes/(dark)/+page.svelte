@@ -4,7 +4,7 @@
 
 	const ogUrl = $derived(`${page.url.origin}/og?lang=ko`);
 	const title = '원채연 — Open Chaence';
-	const description = '태양과 지구와 달. 한 사람의 우주에 들어오세요 — 이성, 감성, 그리고 자기.';
+	const description = '어둠 속 몇 개의 빛. 태양과 지구와 달 — 이성, 자기, 감성.';
 </script>
 
 <svelte:head>

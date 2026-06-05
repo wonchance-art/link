@@ -110,6 +110,14 @@ body {
 	background-attachment: fixed;
 }
 
+/* 우주(다크) 라우트 — 솔직한 검은 배경, 라이트 워시/노이즈 제거 */
+body.cosmic {
+	background: #06070c;
+}
+body.cosmic::before {
+	display: none;
+}
+
 /* 옅은 noise — 디지털 평평함을 깨고 회화적 질감 부여 */
 body::before {
 	content: '';
