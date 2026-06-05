@@ -12,14 +12,14 @@ export type GratitudeStar = {
 
 // y는 은하 아치(galaxyArchY)를 따라 배치 — 별들이 은하수 띠 위에 모이도록.
 export const gratitudeStars: GratitudeStar[] = [
-	{ id: 'sea', x: 10, y: 62, name: '바다', note: '끝이 보이지 않아 오히려 안심이 되는 것.' },
-	{ id: 'mother', x: 20, y: 56, name: '어머니', note: '내가 처음 들은 목소리. 모든 다정함의 시작.' },
-	{ id: 'grandma', x: 29, y: 46, name: '할머니의 손', note: '주름마다 담긴 여러 계절.' },
-	{ id: 'you', x: 38, y: 42, name: '너', note: '지금 이 글을 읽고 있는, 당신.' },
-	{ id: 'night-music', x: 46, y: 33, name: '늦은 밤의 음악', note: '혼자가 아니라고 조용히 말해주는 소리.' },
-	{ id: 'friend', x: 54, y: 28, name: '오랜 친구', note: '말하지 않아도 아는 사이. 멀어도 가까운.' },
-	{ id: 'book', x: 62, y: 20, name: '한 권의 책', note: '다른 삶을 잠시 살게 해준 페이지들.' },
-	{ id: 'rain', x: 70, y: 15, name: '비 오는 날', note: '창을 두드리는 소리에 마음이 천천히 가라앉는다.' },
-	{ id: 'first-line', x: 77, y: 9, name: '첫 문장', note: '처음으로 내 손끝에서 제 빛깔을 낸 한 줄.' },
-	{ id: 'dawn', x: 83, y: 4, name: '새벽 산책', note: '아무도 깨지 않은 시간의 고요.' }
+	{ id: 'sea', x: 8, y: 84, name: '바다', note: '끝이 보이지 않아 오히려 안심이 되는 것.' },
+	{ id: 'mother', x: 16, y: 78, name: '어머니', note: '내가 처음 들은 목소리. 모든 다정함의 시작.' },
+	{ id: 'grandma', x: 24, y: 71, name: '할머니의 손', note: '주름마다 담긴 여러 계절.' },
+	{ id: 'you', x: 32, y: 65, name: '너', note: '지금 이 글을 읽고 있는, 당신.' },
+	{ id: 'night-music', x: 40, y: 58, name: '늦은 밤의 음악', note: '혼자가 아니라고 조용히 말해주는 소리.' },
+	{ id: 'friend', x: 60, y: 42, name: '오랜 친구', note: '말하지 않아도 아는 사이. 멀어도 가까운.' },
+	{ id: 'book', x: 68, y: 35, name: '한 권의 책', note: '다른 삶을 잠시 살게 해준 페이지들.' },
+	{ id: 'rain', x: 76, y: 28, name: '비 오는 날', note: '창을 두드리는 소리에 마음이 천천히 가라앉는다.' },
+	{ id: 'first-line', x: 83, y: 22, name: '첫 문장', note: '처음으로 내 손끝에서 제 빛깔을 낸 한 줄.' },
+	{ id: 'dawn', x: 89, y: 17, name: '새벽 산책', note: '아무도 깨지 않은 시간의 고요.' }
 ];

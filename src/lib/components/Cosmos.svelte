@@ -260,7 +260,7 @@
 		position: absolute;
 		left: -42%;
 		right: -42%;
-		top: -2%;
+		top: 18%;
 		height: 64%;
 		pointer-events: none;
 		background: url('/milkyway.jpg') center / 100% 100% no-repeat;
