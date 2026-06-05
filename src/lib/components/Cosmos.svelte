@@ -580,49 +580,42 @@
 	}
 	/* 태양 표면 (자전 스크롤) */
 	.sun-orb {
-		background: #f5cd2e;
+		background: #2a1500;
 	}
 	.sun-surface {
 		position: absolute;
 		inset: 0;
-		background-image:
-			radial-gradient(circle at 18% 38%, rgba(255, 165, 35, 0.5), transparent 13%),
-			radial-gradient(circle at 44% 66%, rgba(255, 220, 100, 0.45), transparent 11%),
-			radial-gradient(circle at 68% 28%, rgba(212, 120, 14, 0.42), transparent 10%),
-			radial-gradient(circle at 86% 58%, rgba(255, 198, 66, 0.4), transparent 12%),
-			radial-gradient(circle at 30% 84%, rgba(230, 150, 30, 0.38), transparent 11%);
-		background-size: 600px 100%;
-		background-repeat: repeat;
-		animation: surf 26s linear infinite;
+		background: url('/sun.jpg') 0 center / 200% 100% repeat-x;
+		animation: surf 42s linear infinite;
 	}
 	.sun-sphere {
 		position: absolute;
 		inset: 0;
 		border-radius: 50%;
 		pointer-events: none;
+		background: radial-gradient(
+			circle at 42% 40%,
+			transparent 48%,
+			rgba(110, 45, 0, 0.32) 80%,
+			rgba(70, 25, 0, 0.5) 100%
+		);
 		box-shadow:
-			inset -24px -28px 64px rgba(120, 60, 0, 0.42),
-			inset 16px 18px 48px rgba(255, 244, 190, 0.28);
+			inset -18px -20px 50px rgba(90, 35, 0, 0.42),
+			inset 14px 16px 44px rgba(255, 244, 190, 0.16);
 	}
 	/* 달 표면 (자전 스크롤) */
 	.moon-orb {
-		background: #c9c9d2;
+		background: #15151a;
 	}
 	.moon-surface {
 		position: absolute;
 		inset: 0;
-		background-image:
-			radial-gradient(circle at 22% 44%, rgba(120, 120, 136, 0.55), transparent 15%),
-			radial-gradient(circle at 54% 64%, rgba(140, 140, 154, 0.5), transparent 12%),
-			radial-gradient(circle at 78% 34%, rgba(108, 108, 126, 0.5), transparent 11%),
-			radial-gradient(circle at 40% 82%, rgba(150, 150, 162, 0.42), transparent 10%);
-		background-size: 600px 100%;
-		background-repeat: repeat;
-		animation: surf 46s linear infinite;
+		background: url('/moon.jpg') 0 center / 200% 100% repeat-x;
+		animation: surf 72s linear infinite;
 	}
 	@keyframes surf {
 		to {
-			background-position-x: 600px;
+			background-position-x: -200%;
 		}
 	}
 	@media (prefers-reduced-motion: reduce) {
@@ -671,9 +664,15 @@
 		inset: 0;
 		border-radius: 50%;
 		pointer-events: none;
+		background: radial-gradient(
+			circle at 38% 34%,
+			transparent 42%,
+			rgba(0, 0, 0, 0.32) 76%,
+			rgba(0, 0, 0, 0.6) 100%
+		);
 		box-shadow:
-			inset -26px -30px 70px rgba(3, 8, 14, 0.4),
-			inset 16px 18px 50px rgba(255, 255, 255, 0.08);
+			inset -22px -26px 60px rgba(0, 0, 0, 0.5),
+			inset 14px 16px 44px rgba(255, 255, 255, 0.07);
 	}
 
 </style>

@@ -45,3 +45,4 @@ npm run dev
 ## Credits
 
 - Milky Way background: NASA/Goddard Space Flight Center Scientific Visualization Studio, Deep Star Maps 2020 (public domain). https://svs.gsfc.nasa.gov/4851/
+- Sun & Moon textures: Solar System Scope (CC BY 4.0). https://www.solarsystemscope.com/textures/
