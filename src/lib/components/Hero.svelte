@@ -22,7 +22,7 @@
 
 	<h1 class="name"><WindText text={p.name} /></h1>
 
-	<p class="brand">{p.subtitle}</p>
+	<p class="brand"><span class="stroke" aria-hidden="true"></span>{p.subtitle}</p>
 	<p class="tag">{@html tagHtml}</p>
 </header>
 
@@ -84,6 +84,9 @@
 	}
 
 	.brand {
+		display: flex;
+		align-items: center;
+		gap: 16px;
 		font-family: var(--font-serif);
 		font-style: italic;
 		font-weight: 400;
@@ -91,10 +94,25 @@
 		font-feature-settings: 'liga', 'dlig';
 		font-size: clamp(22px, 3.4vw, 34px);
 		color: var(--accent);
-		margin: 24px 0 0;
+		margin: 26px 0 0;
 		letter-spacing: 0.004em;
 		opacity: 0;
 		animation: fade-in 800ms ease-out 760ms forwards;
+	}
+	/* 잉크 스트로크 — 로드 시 왼쪽에서 그어진다 */
+	.brand .stroke {
+		display: inline-block;
+		height: 1.5px;
+		width: 0;
+		flex: 0 0 auto;
+		border-radius: 2px;
+		background: linear-gradient(90deg, var(--accent), var(--accent-pond));
+		animation: draw-stroke 900ms cubic-bezier(0.22, 1, 0.36, 1) 1180ms forwards;
+	}
+	@keyframes draw-stroke {
+		to {
+			width: 40px;
+		}
 	}
 
 	.tag {
@@ -133,6 +151,10 @@
 		.brand,
 		.tag {
 			opacity: 1;
+			animation: none;
+		}
+		.brand .stroke {
+			width: 40px;
 			animation: none;
 		}
 	}
