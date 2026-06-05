@@ -6,29 +6,68 @@
 
 	const stars = makeStars(80);
 
-	let zoomed = $state(false);
+	let zoomedBody = $state<null | 'sun' | 'earth' | 'moon'>(null);
 	let hovered = $state<null | 'sun' | 'earth' | 'moon'>(null);
-	// 지구 확대 시작 좌표(점이 있던 자리) — 화면 중심 기준 오프셋
+	// 확대 시작 좌표(점이 있던 자리) — 화면 중심 기준 오프셋
 	let startX = $state(0);
 	let startY = $state(0);
-
-	function zoomEarth() {
-		if (earthSystemEl) {
-			const r = earthSystemEl.getBoundingClientRect();
-			startX = Math.round(r.left - window.innerWidth / 2);
-			startY = Math.round(r.top - window.innerHeight / 2);
-		}
-		zoomed = true;
-	}
+	let liveLandPath = $state(''); // 자전 중 갱신, 비면 정적 landPath 사용
 
 	let stageEl: HTMLDivElement | null = $state(null);
 	let earthSystemEl: HTMLDivElement | null = $state(null);
 	let moonEl: HTMLDivElement | null = $state(null);
 	let raf: number | null = null;
+	let earthRaf: number | null = null;
 
 	const EARTH_PERIOD = 60000;
 	const MOON_PERIOD = 12000;
 	const EARTH_R_FRAC = 0.34;
+
+	function captureStart(el: Element) {
+		const r = el.getBoundingClientRect();
+		startX = Math.round(r.left + r.width / 2 - window.innerWidth / 2);
+		startY = Math.round(r.top + r.height / 2 - window.innerHeight / 2);
+	}
+
+	function zoomBody(body: 'sun' | 'earth' | 'moon', e: MouseEvent) {
+		captureStart(e.currentTarget as Element);
+		hovered = null;
+		zoomedBody = body;
+		if (body === 'earth') startEarthSpin();
+	}
+
+	function closeZoom() {
+		zoomedBody = null;
+		if (earthRaf) {
+			cancelAnimationFrame(earthRaf);
+			earthRaf = null;
+		}
+	}
+
+	// 지구 자전 — 확대 시에만 d3-geo 동적 import, 저프레임 throttle로 천천히
+	async function startEarthSpin() {
+		liveLandPath = '';
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		const { makeEarthRotator } = await import('$lib/cosmos/earthClient');
+		const rotate = makeEarthRotator(100, 12);
+		const PERIOD = 120000; // 한 바퀴 ≈ 2분
+		const baseLon = 18;
+		let startT = 0;
+		let lastGen = 0;
+		const loop = (t: number) => {
+			if (zoomedBody !== 'earth') {
+				earthRaf = null;
+				return;
+			}
+			if (!startT) startT = t;
+			if (t - lastGen > 80) {
+				lastGen = t;
+				liveLandPath = rotate(baseLon + ((t - startT) / PERIOD) * 360);
+			}
+			earthRaf = requestAnimationFrame(loop);
+		};
+		earthRaf = requestAnimationFrame(loop);
+	}
 
 	function frame(t: number) {
 		if (stageEl && earthSystemEl) {
@@ -52,7 +91,7 @@
 		document.body.style.overflow = 'hidden';
 
 		const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-		if (!reduce && !zoomed) {
+		if (!reduce && !zoomedBody) {
 			raf = requestAnimationFrame(frame);
 		} else if (earthSystemEl) {
 			const m = stageEl ? Math.min(stageEl.clientWidth, stageEl.clientHeight) : 600;
@@ -62,12 +101,14 @@
 		return () => {
 			if (raf) cancelAnimationFrame(raf);
 			raf = null;
+			if (earthRaf) cancelAnimationFrame(earthRaf);
+			earthRaf = null;
 			document.body.style.overflow = prevOf;
 		};
 	});
 </script>
 
-<div class="stage" bind:this={stageEl} class:zoomed>
+<div class="stage" bind:this={stageEl} class:zoomed={zoomedBody}>
 	<div class="stars" aria-hidden="true">
 		{#each stars as s, i (i)}
 			<span
@@ -81,18 +122,18 @@
 		{/each}
 	</div>
 
-	{#if !zoomed}
+	{#if !zoomedBody}
 		<div class="system">
 			<!-- 태양 = 이성 -->
-			<a
+			<button
 				class="hit sun"
-				href="/sun"
 				onmouseenter={() => (hovered = 'sun')}
 				onmouseleave={() => (hovered = null)}
+				onclick={(e) => zoomBody('sun', e)}
 				aria-label="태양 · 이성"
 			>
 				<span class="dot"></span>
-			</a>
+			</button>
 
 			<!-- 지구계 -->
 			<div class="earth-system" bind:this={earthSystemEl}>
@@ -100,21 +141,21 @@
 					class="hit earth"
 					onmouseenter={() => (hovered = 'earth')}
 					onmouseleave={() => (hovered = null)}
-					onclick={zoomEarth}
-					aria-label="지구 · 자기 — 눌러서 들어가기"
+					onclick={(e) => zoomBody('earth', e)}
+					aria-label="지구 · 자기"
 				>
 					<span class="dot"></span>
 				</button>
 				<div class="moon-wrap" bind:this={moonEl}>
-					<a
+					<button
 						class="hit moon"
-						href="/moon"
 						onmouseenter={() => (hovered = 'moon')}
 						onmouseleave={() => (hovered = null)}
+						onclick={(e) => zoomBody('moon', e)}
 						aria-label="달 · 감성"
 					>
 						<span class="dot"></span>
-					</a>
+					</button>
 				</div>
 			</div>
 		</div>
@@ -122,19 +163,30 @@
 		<div class="label" class:show={hovered}>
 			{#if hovered === 'sun'}이성{:else if hovered === 'earth'}자기{:else if hovered === 'moon'}감성{/if}
 		</div>
-	{:else}
-		<!-- 지구 확대 → 땅 / 바다 (텍스트 없이, 직접 드러내지 않음) -->
-		<div class="world" style:--sx="{startX}px" style:--sy="{startY}px">
+	{:else if zoomedBody === 'earth'}
+		<!-- 지구 확대 (자전) → 땅 / 바다, 텍스트 없이 -->
+		<div class="zoom-obj world" style:--sx="{startX}px" style:--sy="{startY}px">
 			<a class="sea" href="/sea" aria-label="바다"></a>
 			<svg class="land-svg" viewBox="0 0 100 100">
-				<a href="/land" aria-label="땅">
-					<!-- 실제 지리 데이터(Natural Earth) 정사영 — 진짜 지구 대륙 -->
-					<path d={landPath} />
-				</a>
+				<a href="/land" aria-label="땅"><path d={liveLandPath || landPath} /></a>
 			</svg>
 			<span class="sphere" aria-hidden="true"></span>
 		</div>
-		<button class="back" onclick={() => (zoomed = false)}>← 우주</button>
+		<button class="back" onclick={closeZoom}>← 우주</button>
+	{:else if zoomedBody === 'sun'}
+		<!-- 태양 확대 (자전 표면) → /sun -->
+		<a class="zoom-obj orb sun-orb" href="/sun" style:--sx="{startX}px" style:--sy="{startY}px" aria-label="태양 · 이성">
+			<span class="surface sun-surface" aria-hidden="true"></span>
+			<span class="sphere sun-sphere" aria-hidden="true"></span>
+		</a>
+		<button class="back" onclick={closeZoom}>← 우주</button>
+	{:else if zoomedBody === 'moon'}
+		<!-- 달 확대 (자전 표면) → /moon -->
+		<a class="zoom-obj orb moon-orb" href="/moon" style:--sx="{startX}px" style:--sy="{startY}px" aria-label="달 · 감성">
+			<span class="surface moon-surface" aria-hidden="true"></span>
+			<span class="sphere" aria-hidden="true"></span>
+		</a>
+		<button class="back" onclick={closeZoom}>← 우주</button>
 	{/if}
 </div>
 
@@ -279,8 +331,8 @@
 		opacity: 1;
 	}
 
-	/* === 지구 확대: 땅 / 바다 === */
-	.world {
+	/* === 천체 확대 (공용) === */
+	.zoom-obj {
 		position: absolute;
 		left: 50%;
 		top: 50%;
@@ -291,6 +343,63 @@
 		overflow: hidden;
 		/* 점이 있던 자리(--sx,--sy)에서 중앙으로 커진다 */
 		animation: world-in 820ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+	.orb {
+		display: block;
+		cursor: pointer;
+	}
+	/* 태양 표면 (자전 스크롤) */
+	.sun-orb {
+		background: #f5cd2e;
+	}
+	.sun-surface {
+		position: absolute;
+		inset: 0;
+		background-image:
+			radial-gradient(circle at 18% 38%, rgba(255, 165, 35, 0.5), transparent 13%),
+			radial-gradient(circle at 44% 66%, rgba(255, 220, 100, 0.45), transparent 11%),
+			radial-gradient(circle at 68% 28%, rgba(212, 120, 14, 0.42), transparent 10%),
+			radial-gradient(circle at 86% 58%, rgba(255, 198, 66, 0.4), transparent 12%),
+			radial-gradient(circle at 30% 84%, rgba(230, 150, 30, 0.38), transparent 11%);
+		background-size: 600px 100%;
+		background-repeat: repeat;
+		animation: surf 26s linear infinite;
+	}
+	.sun-sphere {
+		position: absolute;
+		inset: 0;
+		border-radius: 50%;
+		pointer-events: none;
+		box-shadow:
+			inset -24px -28px 64px rgba(120, 60, 0, 0.42),
+			inset 16px 18px 48px rgba(255, 244, 190, 0.28);
+	}
+	/* 달 표면 (자전 스크롤) */
+	.moon-orb {
+		background: #c9c9d2;
+	}
+	.moon-surface {
+		position: absolute;
+		inset: 0;
+		background-image:
+			radial-gradient(circle at 22% 44%, rgba(120, 120, 136, 0.55), transparent 15%),
+			radial-gradient(circle at 54% 64%, rgba(140, 140, 154, 0.5), transparent 12%),
+			radial-gradient(circle at 78% 34%, rgba(108, 108, 126, 0.5), transparent 11%),
+			radial-gradient(circle at 40% 82%, rgba(150, 150, 162, 0.42), transparent 10%);
+		background-size: 600px 100%;
+		background-repeat: repeat;
+		animation: surf 46s linear infinite;
+	}
+	@keyframes surf {
+		to {
+			background-position-x: 600px;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.sun-surface,
+		.moon-surface {
+			animation: none;
+		}
 	}
 	@keyframes world-in {
 		from {
