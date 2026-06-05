@@ -109,6 +109,7 @@
 </script>
 
 <div class="stage" bind:this={stageEl} class:zoomed={zoomedBody}>
+	<div class="milkyway" aria-hidden="true"></div>
 	<div class="stars" aria-hidden="true">
 		{#each stars as s, i (i)}
 			<span
@@ -163,29 +164,33 @@
 		<div class="label" class:show={hovered}>
 			{#if hovered === 'sun'}이성{:else if hovered === 'earth'}자기{:else if hovered === 'moon'}감성{/if}
 		</div>
-	{:else if zoomedBody === 'earth'}
-		<!-- 지구 확대 (자전) → 땅 / 바다, 텍스트 없이 -->
-		<div class="zoom-obj world" style:--sx="{startX}px" style:--sy="{startY}px">
-			<a class="sea" href="/sea" aria-label="바다"></a>
-			<svg class="land-svg" viewBox="0 0 100 100">
-				<a href="/land" aria-label="땅"><path d={liveLandPath || landPath} /></a>
-			</svg>
-			<span class="sphere" aria-hidden="true"></span>
-		</div>
-		<button class="back" onclick={closeZoom}>← 우주</button>
-	{:else if zoomedBody === 'sun'}
-		<!-- 태양 확대 (자전 표면) → /sun -->
-		<a class="zoom-obj orb sun-orb" href="/sun" style:--sx="{startX}px" style:--sy="{startY}px" aria-label="태양 · 이성">
-			<span class="surface sun-surface" aria-hidden="true"></span>
-			<span class="sphere sun-sphere" aria-hidden="true"></span>
-		</a>
-		<button class="back" onclick={closeZoom}>← 우주</button>
-	{:else if zoomedBody === 'moon'}
-		<!-- 달 확대 (자전 표면) → /moon -->
-		<a class="zoom-obj orb moon-orb" href="/moon" style:--sx="{startX}px" style:--sy="{startY}px" aria-label="달 · 감성">
-			<span class="surface moon-surface" aria-hidden="true"></span>
-			<span class="sphere" aria-hidden="true"></span>
-		</a>
+	{:else}
+		<!-- 확대 뷰: 바깥(검정) 클릭 시 우주로 -->
+		<button class="zoom-backdrop" onclick={closeZoom} aria-label="우주로 돌아가기"></button>
+
+		{#if zoomedBody === 'earth'}
+			<!-- 지구 확대 (자전) → 땅 / 바다, 텍스트 없이 -->
+			<div class="zoom-obj world" style:--sx="{startX}px" style:--sy="{startY}px">
+				<a class="sea" href="/sea" aria-label="바다"></a>
+				<svg class="land-svg" viewBox="0 0 100 100">
+					<a href="/land" aria-label="땅"><path d={liveLandPath || landPath} /></a>
+				</svg>
+				<span class="sphere" aria-hidden="true"></span>
+			</div>
+		{:else if zoomedBody === 'sun'}
+			<!-- 태양 확대 (자전 표면) → /sun -->
+			<a class="zoom-obj orb sun-orb" href="/sun" style:--sx="{startX}px" style:--sy="{startY}px" aria-label="태양 · 이성">
+				<span class="surface sun-surface" aria-hidden="true"></span>
+				<span class="sphere sun-sphere" aria-hidden="true"></span>
+			</a>
+		{:else if zoomedBody === 'moon'}
+			<!-- 달 확대 (자전 표면) → /moon -->
+			<a class="zoom-obj orb moon-orb" href="/moon" style:--sx="{startX}px" style:--sy="{startY}px" aria-label="달 · 감성">
+				<span class="surface moon-surface" aria-hidden="true"></span>
+				<span class="sphere" aria-hidden="true"></span>
+			</a>
+		{/if}
+
 		<button class="back" onclick={closeZoom}>← 우주</button>
 	{/if}
 </div>
@@ -203,11 +208,34 @@
 		font-family: var(--font-sans);
 	}
 
+	/* 은하수 — 별 뒤로 흐릿하게 가로지르는 띠 */
+	.milkyway {
+		position: absolute;
+		inset: -10%;
+		pointer-events: none;
+		opacity: 0.85;
+		background:
+			radial-gradient(ellipse 28% 11% at 28% 36%, rgba(202, 204, 232, 0.1), transparent 70%),
+			radial-gradient(ellipse 24% 9% at 50% 50%, rgba(224, 208, 220, 0.13), transparent 70%),
+			radial-gradient(ellipse 32% 13% at 73% 64%, rgba(196, 206, 234, 0.09), transparent 70%),
+			radial-gradient(ellipse 20% 8% at 62% 58%, rgba(150, 200, 220, 0.06), transparent 70%),
+			linear-gradient(
+				118deg,
+				transparent 41%,
+				rgba(190, 196, 222, 0.05) 46%,
+				rgba(216, 206, 218, 0.085) 50%,
+				rgba(190, 196, 222, 0.05) 54%,
+				transparent 59%
+			);
+		filter: blur(11px);
+	}
+
 	/* 별 — 순수한 점 */
 	.stars {
 		position: absolute;
 		inset: 0;
 		pointer-events: none;
+		z-index: 1;
 	}
 	.stars span {
 		position: absolute;
@@ -332,6 +360,16 @@
 	}
 
 	/* === 천체 확대 (공용) === */
+	/* 확대 뷰 배경: 바깥(검정) 클릭 → 우주로 */
+	.zoom-backdrop {
+		position: absolute;
+		inset: 0;
+		border: 0;
+		padding: 0;
+		background: transparent;
+		cursor: zoom-out;
+		z-index: 1;
+	}
 	.zoom-obj {
 		position: absolute;
 		left: 50%;
@@ -341,6 +379,9 @@
 		transform: translate(-50%, -50%);
 		border-radius: 50%;
 		overflow: hidden;
+		/* 원형으로만 클릭 받도록(코너는 배경으로 통과 → 우주 전환) */
+		clip-path: circle(50%);
+		z-index: 2;
 		/* 점이 있던 자리(--sx,--sy)에서 중앙으로 커진다 */
 		animation: world-in 820ms cubic-bezier(0.22, 1, 0.36, 1);
 	}
@@ -456,6 +497,7 @@
 		font-size: 14px;
 		cursor: pointer;
 		transition: color 200ms ease;
+		z-index: 3;
 	}
 	.back:hover {
 		color: #fff;
