@@ -265,8 +265,8 @@
 		transform: rotate(-40deg);
 		transform-origin: center;
 		/* 남보라로 물들이고 은은하게 */
-		filter: blur(2.5px) sepia(0.5) hue-rotate(205deg) saturate(1.5) brightness(0.72) contrast(1.02);
-		opacity: 0.3;
+		filter: sepia(0.5) hue-rotate(205deg) saturate(1.5) brightness(0.72) contrast(1.02);
+		opacity: 0.22;
 		mix-blend-mode: screen;
 		/* 직사각형 경계를 부드럽게 페이드 */
 		-webkit-mask: radial-gradient(ellipse 82% 58% at 50% 50%, #000 22%, transparent 88%);
