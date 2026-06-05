@@ -1,15 +1,8 @@
 <script lang="ts">
 	import type { ProfileData } from '$lib/content/profile';
-	import type { Lang } from '$lib/i18n/lang';
 
-	type Props = {
-		profile: ProfileData;
-		lang: Lang;
-	};
-
-	let { profile: p, lang }: Props = $props();
-	// lang는 향후 i18n 확장을 위해 prop 유지.
-	void lang;
+	type Props = { profile: ProfileData };
+	let { profile: p }: Props = $props();
 
 	const tagHtml = $derived(p.tag.replace(/\*(.+?)\*/g, '<em>$1</em>'));
 

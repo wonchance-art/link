@@ -61,7 +61,7 @@
 
 <main class="page">
 	<div use:fadeIn={{ delay: 0 }}>
-		<Hero profile={p} {lang} />
+		<Hero profile={p} />
 	</div>
 	<div use:fadeIn={{ delay: 90 }}>
 		<About body={p.about} {lang} />
