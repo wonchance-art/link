@@ -27,6 +27,19 @@
 
 	// 사이트 우산(Open Chaence)을 title에도 노출.
 	const title = $derived(`${p.name} — ${p.subtitle}`);
+
+	// JSON-LD Person schema — 검색엔진/링크 미리보기에 정체성 제공.
+	const personSchema = $derived({
+		'@context': 'https://schema.org',
+		'@type': 'Person',
+		name: p.name,
+		alternateName: lang === 'ko' ? 'Won Chaeyeon' : '원채연',
+		url: page.url.origin,
+		description,
+		inLanguage: lang === 'ko' ? 'ko-KR' : 'en-US',
+		sameAs: ['https://instagram.com/won_cy_', 'https://blog.naver.com/won_cy_']
+	});
+	const personSchemaStr = $derived(JSON.stringify(personSchema));
 </script>
 
 <svelte:head>
@@ -38,8 +51,12 @@
 	<meta property="og:image" content={ogUrl} />
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
+	<meta property="og:site_name" content={p.subtitle} />
+	<meta property="og:url" content={page.url.toString()} />
+	<meta property="og:locale" content={lang === 'ko' ? 'ko_KR' : 'en_US'} />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:image" content={ogUrl} />
+	{@html `<script type="application/ld+json">${personSchemaStr}</script>`}
 </svelte:head>
 
 <main class="page">
