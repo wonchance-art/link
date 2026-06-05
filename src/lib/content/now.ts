@@ -10,10 +10,10 @@ type NowData = {
 export const now: Record<Lang, NowData> = {
 	ko: {
 		updatedLabel: '6월 5일',
-		body: '부산살이중.'
+		body: '부산살이중. 저녁 산책길에 마주친 노을이 오래도록 따라옵니다.'
 	},
 	en: {
 		updatedLabel: 'June 5',
-		body: 'Living in Busan.'
+		body: 'Living in Busan. The sunset I met on an evening walk stays with me for a long while.'
 	}
 };

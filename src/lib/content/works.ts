@@ -12,11 +12,27 @@ export type Work = {
 
 export const works: Record<Lang, Work[]> = {
 	ko: [
-		{ title: '언어 학습 웹', date: '준비 중' },
-		{ title: '영어 학습 웹', date: '준비 중' }
+		{
+			title: '언어 학습 웹',
+			description: '여러 언어를 천천히 익히는 방식을 모은 작은 노트.',
+			date: '준비 중'
+		},
+		{
+			title: '영어 학습 웹',
+			description: '영어 문장을 글쓰기로 익혀 가는 일지.',
+			date: '준비 중'
+		}
 	],
 	en: [
-		{ title: 'Language learning', date: 'coming soon' },
-		{ title: 'English learning', date: 'coming soon' }
+		{
+			title: 'Language learning',
+			description: 'A small notebook of slow ways to learn languages.',
+			date: 'coming soon'
+		},
+		{
+			title: 'English learning',
+			description: 'A journal of learning English through writing.',
+			date: 'coming soon'
+		}
 	]
 };
