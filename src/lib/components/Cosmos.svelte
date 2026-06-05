@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { makeStars } from '$lib/cosmos/stars';
+	import { makeStars, makeBandStars } from '$lib/cosmos/stars';
 
 	type Props = { landPath: string };
 	let { landPath }: Props = $props();
 
-	const stars = makeStars(80);
+	const stars = makeStars(70);
+	const bandStars = makeBandStars(130);
 
 	let zoomedBody = $state<null | 'sun' | 'earth' | 'moon'>(null);
 	let hovered = $state<null | 'sun' | 'earth' | 'moon'>(null);
@@ -111,6 +112,16 @@
 <div class="stage" bind:this={stageEl} class:zoomed={zoomedBody}>
 	<div class="milkyway" aria-hidden="true"></div>
 	<div class="stars" aria-hidden="true">
+		{#each bandStars as s, i (`b${i}`)}
+			<span
+				style:left="{s.x}%"
+				style:top="{s.y}%"
+				style:width="{s.r}px"
+				style:height="{s.r}px"
+				style:--o={s.o}
+				style:animation-delay="{s.tw}s"
+			></span>
+		{/each}
 		{#each stars as s, i (i)}
 			<span
 				style:left="{s.x}%"
@@ -208,28 +219,26 @@
 		font-family: var(--font-sans);
 	}
 
-	/* 은하수 — 진하지만 뿌연 안개. 흐린 느낌 유지(강한 blur, 날카로운 코어 없음) */
+	/* 은하수 — 별의 강을 감싸는 남색~보라 은은한 빛. 조용한 톤 유지 */
 	.milkyway {
 		position: absolute;
-		inset: -18%;
+		inset: -12%;
 		pointer-events: none;
 		opacity: 1;
 		background:
-			/* 성운 광점 — 넓고 부드럽게 */
-			radial-gradient(ellipse 38% 20% at 26% 34%, rgba(206, 209, 238, 0.2), transparent 76%),
-			radial-gradient(ellipse 34% 18% at 52% 52%, rgba(230, 214, 226, 0.26), transparent 76%),
-			radial-gradient(ellipse 42% 22% at 75% 66%, rgba(199, 211, 240, 0.18), transparent 76%),
-			radial-gradient(ellipse 26% 14% at 62% 58%, rgba(162, 206, 228, 0.14), transparent 76%),
-			/* 넓고 부드러운 띠 (좁은 밝은 코어 없음) */
+			/* 보라 성운 클럼프 (띠 위 한두 군데만) */
+			radial-gradient(ellipse 20% 11% at 36% 60%, rgba(78, 60, 122, 0.16), transparent 72%),
+			radial-gradient(ellipse 18% 10% at 62% 38%, rgba(52, 56, 118, 0.14), transparent 72%),
+			/* 남색 → 보라 → 남색 부드러운 띠 */
 			linear-gradient(
 				118deg,
-				transparent 28%,
-				rgba(198, 203, 228, 0.1) 43%,
-				rgba(216, 207, 221, 0.15) 50%,
-				rgba(198, 203, 228, 0.1) 57%,
-				transparent 72%
+				transparent 38%,
+				rgba(36, 42, 86, 0.16) 46%,
+				rgba(66, 52, 110, 0.2) 50%,
+				rgba(36, 42, 86, 0.16) 54%,
+				transparent 62%
 			);
-		filter: blur(26px);
+		filter: blur(18px);
 	}
 
 	/* 별 — 순수한 점 */
