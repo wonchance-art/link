@@ -246,7 +246,7 @@
 		height: 100vh;
 		height: 100dvh;
 		overflow: hidden;
-		background: #06070c;
+		background: #000;
 		color: #e9ecf2;
 		font-family: var(--font-sans);
 	}
