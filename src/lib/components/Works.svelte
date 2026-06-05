@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Work } from '$lib/content/works';
+	import { reveal } from '$lib/actions/reveal';
 
 	type Props = { items: Work[] };
 	let { items }: Props = $props();
@@ -22,12 +23,12 @@
 <div class="works">
 	{#each items as work, i (work.title + (work.href ?? i))}
 		{#if work.href}
-			<a class="work" href={work.href} target="_blank" rel="noopener noreferrer">
+			<a class="work" href={work.href} target="_blank" rel="noopener noreferrer" use:reveal>
 				{@render inner(work, i)}
 				<span class="vine" aria-hidden="true"></span>
 			</a>
 		{:else}
-			<div class="work pending">{@render inner(work, i)}</div>
+			<div class="work pending" use:reveal>{@render inner(work, i)}</div>
 		{/if}
 	{/each}
 </div>
@@ -86,6 +87,16 @@
 		letter-spacing: -0.038em;
 		color: var(--ink);
 		margin: 0;
+		/* 스크롤 진입 시 아래에서 위로 드러남 */
+		clip-path: inset(112% 0 -8% 0);
+		opacity: 0;
+		transition:
+			clip-path 940ms cubic-bezier(0.22, 1, 0.36, 1),
+			opacity 720ms ease;
+	}
+	:global(.work[data-revealed]) .title {
+		clip-path: inset(0% 0 -8% 0);
+		opacity: 1;
 	}
 	.title .t {
 		transition:

@@ -14,16 +14,24 @@
 
 	let charEls: HTMLSpanElement[] = [];
 	let raf: number | null = null;
+	let running = false;
 	const pointer = { x: -99999, y: -99999, active: false };
 	let w: number[] = [];
 
+	function start() {
+		if (running) return;
+		running = true;
+		raf = requestAnimationFrame(tick);
+	}
 	function onMove(e: PointerEvent) {
 		pointer.x = e.clientX;
 		pointer.y = e.clientY;
 		pointer.active = true;
+		start();
 	}
 	function onLeave() {
 		pointer.active = false;
+		start(); // 쉬는 상태로 부드럽게 되돌아가도록 한 번 더 돌린다
 	}
 	function smoothstep(t: number) {
 		return t * t * (3 - 2 * t);
@@ -46,8 +54,13 @@
 			w[i] = next;
 			el.style.fontWeight = String(Math.round(w[i]));
 		}
-		raf = requestAnimationFrame(tick);
-		void moving;
+		// 커서가 떠났고 모두 쉬는 두께로 안정되면 루프 정지 (idle 시 CPU 0)
+		if (pointer.active || moving) {
+			raf = requestAnimationFrame(tick);
+		} else {
+			running = false;
+			raf = null;
+		}
 	}
 
 	$effect(() => {
@@ -55,11 +68,11 @@
 		if (!window.matchMedia('(pointer: fine)').matches) return;
 		window.addEventListener('pointermove', onMove);
 		window.addEventListener('pointerleave', onLeave);
-		raf = requestAnimationFrame(tick);
 		return () => {
 			window.removeEventListener('pointermove', onMove);
 			window.removeEventListener('pointerleave', onLeave);
 			if (raf) cancelAnimationFrame(raf);
+			running = false;
 		};
 	});
 </script>
