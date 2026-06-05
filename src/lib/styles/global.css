@@ -153,10 +153,21 @@ svg {
 	color: var(--ink-muted);
 	margin: 0 0 22px;
 	display: flex;
-	align-items: center;
+	align-items: baseline;
 	gap: 14px;
 	text-transform: none;
 	font-variation-settings: 'opsz' 14;
+}
+.sect-title .sub {
+	font-family: var(--font-sans);
+	font-style: normal;
+	font-weight: 500;
+	font-size: 11px;
+	letter-spacing: 0.04em;
+	color: var(--ink-faint);
+	text-transform: none;
+	font-feature-settings: normal;
+	margin-left: -4px;
 }
 .sect-title::before {
 	content: '';

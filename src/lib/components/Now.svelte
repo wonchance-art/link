@@ -1,13 +1,22 @@
 <script lang="ts">
+	import type { Lang } from '$lib/i18n/lang';
+
 	type Props = {
 		updatedLabel: string;
 		body: string;
+		lang: Lang;
 	};
-	let { updatedLabel, body }: Props = $props();
+	let { updatedLabel, body, lang }: Props = $props();
+
+	const main = $derived(lang === 'ko' ? '지금' : 'Now');
+	const sub = $derived(lang === 'ko' ? 'Now' : '지금');
 </script>
 
 <section class="sect">
-	<h2 class="sect-title">Now</h2>
+	<h2 class="sect-title">
+		{main}
+		<span class="sub">{sub}</span>
+	</h2>
 	<div class="now">
 		<p class="now-meta">Updated · {updatedLabel}</p>
 		<p class="now-body">{body}</p>
@@ -57,7 +66,6 @@
 			box-shadow: 0 0 0 0 transparent;
 		}
 	}
-	/* 본문 — 잡지 인용구 같은 serif italic, 콘텐츠 분량에 맞춤 */
 	.now-body {
 		font-family: var(--font-serif);
 		font-style: italic;

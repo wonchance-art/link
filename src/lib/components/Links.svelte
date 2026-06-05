@@ -1,13 +1,20 @@
 <script lang="ts">
 	import type { Link } from '$lib/content/links';
+	import type { Lang } from '$lib/i18n/lang';
 	import { tilt3d } from '$lib/actions/tilt3d';
 
-	type Props = { items: Link[] };
-	let { items }: Props = $props();
+	type Props = { items: Link[]; lang: Lang };
+	let { items, lang }: Props = $props();
+
+	const main = $derived(lang === 'ko' ? '그 외' : 'Elsewhere');
+	const sub = $derived(lang === 'ko' ? 'Elsewhere' : '그 외');
 </script>
 
 <section class="sect">
-	<h2 class="sect-title">Elsewhere</h2>
+	<h2 class="sect-title">
+		{main}
+		<span class="sub">{sub}</span>
+	</h2>
 	<ul class="links">
 		{#each items as link (link.label)}
 			<li>
@@ -27,30 +34,30 @@
 		padding: 0;
 		margin: 0;
 		display: grid;
-		gap: 10px;
+		gap: 8px;
 		perspective: 1000px;
 	}
+	/* Works보다 절제된 사이즈 — SNS·연락처는 본인 작업 카드보다 가볍게 */
 	.links a {
 		display: flex;
 		align-items: center;
-		background: rgba(251, 250, 246, 0.55);
-		backdrop-filter: blur(14px) saturate(150%);
-		-webkit-backdrop-filter: blur(14px) saturate(150%);
+		background: rgba(251, 250, 246, 0.5);
+		backdrop-filter: blur(12px) saturate(140%);
+		-webkit-backdrop-filter: blur(12px) saturate(140%);
 		border: 1px solid var(--line);
-		border-radius: 14px;
-		padding: 16px 18px 16px 20px;
+		border-radius: 12px;
+		padding: 12px 16px 12px 18px;
 		color: var(--ink);
-		font-size: 15px;
+		font-size: 14px;
 		font-weight: 500;
 		transform-style: preserve-3d;
 		--hover-y: 0px;
 		transform: rotateX(var(--ty-deg, 0deg)) rotateY(var(--tx-deg, 0deg))
 			translateY(var(--hover-y));
-		/* 좌측 pond strip + 상단 광택 + 부드러운 그림자 */
 		box-shadow:
 			inset 1px 0 0 var(--accent-pond),
-			inset 0 1px 0 rgba(255, 255, 255, 0.5),
-			0 4px 14px -6px rgba(74, 107, 122, 0.1);
+			inset 0 1px 0 rgba(255, 255, 255, 0.45),
+			0 3px 10px -5px rgba(74, 107, 122, 0.08);
 		transition:
 			transform 420ms cubic-bezier(0.34, 1.35, 0.64, 1),
 			border-color 220ms ease,
@@ -59,15 +66,14 @@
 	}
 	.links a:hover {
 		--hover-y: -2px;
-		background: rgba(251, 250, 246, 0.82);
+		background: rgba(251, 250, 246, 0.78);
 		border-color: var(--accent-soft);
 		box-shadow:
 			inset 2px 0 0 var(--accent-pond),
-			inset 0 1px 0 rgba(255, 255, 255, 0.6),
-			0 22px 44px -16px rgba(74, 107, 122, 0.28),
-			0 4px 8px rgba(31, 42, 42, 0.05);
+			inset 0 1px 0 rgba(255, 255, 255, 0.55),
+			0 18px 36px -16px rgba(74, 107, 122, 0.24),
+			0 3px 6px rgba(31, 42, 42, 0.04);
 	}
-	/* 탭/터치 시 미세 눌림 — 모바일 feedback */
 	.links a:active {
 		--hover-y: 0px;
 		--tx-deg: 0deg;
@@ -79,11 +85,11 @@
 		flex: 0 0 auto;
 	}
 	.meta {
-		font-size: 12px;
+		font-size: 11px;
 		color: var(--ink-faint);
 		font-weight: 400;
 		margin-left: auto;
-		margin-right: 16px;
+		margin-right: 14px;
 		transition: color 280ms ease 40ms;
 	}
 	a:not(:has(.meta)) .arrow {

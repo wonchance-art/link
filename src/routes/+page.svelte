@@ -64,16 +64,16 @@
 		<Hero profile={p} {lang} />
 	</div>
 	<div use:fadeIn={{ delay: 90 }}>
-		<About body={p.about} />
+		<About body={p.about} {lang} />
 	</div>
 	<div use:fadeIn={{ delay: 180 }}>
-		<Now updatedLabel={n.updatedLabel} body={n.body} />
+		<Now updatedLabel={n.updatedLabel} body={n.body} {lang} />
 	</div>
 	<div use:fadeIn={{ delay: 260 }}>
-		<Works items={w} />
+		<Works items={w} {lang} />
 	</div>
 	<div use:fadeIn={{ delay: 340 }}>
-		<Links items={l} />
+		<Links items={l} {lang} />
 	</div>
 	<Footer {lang} />
 </main>
