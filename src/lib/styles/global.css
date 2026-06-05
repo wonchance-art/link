@@ -144,6 +144,13 @@ svg {
 .sect {
 	margin-top: 64px;
 }
+/* Section rhythm — Works(본질) 위 큰 호흡, Elsewhere(보조) 위 가깝게 */
+.sect-major {
+	margin-top: 96px;
+}
+.sect-tight {
+	margin-top: 48px;
+}
 .sect-title {
 	font-family: var(--font-serif);
 	font-style: italic;

@@ -23,7 +23,7 @@
 	{/if}
 {/snippet}
 
-<section class="sect">
+<section class="sect sect-major">
 	<h2 class="sect-title">
 		{main}
 		<span class="sub">{sub}</span>
@@ -67,7 +67,7 @@
 		box-shadow:
 			inset 1px 0 0 var(--accent),
 			inset 0 1px 0 rgba(255, 255, 255, 0.5),
-			0 4px 14px -6px rgba(78, 107, 74, 0.1);
+			0 6px 18px -8px rgba(78, 107, 74, 0.16);
 		transition:
 			transform 420ms cubic-bezier(0.34, 1.35, 0.64, 1),
 			border-color 220ms ease,
@@ -82,7 +82,7 @@
 		box-shadow:
 			inset 2px 0 0 var(--accent),
 			inset 0 1px 0 rgba(255, 255, 255, 0.55),
-			0 8px 22px -10px rgba(78, 107, 74, 0.14);
+			0 12px 28px -12px rgba(78, 107, 74, 0.22);
 	}
 	.works li > a:hover {
 		--hover-y: -2px;

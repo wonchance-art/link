@@ -10,7 +10,7 @@
 	const sub = $derived(lang === 'ko' ? 'Elsewhere' : '그 외');
 </script>
 
-<section class="sect">
+<section class="sect sect-tight">
 	<h2 class="sect-title">
 		{main}
 		<span class="sub">{sub}</span>
@@ -19,6 +19,50 @@
 		{#each items as link (link.label)}
 			<li>
 				<a href={link.href} use:tilt3d>
+					{#if link.icon === 'instagram'}
+						<svg
+							class="icon"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.6"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<rect x="3.5" y="3.5" width="17" height="17" rx="4.5" />
+							<circle cx="12" cy="12" r="3.5" />
+							<circle cx="17" cy="7" r="0.9" fill="currentColor" stroke="none" />
+						</svg>
+					{:else if link.icon === 'blog'}
+						<svg
+							class="icon"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.6"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<path d="M14 4 L20 10 L9 21 L3 21 L3 15 Z" />
+							<path d="M13 5 L19 11" />
+						</svg>
+					{:else if link.icon === 'email'}
+						<svg
+							class="icon"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.6"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<rect x="3" y="5.5" width="18" height="13" rx="2" />
+							<path d="M3 7.5 L12 13.5 L21 7.5" />
+						</svg>
+					{/if}
 					<span class="label">{link.label}</span>
 					{#if link.meta}<span class="meta">{link.meta}</span>{/if}
 					<span class="arrow">→</span>
@@ -37,7 +81,6 @@
 		gap: 8px;
 		perspective: 1000px;
 	}
-	/* Works보다 절제된 사이즈 — SNS·연락처는 본인 작업 카드보다 가볍게 */
 	.links a {
 		display: flex;
 		align-items: center;
@@ -57,7 +100,7 @@
 		box-shadow:
 			inset 1px 0 0 var(--accent-pond),
 			inset 0 1px 0 rgba(255, 255, 255, 0.45),
-			0 3px 10px -5px rgba(74, 107, 122, 0.08);
+			0 5px 14px -6px rgba(74, 107, 122, 0.14);
 		transition:
 			transform 420ms cubic-bezier(0.34, 1.35, 0.64, 1),
 			border-color 220ms ease,
@@ -71,7 +114,7 @@
 		box-shadow:
 			inset 2px 0 0 var(--accent-pond),
 			inset 0 1px 0 rgba(255, 255, 255, 0.55),
-			0 18px 36px -16px rgba(74, 107, 122, 0.24),
+			0 18px 36px -16px rgba(74, 107, 122, 0.28),
 			0 3px 6px rgba(31, 42, 42, 0.04);
 	}
 	.links a:active {
@@ -81,6 +124,24 @@
 		transform: scale(0.985);
 		transition: transform 140ms ease;
 	}
+
+	.icon {
+		width: 16px;
+		height: 16px;
+		color: var(--accent-pond);
+		flex: 0 0 auto;
+		margin-right: 12px;
+		opacity: 0.7;
+		transition:
+			opacity 280ms ease,
+			color 320ms ease,
+			transform 360ms cubic-bezier(0.34, 1.35, 0.64, 1);
+	}
+	a:hover .icon {
+		opacity: 1;
+		transform: scale(1.06);
+	}
+
 	.label {
 		flex: 0 0 auto;
 	}

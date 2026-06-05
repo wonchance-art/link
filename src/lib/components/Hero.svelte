@@ -8,14 +8,10 @@
 	};
 
 	let { profile: p, lang }: Props = $props();
+	// lang는 향후 i18n 확장을 위해 prop 유지.
+	void lang;
 
 	const tagHtml = $derived(p.tag.replace(/\*(.+?)\*/g, '<em>$1</em>'));
-
-	const labels = $derived({
-		place: lang === 'ko' ? '장소' : 'Place',
-		field: lang === 'ko' ? '분야' : 'Field',
-		updated: lang === 'ko' ? '갱신' : 'Updated'
-	});
 
 	// 마우스 위치로 (1) 이름의 가변 폰트 weight (2) Hero 영역의 spotlight 위치.
 	let nameEl: HTMLElement | null = $state(null);
@@ -75,14 +71,11 @@
 	<aside class="meta" aria-label="Site info">
 		<span class="brand">{p.subtitle}</span>
 		<hr class="rule" aria-hidden="true" />
-		<dl>
-			<dt>{labels.place}</dt>
-			<dd>{p.location}</dd>
-			<dt>{labels.field}</dt>
-			<dd>{p.field}</dd>
-			<dt>{labels.updated}</dt>
-			<dd>{p.updated}</dd>
-		</dl>
+		<ul class="info">
+			<li>{p.location}</li>
+			<li>{p.field}</li>
+			<li>{p.updated}</li>
+		</ul>
 		<hr class="rule" aria-hidden="true" />
 		<span class="palette" aria-hidden="true">
 			<span style:background="var(--accent)"></span>
@@ -151,8 +144,8 @@
 		display: inline-block;
 		opacity: 0;
 		transform: translateY(28px);
-		animation: char-rise 820ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
-		animation-delay: calc(var(--i, 0) * 55ms + 80ms);
+		animation: char-rise 860ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+		animation-delay: calc(var(--i, 0) * 90ms + 100ms);
 	}
 	.name .space {
 		white-space: pre;
@@ -217,28 +210,19 @@
 		margin: 0;
 	}
 
-	.meta dl {
+	.meta .info {
+		list-style: none;
+		padding: 0;
 		margin: 0;
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		gap: 6px;
 	}
-	.meta dt {
-		font-size: 9px;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
-		color: var(--ink-faint);
-		font-weight: 500;
-	}
-	.meta dt:not(:first-of-type) {
-		margin-top: 12px;
-	}
-	.meta dd {
-		margin: 0;
+	.meta .info li {
 		font-size: 12px;
 		color: var(--ink-muted);
 		letter-spacing: 0.01em;
-		margin-top: 3px;
+		line-height: 1.45;
 	}
 
 	.meta .palette {
@@ -273,19 +257,15 @@
 		.meta .rule {
 			display: none;
 		}
-		.meta dl {
+		.meta .info {
 			flex-direction: row;
 			gap: 14px;
-			margin: 0;
+			flex-wrap: wrap;
 		}
-		.meta dt {
-			display: none;
-		}
-		.meta dd {
-			margin-top: 0;
+		.meta .info li {
 			font-size: 11px;
 		}
-		.meta dd:not(:first-of-type)::before {
+		.meta .info li:not(:first-of-type)::before {
 			content: '·';
 			color: var(--ink-faint);
 			margin-right: 8px;
