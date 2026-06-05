@@ -101,15 +101,13 @@
 			{#if hovered === 'sun'}이성{:else if hovered === 'earth'}자기{:else if hovered === 'moon'}감성{/if}
 		</div>
 	{:else}
-		<!-- 지구 확대 → 땅 / 바다 -->
+		<!-- 지구 확대 → 땅 / 바다 (텍스트 없이, 직접 드러내지 않음) -->
 		<div class="world">
-			<a class="sea" href="/sea" aria-label="바다 · 나의 안">
-				<span class="w-label sea-label">바다<small>나의 안</small></span>
-			</a>
-			<a class="land land-a" href="/land" aria-label="땅 · 나의 밖">
-				<span class="w-label">땅<small>나의 밖</small></span>
-			</a>
-			<a class="land land-b" href="/land" aria-hidden="true" tabindex="-1"></a>
+			<a class="sea" href="/sea" aria-label="바다"></a>
+			<a class="land land-1" href="/land" aria-label="땅"></a>
+			<a class="land land-2" href="/land" aria-hidden="true" tabindex="-1"></a>
+			<a class="land land-3" href="/land" aria-hidden="true" tabindex="-1"></a>
+			<span class="sphere" aria-hidden="true"></span>
 		</div>
 		<button class="back" onclick={() => (zoomed = false)}>← 우주</button>
 	{/if}
@@ -178,7 +176,7 @@
 	.sun .dot {
 		width: 13px;
 		height: 13px;
-		background: #ead9a6;
+		background: #f5cd2e;
 	}
 
 	/* 지구계 */
@@ -262,57 +260,65 @@
 			opacity: 1;
 		}
 	}
-	/* 바다 = 전체 원 (pale blue) */
+	/* 바다 = 전체 원 (지구 바다 블루) */
 	.sea {
 		position: absolute;
 		inset: 0;
-		background: #6f9bbd;
+		background: #4f7ea2;
 		cursor: pointer;
 	}
-	/* 땅 = 초록 덩어리 */
+	/* 땅 = 초록 대륙 (clip-path 실루엣) */
 	.land {
 		position: absolute;
-		background: #6f8f63;
+		background: #6c8b5c;
 		cursor: pointer;
+		transition: filter 260ms ease;
 	}
-	.land-a {
-		left: 14%;
-		top: 16%;
-		width: 46%;
-		height: 42%;
-		border-radius: 58% 42% 50% 60% / 56% 50% 60% 44%;
+	.land:hover {
+		filter: brightness(1.08);
 	}
-	.land-b {
-		right: 12%;
-		bottom: 14%;
+	.land-1 {
+		left: 9%;
+		top: 12%;
+		width: 47%;
+		height: 44%;
+		clip-path: polygon(
+			22% 6%,
+			52% 0%,
+			68% 18%,
+			62% 38%,
+			78% 52%,
+			58% 72%,
+			40% 64%,
+			46% 92%,
+			24% 78%,
+			14% 48%,
+			4% 26%
+		);
+	}
+	.land-2 {
+		right: 7%;
+		top: 40%;
 		width: 38%;
-		height: 34%;
-		border-radius: 50% 60% 44% 56% / 60% 44% 60% 50%;
+		height: 40%;
+		clip-path: polygon(34% 8%, 66% 2%, 88% 30%, 80% 56%, 92% 74%, 54% 90%, 30% 70%, 12% 38%);
 	}
-	.w-label {
+	.land-3 {
+		left: 30%;
+		bottom: 6%;
+		width: 26%;
+		height: 24%;
+		clip-path: polygon(28% 14%, 72% 6%, 90% 46%, 64% 88%, 26% 74%, 8% 42%);
+	}
+	/* 구체감 — 한쪽이 살짝 어두워지는 옅은 음영 (플랫 유지, 둥글게만) */
+	.sphere {
 		position: absolute;
-		left: 22%;
-		top: 26%;
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-		color: #f3f5f8;
-		font-size: clamp(20px, 3vw, 30px);
-		font-weight: 600;
-		letter-spacing: -0.01em;
+		inset: 0;
+		border-radius: 50%;
 		pointer-events: none;
-	}
-	.w-label small {
-		font-size: 12px;
-		font-weight: 400;
-		letter-spacing: 0.04em;
-		opacity: 0.85;
-	}
-	.sea-label {
-		left: 50%;
-		top: 58%;
-		transform: translateX(-50%);
-		align-items: center;
+		box-shadow:
+			inset -26px -30px 70px rgba(3, 8, 14, 0.4),
+			inset 16px 18px 50px rgba(255, 255, 255, 0.08);
 	}
 
 	.back {
