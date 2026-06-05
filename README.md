@@ -41,3 +41,7 @@ npm run dev
 - [ ] Phase 1.4 — OG 이미지, Vercel 배포, 도메인
 - [ ] Phase 2 — 익명 방명록 (Supabase)
 - [ ] Phase 3 — Now 자동화, 작은 일기
+
+## Credits
+
+- Milky Way background: NASA/Goddard Space Flight Center Scientific Visualization Studio, Deep Star Maps 2020 (public domain). https://svs.gsfc.nasa.gov/4851/

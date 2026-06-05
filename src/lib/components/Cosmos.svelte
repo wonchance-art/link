@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { makeStars, makeBandStars } from '$lib/cosmos/stars';
+	import { makeStars } from '$lib/cosmos/stars';
 
 	type Props = { landPath: string };
 	let { landPath }: Props = $props();
 
-	const stars = makeStars(70);
-	const bandStars = makeBandStars(130);
+	const stars = makeStars(90);
 
 	let zoomedBody = $state<null | 'sun' | 'earth' | 'moon'>(null);
 	let hovered = $state<null | 'sun' | 'earth' | 'moon'>(null);
@@ -112,16 +111,6 @@
 <div class="stage" bind:this={stageEl} class:zoomed={zoomedBody}>
 	<div class="milkyway" aria-hidden="true"></div>
 	<div class="stars" aria-hidden="true">
-		{#each bandStars as s, i (`b${i}`)}
-			<span
-				style:left="{s.x}%"
-				style:top="{s.y}%"
-				style:width="{s.r}px"
-				style:height="{s.r}px"
-				style:--o={s.o}
-				style:animation-delay="{s.tw}s"
-			></span>
-		{/each}
 		{#each stars as s, i (i)}
 			<span
 				style:left="{s.x}%"
@@ -219,26 +208,18 @@
 		font-family: var(--font-sans);
 	}
 
-	/* 은하수 — 별의 강을 감싸는 남색~보라 은은한 빛. 조용한 톤 유지 */
+	/* 은하수 — NASA Deep Star Maps(퍼블릭 도메인)의 실제 은하수 띠.
+	   대각선으로 돌리고 남보라로 그레이딩, 은은하게. */
 	.milkyway {
 		position: absolute;
-		inset: -12%;
+		inset: -35%;
 		pointer-events: none;
-		opacity: 1;
-		background:
-			/* 보라 성운 클럼프 (띠 위 한두 군데만) */
-			radial-gradient(ellipse 20% 11% at 36% 60%, rgba(78, 60, 122, 0.16), transparent 72%),
-			radial-gradient(ellipse 18% 10% at 62% 38%, rgba(52, 56, 118, 0.14), transparent 72%),
-			/* 남색 → 보라 → 남색 부드러운 띠 */
-			linear-gradient(
-				118deg,
-				transparent 38%,
-				rgba(36, 42, 86, 0.16) 46%,
-				rgba(66, 52, 110, 0.2) 50%,
-				rgba(36, 42, 86, 0.16) 54%,
-				transparent 62%
-			);
-		filter: blur(18px);
+		background: url('/milkyway.jpg') center / cover no-repeat;
+		transform: rotate(-25deg) scale(1.3);
+		/* 남보라로 물들이고(sepia→hue-rotate) 부드럽게 */
+		filter: blur(1.5px) sepia(0.5) hue-rotate(205deg) saturate(1.8) brightness(1.45) contrast(1.12);
+		opacity: 0.9;
+		mix-blend-mode: screen;
 	}
 
 	/* 별 — 순수한 점 */
