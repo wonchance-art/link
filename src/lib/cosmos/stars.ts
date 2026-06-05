@@ -26,24 +26,28 @@ export function makeStars(count = 90, seed = 20260606): Star[] {
 	return stars;
 }
 
-// 은하수 띠를 따라 모여 있는 별들 — "별의 강".
-// 대각선 띠(좌하→우상) 축을 따라 작은 별이 밀집해 은하처럼 보이게.
-export function makeBandStars(count = 120, seed = 88): Star[] {
+// 은하수 아치 중심선 — 화면에 표시되는 NASA 은하수 띠(아치)와 맞춤.
+// 좌우로 갈수록 내려가는 포물선 아치. (x: 0~100 → y %)
+export function galaxyArchY(x: number): number {
+	return 6 + 0.009 * (x - 40) ** 2;
+}
+
+// 은하수 아치를 따라 모여 있는 별들 — "별의 강".
+export function makeBandStars(count = 130, seed = 88): Star[] {
 	const rng = mulberry32(seed);
 	const stars: Star[] = [];
 	for (let i = 0; i < count; i++) {
 		const x = rng() * 100;
-		const baseY = 90 - x * 0.74; // 띠 중심선 (좌하 → 우상)
+		const baseY = galaxyArchY(x); // 아치 곡선
 		// 합으로 근사한 정규분포 → 띠 가까이 밀집
-		const spread = (rng() + rng() + rng() - 1.5) * 18;
+		const spread = (rng() + rng() + rng() - 1.5) * 13;
 		const y = baseY + spread;
-		// 중심에 가까울수록 밝고 작게
-		const near = 1 - Math.min(1, Math.abs(spread) / 27);
+		const near = 1 - Math.min(1, Math.abs(spread) / 20);
 		stars.push({
 			x,
 			y,
-			r: 0.3 + rng() * (0.5 + near * 0.7),
-			o: 0.16 + near * 0.5 + rng() * 0.18,
+			r: 0.3 + rng() * (0.45 + near * 0.65),
+			o: 0.14 + near * 0.5 + rng() * 0.16,
 			tw: rng() * 6
 		});
 	}
