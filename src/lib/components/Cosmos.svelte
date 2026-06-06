@@ -776,10 +776,11 @@
 		position: absolute;
 		left: 50%;
 		top: 50%;
-		width: min(74vw, 74vh);
-		height: min(74vw, 74vh);
+		/* 구체를 줄여 고리(218%)까지 화면 안에 들어오게 — 토성은 고리가 주인공 */
+		width: 42vmin;
+		height: 42vmin;
 		transform: translate(-50%, -50%);
-		perspective: 1200px;
+		perspective: 1000px;
 		z-index: 2;
 		pointer-events: none;
 		animation: world-in 820ms cubic-bezier(0.22, 1, 0.36, 1);
