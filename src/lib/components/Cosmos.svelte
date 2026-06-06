@@ -103,7 +103,7 @@
 		if (!sctx) return;
 		sctx.drawImage(strip, 0, 0);
 		const srow = sctx.getImageData(0, Math.floor(sh / 2), sw, 1).data;
-		const N = 600;
+		const N = 1280;
 		const out = document.createElement('canvas');
 		out.width = N;
 		out.height = N;
@@ -811,6 +811,7 @@
 	/* 뒤고리: 구체 뒤(그림자져 어둡게). 앞고리: 구체 앞, 아래 호만(마스크) */
 	.s-ring-back {
 		z-index: 1;
+		/* 뒤고리 그림자(고해상도 텍스처라 blur 없이 선명) */
 		filter: brightness(0.78);
 	}
 	.s-ring-front {
