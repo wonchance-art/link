@@ -286,10 +286,12 @@
 					class="zoom-obj orb planet-orb"
 					href="/{p.key}"
 					style:--c={p.color}
+					style:--tex="url(/{p.key}.jpg)"
 					style:--sx="{startX}px"
 					style:--sy="{startY}px"
 					aria-label="{p.name} · {p.symbol}"
 				>
+					<span class="surface planet-surface" aria-hidden="true"></span>
 					<span class="sphere" aria-hidden="true"></span>
 				</a>
 			{/if}
@@ -695,9 +697,17 @@
 		display: block;
 		cursor: pointer;
 	}
-	/* 행성 확대 — 행성 색 단색 구체(.sphere 음영으로 입체감) */
+	/* 행성 확대 — NASA 기반 텍스처를 흐릿·매끈하게(미니멀). 색은 로드 전 fallback */
 	.planet-orb {
 		background: var(--c);
+	}
+	.planet-surface {
+		position: absolute;
+		inset: 0;
+		background: var(--tex) center / cover no-repeat;
+		/* 흐릿하게 → 디테일 뭉개고 색·결만. scale로 blur 가장자리 채움 */
+		filter: blur(14px) saturate(1.12) brightness(1.04);
+		transform: scale(1.3);
 	}
 	/* 태양 표면 (자전 스크롤) */
 	.sun-orb {
@@ -707,6 +717,9 @@
 		position: absolute;
 		inset: 0;
 		background: url('/sun.jpg') 0 center / 200% 100% repeat-x;
+		/* 흐릿·매끈하게(scaleY로 blur 위아래 가장자리 채움) */
+		filter: blur(11px) saturate(1.1) brightness(1.03);
+		transform: scaleY(1.3);
 		animation: surf 42s linear infinite;
 	}
 	.sun-sphere {
