@@ -20,6 +20,8 @@
 	let liveLandPath = $state(''); // 자전 중 갱신, 비면 정적 landPath 사용
 
 	let stageEl: HTMLDivElement | null = $state(null);
+	let stageW = $state(0);
+	let stageH = $state(0);
 	let earthSystemEl: HTMLDivElement | null = $state(null);
 	let moonEl: HTMLDivElement | null = $state(null);
 	let raf: number | null = null;
@@ -45,13 +47,16 @@
 		essence?: string; // 상징의 의미 한 줄
 	};
 	const PLANETS: Planet[] = [
-		{ key: 'mercury', distFrac: 0.15, e: 0.206, T: 0.241, peri: 1.34, phase0: 0.6, size: 4,  color: '#b9a892', cls: '',        name: '수성' },
+		{ key: 'mercury', distFrac: 0.09, e: 0.206, T: 0.241, peri: 1.34, phase0: 1.0, size: 5,  color: '#cdbfa6', cls: '',        name: '수성' },
 		{ key: 'venus',   distFrac: 0.21, e: 0.007, T: 0.615, peri: 2.29, phase0: 2.1, size: 8,  color: '#f0e7d2', cls: '',        name: '금성', symbol: 'Eros',    essence: '끌림. 어떤 것을 향해 마음이 기우는 일.' },
-		{ key: 'mars',    distFrac: 0.42, e: 0.093, T: 1.881, peri: 5.86, phase0: 1.3, size: 5,  color: '#d2502c', cls: '',        name: '화성', symbol: 'Thymos',  essence: '기개. 나를 앞으로 밀어붙이는 의지.' },
-		{ key: 'jupiter', distFrac: 0.56, e: 0.048, T: 11.86, peri: 0.24, phase0: 4.5, size: 17, color: '#d6b07a', cls: 'jupiter', name: '목성', symbol: 'Nomos',   essence: '질서. 흩어지려는 것들을 붙드는 법.' },
-		{ key: 'saturn',  distFrac: 0.70, e: 0.054, T: 29.46, peri: 1.62, phase0: 3.4, size: 14, color: '#e8d6a4', cls: 'saturn',  name: '토성', symbol: 'Chronos', essence: '시간. 쌓이고 잊히고, 그래도 남는 자리.' }
+		{ key: 'mars',    distFrac: 0.42, e: 0.093, T: 1.881, peri: 5.86, phase0: 3.3, size: 5,  color: '#d2502c', cls: '',        name: '화성', symbol: 'Thymos',  essence: '기개. 나를 앞으로 밀어붙이는 의지.' },
+		{ key: 'jupiter', distFrac: 0.56, e: 0.048, T: 11.86, peri: 0.24, phase0: 4.4, size: 17, color: '#d6b07a', cls: 'jupiter', name: '목성', symbol: 'Nomos',   essence: '질서. 흩어지려는 것들을 붙드는 법.' },
+		{ key: 'saturn',  distFrac: 0.70, e: 0.054, T: 29.46, peri: 1.62, phase0: 5.5, size: 14, color: '#e8d6a4', cls: 'saturn',  name: '토성', symbol: 'Chronos', essence: '시간. 쌓이고 잊히고, 그래도 남는 자리.' }
 	];
 	let planetEls: (HTMLDivElement | null)[] = $state(Array(PLANETS.length).fill(null));
+	// 점 크기 반응형 — 큰 화면은 px 유지, 작은 화면(모바일)은 비례 축소
+	const dsize = (px: number) =>
+		`clamp(${(px * 0.6).toFixed(1)}px, ${(px / 7.5).toFixed(2)}vmin, ${px}px)`;
 	let openedPlanet = $state<Planet | null>(null);
 	let hoveredPlanet = $state<string | null>(null);
 
@@ -65,6 +70,31 @@
 		const s = Math.sin(p.peri);
 		return { x: X * c - Y * s, y: X * s + Y * c };
 	}
+
+	// 케플러 타원 궤도선 — keplerXY와 동일한 변환으로 72점 SVG path
+	function orbitPath(b: { distFrac: number; e: number; peri: number }, m: number, cx: number, cy: number) {
+		const r = b.distFrac * m;
+		const cp = Math.cos(b.peri), sp = Math.sin(b.peri);
+		const f = Math.sqrt(1 - b.e * b.e);
+		let d = '';
+		for (let i = 0; i <= 72; i++) {
+			const E = (i / 72) * Math.PI * 2;
+			const X = Math.cos(E) - b.e;
+			const Y = f * Math.sin(E);
+			const x = X * cp - Y * sp;
+			const y = X * sp + Y * cp;
+			d += (i ? 'L' : 'M') + (cx + x * r).toFixed(1) + ' ' + (cy - y * r * ORBIT_TILT).toFixed(1);
+		}
+		return d + 'Z';
+	}
+	const EARTH_ORBIT = { distFrac: EARTH_R_FRAC, e: 0, peri: 0 };
+	let orbitPaths = $derived(
+		stageW && stageH
+			? [...PLANETS, EARTH_ORBIT].map((b) =>
+					orbitPath(b, Math.min(stageW, stageH), stageW / 2, stageH / 2)
+				)
+			: []
+	);
 
 	function captureStart(el: Element) {
 		const r = el.getBoundingClientRect();
@@ -143,6 +173,16 @@
 		const prevOf = document.body.style.overflow;
 		document.body.style.overflow = 'hidden';
 
+		// 궤도선 path 계산용 화면 크기 — 마운트 + 리사이즈
+		const measure = () => {
+			if (stageEl) {
+				stageW = stageEl.clientWidth;
+				stageH = stageEl.clientHeight;
+			}
+		};
+		measure();
+		window.addEventListener('resize', measure);
+
 		const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 		if (!reduce && !zoomedBody) {
 			raf = requestAnimationFrame(frame);
@@ -164,6 +204,7 @@
 			raf = null;
 			if (earthRaf) cancelAnimationFrame(earthRaf);
 			earthRaf = null;
+			window.removeEventListener('resize', measure);
 			document.body.style.overflow = prevOf;
 		};
 	});
@@ -217,6 +258,20 @@
 		</div>
 
 		<div class="system">
+			<!-- 케플러 타원 궤도선 (옅게) -->
+			{#if stageW && stageH}
+				<svg
+					class="orbits"
+					viewBox="0 0 {stageW} {stageH}"
+					preserveAspectRatio="none"
+					aria-hidden="true"
+				>
+					{#each orbitPaths as d (d)}
+						<path {d} />
+					{/each}
+				</svg>
+			{/if}
+
 			<!-- 태양 = 이성 -->
 			<button
 				class="hit sun"
@@ -231,7 +286,7 @@
 			<!-- 행성: 수성·금성·화성·목성·토성 (실측 이심률·근점방향·주기) -->
 			{#each PLANETS as p, i (p.key)}
 				<div class="planet-wrap" bind:this={planetEls[i]} aria-label={p.name}>
-					<span class="planet-dot {p.cls}" style:--c={p.color} style:--s="{p.size}px"></span>
+					<span class="planet-dot {p.cls}" style:--c={p.color} style:--s={dsize(p.size)}></span>
 					{#if p.symbol}
 						<button
 							class="planet-hit"
@@ -414,6 +469,23 @@
 		place-items: center;
 	}
 
+	/* 케플러 궤도선 — 은은하게, 행성 뒤 */
+	.orbits {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+		z-index: 0;
+		overflow: visible;
+	}
+	.orbits path {
+		fill: none;
+		stroke: rgba(180, 200, 235, 0.07);
+		stroke-width: 1;
+		vector-effect: non-scaling-stroke;
+	}
+
 	/* 클릭 히트영역(투명) + 점 */
 	.hit {
 		position: absolute;
@@ -443,9 +515,10 @@
 		top: 50%;
 	}
 	.sun .dot {
-		width: 20px;
-		height: 20px;
+		width: clamp(12px, 2.67vmin, 20px);
+		height: clamp(12px, 2.67vmin, 20px);
 		background: #f5cd2e;
+		box-shadow: 0 0 12px 2px rgba(245, 205, 46, 0.35);
 	}
 
 	/* 지구계 */
@@ -464,10 +537,11 @@
 		top: 0;
 	}
 	.earth .dot {
-		width: 9px;
-		height: 9px;
+		width: clamp(5.4px, 1.2vmin, 9px);
+		height: clamp(5.4px, 1.2vmin, 9px);
 		/* 대륙(초록) + 바다(파랑) — 확대 뷰의 land/sea 색과 연결 */
 		background: radial-gradient(circle at 38% 38%, #6faa6e 0%, #6faa6e 34%, #4f86ab 60%, #4a7ba0 100%);
+		box-shadow: 0 0 6px 1px rgba(160, 200, 220, 0.25);
 	}
 	.moon-wrap {
 		position: absolute;
@@ -511,7 +585,7 @@
 		/* 음영(구체감) + 옅은 외광 → 은하수 띠 위에서도 떠 보임 */
 		box-shadow:
 			inset -1px -1px 2px rgba(0, 0, 0, 0.35),
-			0 0 6px 1px rgba(255, 255, 255, 0.16);
+			0 0 8px 1px rgba(255, 255, 255, 0.22);
 	}
 	.planet-dot.jupiter {
 		background: linear-gradient(
