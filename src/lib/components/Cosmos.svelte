@@ -28,6 +28,7 @@
 	const EARTH_PERIOD = 60000;
 	const MOON_PERIOD = 12000;
 	const EARTH_R_FRAC = 0.34;
+	const ORBIT_TILT = 0.52; // 황도면을 비스듬히 본 y축 압축(지구·행성 공용)
 
 	type Planet = {
 		key: string;
@@ -42,11 +43,11 @@
 		name: string;
 	};
 	const PLANETS: Planet[] = [
-		{ key: 'mercury', distFrac: 0.21, e: 0.206, T: 0.241, peri: 1.34, phase0: 0.6, size: 4,  color: '#a08570', cls: '',        name: '수성' },
-		{ key: 'venus',   distFrac: 0.27, e: 0.007, T: 0.615, peri: 2.29, phase0: 2.1, size: 8,  color: '#e6c089', cls: '',        name: '금성' },
-		{ key: 'mars',    distFrac: 0.42, e: 0.093, T: 1.881, peri: 5.86, phase0: 1.3, size: 5,  color: '#c1532e', cls: '',        name: '화성' },
+		{ key: 'mercury', distFrac: 0.21, e: 0.206, T: 0.241, peri: 1.34, phase0: 0.6, size: 4,  color: '#b9a892', cls: '',        name: '수성' },
+		{ key: 'venus',   distFrac: 0.27, e: 0.007, T: 0.615, peri: 2.29, phase0: 2.1, size: 8,  color: '#f0e7d2', cls: '',        name: '금성' },
+		{ key: 'mars',    distFrac: 0.42, e: 0.093, T: 1.881, peri: 5.86, phase0: 1.3, size: 5,  color: '#d2502c', cls: '',        name: '화성' },
 		{ key: 'jupiter', distFrac: 0.56, e: 0.048, T: 11.86, peri: 0.24, phase0: 4.5, size: 17, color: '#d6b07a', cls: 'jupiter', name: '목성' },
-		{ key: 'saturn',  distFrac: 0.70, e: 0.054, T: 29.46, peri: 1.62, phase0: 3.4, size: 14, color: '#e4cc9c', cls: 'saturn',  name: '토성' }
+		{ key: 'saturn',  distFrac: 0.70, e: 0.054, T: 29.46, peri: 1.62, phase0: 3.4, size: 14, color: '#e8d6a4', cls: 'saturn',  name: '토성' }
 	];
 	let planetEls: (HTMLDivElement | null)[] = $state(Array(PLANETS.length).fill(null));
 
@@ -113,7 +114,7 @@
 			if (earthSystemEl) {
 				const er = m * EARTH_R_FRAC;
 				const a = (t / EARTH_PERIOD) * Math.PI * 2;
-				earthSystemEl.style.transform = `translate(${Math.cos(a) * er}px, ${-Math.sin(a) * er * 0.4}px)`;
+				earthSystemEl.style.transform = `translate(${Math.cos(a) * er}px, ${-Math.sin(a) * er * ORBIT_TILT}px)`;
 				if (moonEl) {
 					const mr = m * 0.065;
 					const ma = (t / MOON_PERIOD) * Math.PI * 2;
@@ -128,7 +129,7 @@
 				if (!el) continue;
 				const r = m * p.distFrac;
 				const { x, y } = keplerXY(t, p);
-				el.style.transform = `translate(${x * r}px, ${-y * r * 0.4}px)`;
+				el.style.transform = `translate(${x * r}px, ${-y * r * ORBIT_TILT}px)`;
 			}
 		}
 		raf = requestAnimationFrame(frame);
@@ -151,7 +152,7 @@
 				if (!el) continue;
 				const r = m * p.distFrac;
 				const { x, y } = keplerXY(0, p);
-				el.style.transform = `translate(${x * r}px, ${-y * r * 0.4}px)`;
+				el.style.transform = `translate(${x * r}px, ${-y * r * ORBIT_TILT}px)`;
 			}
 		}
 		return () => {
@@ -481,21 +482,24 @@
 		margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
 		border-radius: 50%;
 		background: var(--c);
-		box-shadow: inset -1px -1px 2px rgba(0, 0, 0, 0.35);
+		/* 음영(구체감) + 옅은 외광 → 은하수 띠 위에서도 떠 보임 */
+		box-shadow:
+			inset -1px -1px 2px rgba(0, 0, 0, 0.35),
+			0 0 6px 1px rgba(255, 255, 255, 0.16);
 	}
 	.planet-dot.jupiter {
 		background: linear-gradient(
 			to bottom,
-			#d8b07c 0%,
-			#d8b07c 24%,
-			#a87c50 32%,
-			#d8b07c 42%,
-			#b8946a 52%,
-			#d8b07c 62%,
-			#a87c50 72%,
-			#d8b07c 82%,
-			#b8946a 92%,
-			#d8b07c 100%
+			#e2c48e 0%,
+			#e2c48e 22%,
+			#9a6a3e 31%,
+			#e0bd86 41%,
+			#b07a4a 51%,
+			#e2c48e 61%,
+			#9a6a3e 71%,
+			#e0bd86 81%,
+			#b07a4a 91%,
+			#e2c48e 100%
 		);
 	}
 	.planet-dot.saturn {
