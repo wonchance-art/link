@@ -281,7 +281,7 @@
 		{:else if zoomedBody === 'saturn'}
 			<!-- 토성 확대 — 고리 포함(clip 없이 고리 노출, 구체만 클릭) → /saturn -->
 			<div class="saturn-obj" style:--sx="{startX}px" style:--sy="{startY}px">
-				<span class="s-ring s-ring-back" aria-hidden="true"></span>
+				<span class="s-ring" aria-hidden="true"></span>
 				<a
 					class="s-globe"
 					href="/saturn"
@@ -292,7 +292,6 @@
 					<span class="surface planet-surface" aria-hidden="true"></span>
 					<span class="sphere" aria-hidden="true"></span>
 				</a>
-				<span class="s-ring s-ring-front" aria-hidden="true"></span>
 			</div>
 		{:else}
 			<!-- 행성 확대 → 각자의 페이지 -->
@@ -754,32 +753,24 @@
 		position: absolute;
 		left: 50%;
 		top: 50%;
-		width: 192%;
+		width: 196%;
 		aspect-ratio: 1 / 1;
-		transform: translate(-50%, -50%) rotateX(72deg) rotate(-17deg);
+		transform: translate(-50%, -50%) rotateX(75deg) rotate(-16deg);
 		border-radius: 50%;
+		z-index: 1; /* 구체 뒤로만 지남(앞고리 없음) */
 		pointer-events: none;
+		/* 미니멀 — 얇은 띠 두 줄, 본체보다 살짝 밝은 크림 */
 		background: radial-gradient(
 			circle closest-side,
-			transparent 52%,
-			rgba(232, 216, 180, 0) 53%,
-			rgba(230, 212, 174, 0.92) 56%,
-			rgba(206, 186, 148, 0.97) 61%,
-			rgba(138, 114, 84, 0.62) 65%,
-			rgba(236, 218, 178, 0.97) 69%,
-			rgba(212, 192, 152, 0.92) 75%,
-			rgba(186, 164, 126, 0.55) 79%,
-			transparent 81%
+			transparent 57%,
+			rgba(234, 224, 200, 0) 58%,
+			rgba(232, 221, 194, 0.72) 61%,
+			rgba(214, 201, 170, 0.76) 64%,
+			rgba(228, 216, 190, 0) 67.5%,
+			rgba(226, 214, 188, 0.6) 71%,
+			rgba(206, 192, 160, 0.5) 74%,
+			transparent 77%
 		);
-	}
-	/* 뒤쪽 고리: 구체 뒤. 앞쪽 고리: 구체 앞, 아래 절반만(마스크) */
-	.s-ring-back {
-		z-index: 1;
-	}
-	.s-ring-front {
-		z-index: 3;
-		-webkit-mask: linear-gradient(to bottom, transparent 49%, #000 51%);
-		mask: linear-gradient(to bottom, transparent 49%, #000 51%);
 	}
 	/* 태양 표면 (자전 스크롤) */
 	.sun-orb {
