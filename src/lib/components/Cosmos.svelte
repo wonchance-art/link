@@ -43,11 +43,11 @@
 		symbol?: string;  // 상징 (그리스어) — 클릭 시 해당 페이지로
 	};
 	const PLANETS: Planet[] = [
-		{ key: 'mercury', distFrac: 0.09, e: 0.206, T: 0.241, peri: 1.34, phase0: 1.0, size: 5,  color: '#cdbfa6', cls: '',        name: '수성', symbol: 'Hermes' },
-		{ key: 'venus',   distFrac: 0.21, e: 0.007, T: 0.615, peri: 2.29, phase0: 2.1, size: 8,  color: '#f0e7d2', cls: '',        name: '금성', symbol: 'Eros' },
-		{ key: 'mars',    distFrac: 0.42, e: 0.093, T: 1.881, peri: 5.86, phase0: 3.3, size: 5,  color: '#d2502c', cls: '',        name: '화성', symbol: 'Thymos' },
-		{ key: 'jupiter', distFrac: 0.56, e: 0.048, T: 11.86, peri: 0.24, phase0: 4.4, size: 17, color: '#d6b07a', cls: 'jupiter', name: '목성', symbol: 'Nomos' },
-		{ key: 'saturn',  distFrac: 0.70, e: 0.054, T: 29.46, peri: 1.62, phase0: 5.5, size: 14, color: '#e8d6a4', cls: 'saturn',  name: '토성', symbol: 'Chronos' }
+		{ key: 'mercury', distFrac: 0.09, e: 0.206, T: 0.241, peri: 1.34, phase0: 1.0, size: 5,  color: '#9a9893', cls: '',        name: '수성', symbol: 'Hermes' },
+		{ key: 'venus',   distFrac: 0.21, e: 0.007, T: 0.615, peri: 2.29, phase0: 2.1, size: 8,  color: '#e5be80', cls: '',        name: '금성', symbol: 'Eros' },
+		{ key: 'mars',    distFrac: 0.42, e: 0.093, T: 1.881, peri: 5.86, phase0: 3.3, size: 5,  color: '#b76248', cls: '',        name: '화성', symbol: 'Thymos' },
+		{ key: 'jupiter', distFrac: 0.56, e: 0.048, T: 11.86, peri: 0.24, phase0: 4.4, size: 17, color: '#b3ac9f', cls: 'jupiter', name: '목성', symbol: 'Nomos' },
+		{ key: 'saturn',  distFrac: 0.70, e: 0.054, T: 29.46, peri: 1.62, phase0: 5.5, size: 14, color: '#d0c0a4', cls: 'saturn',  name: '토성', symbol: 'Chronos' }
 	];
 	let planetEls: (HTMLDivElement | null)[] = $state(Array(PLANETS.length).fill(null));
 	// 점 크기 반응형 — 큰 화면은 px 유지, 작은 화면(모바일)은 비례 축소
@@ -278,6 +278,22 @@
 				<span class="surface moon-surface" aria-hidden="true"></span>
 				<span class="sphere" aria-hidden="true"></span>
 			</a>
+		{:else if zoomedBody === 'saturn'}
+			<!-- 토성 확대 — 고리 포함(clip 없이 고리 노출, 구체만 클릭) → /saturn -->
+			<div class="saturn-obj" style:--sx="{startX}px" style:--sy="{startY}px">
+				<span class="s-ring s-ring-back" aria-hidden="true"></span>
+				<a
+					class="s-globe"
+					href="/saturn"
+					style:--c="#d0c0a4"
+					style:--tex="url(/saturn.jpg)"
+					aria-label="토성 · Chronos"
+				>
+					<span class="surface planet-surface" aria-hidden="true"></span>
+					<span class="sphere" aria-hidden="true"></span>
+				</a>
+				<span class="s-ring s-ring-front" aria-hidden="true"></span>
+			</div>
 		{:else}
 			<!-- 행성 확대 → 각자의 페이지 -->
 			{@const p = PLANETS.find((x) => x.key === zoomedBody)}
@@ -497,22 +513,23 @@
 			0 0 8px 1px rgba(255, 255, 255, 0.22);
 	}
 	.planet-dot.jupiter {
+		/* 텍스처 색감(회베이지) 기반 줄무늬 */
 		background: linear-gradient(
 			to bottom,
-			#e2c48e 0%,
-			#e2c48e 22%,
-			#9a6a3e 31%,
-			#e0bd86 41%,
-			#b07a4a 51%,
-			#e2c48e 61%,
-			#9a6a3e 71%,
-			#e0bd86 81%,
-			#b07a4a 91%,
-			#e2c48e 100%
+			#bdb6a8 0%,
+			#bdb6a8 22%,
+			#837a6c 31%,
+			#b4ab9c 41%,
+			#958c7d 51%,
+			#bdb6a8 61%,
+			#837a6c 71%,
+			#b4ab9c 81%,
+			#958c7d 91%,
+			#bdb6a8 100%
 		);
 	}
 	.planet-dot.saturn {
-		background: #e4cc9c;
+		background: #d0c0a4;
 		overflow: visible;
 	}
 	.planet-dot.saturn::after {
@@ -524,7 +541,7 @@
 		height: 110%;
 		transform: translate(-50%, -50%) rotate(-18deg);
 		border-radius: 50%;
-		border: 1.2px solid rgba(214, 184, 130, 0.85);
+		border: 1.2px solid rgba(206, 190, 158, 0.85);
 		pointer-events: none;
 	}
 	/* 행성 클릭 히트영역(투명) — 점이 작아도 누르기 쉽게 */
@@ -708,6 +725,61 @@
 		/* 흐릿하게 → 디테일 뭉개고 색·결만. scale로 blur 가장자리 채움 */
 		filter: blur(14px) saturate(1.12) brightness(1.04);
 		transform: scale(1.3);
+	}
+
+	/* 토성 확대 — 3D로 눕힌 고리 + 원형 구체(고리가 구체를 관통) */
+	.saturn-obj {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		width: min(74vw, 74vh);
+		height: min(74vw, 74vh);
+		transform: translate(-50%, -50%);
+		perspective: 1200px;
+		z-index: 2;
+		pointer-events: none;
+		animation: world-in 820ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+	.s-globe {
+		position: absolute;
+		inset: 0;
+		border-radius: 50%;
+		overflow: hidden;
+		z-index: 2;
+		background: var(--c);
+		pointer-events: auto;
+		cursor: pointer;
+	}
+	.s-ring {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		width: 192%;
+		aspect-ratio: 1 / 1;
+		transform: translate(-50%, -50%) rotateX(72deg) rotate(-17deg);
+		border-radius: 50%;
+		pointer-events: none;
+		background: radial-gradient(
+			circle closest-side,
+			transparent 52%,
+			rgba(232, 216, 180, 0) 53%,
+			rgba(230, 212, 174, 0.92) 56%,
+			rgba(206, 186, 148, 0.97) 61%,
+			rgba(138, 114, 84, 0.62) 65%,
+			rgba(236, 218, 178, 0.97) 69%,
+			rgba(212, 192, 152, 0.92) 75%,
+			rgba(186, 164, 126, 0.55) 79%,
+			transparent 81%
+		);
+	}
+	/* 뒤쪽 고리: 구체 뒤. 앞쪽 고리: 구체 앞, 아래 절반만(마스크) */
+	.s-ring-back {
+		z-index: 1;
+	}
+	.s-ring-front {
+		z-index: 3;
+		-webkit-mask: linear-gradient(to bottom, transparent 49%, #000 51%);
+		mask: linear-gradient(to bottom, transparent 49%, #000 51%);
 	}
 	/* 태양 표면 (자전 스크롤) */
 	.sun-orb {
