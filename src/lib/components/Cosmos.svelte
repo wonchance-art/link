@@ -29,6 +29,38 @@
 	const MOON_PERIOD = 12000;
 	const EARTH_R_FRAC = 0.34;
 
+	type Planet = {
+		key: string;
+		distFrac: number; // 시각 거리(m 기준). 실제 AU의 ≈a^0.45 압축
+		e: number;        // 이심률 (J2000.0)
+		T: number;        // 공전주기 (지구년)
+		peri: number;     // 근점경도 ϖ (rad)
+		phase0: number;   // 초기 평균근점이각 — 시각 분산용
+		size: number;
+		color: string;
+		cls: '' | 'jupiter' | 'saturn';
+		name: string;
+	};
+	const PLANETS: Planet[] = [
+		{ key: 'mercury', distFrac: 0.21, e: 0.206, T: 0.241, peri: 1.34, phase0: 0.6, size: 4,  color: '#a08570', cls: '',        name: '수성' },
+		{ key: 'venus',   distFrac: 0.27, e: 0.007, T: 0.615, peri: 2.29, phase0: 2.1, size: 8,  color: '#e6c089', cls: '',        name: '금성' },
+		{ key: 'mars',    distFrac: 0.42, e: 0.093, T: 1.881, peri: 5.86, phase0: 1.3, size: 5,  color: '#c1532e', cls: '',        name: '화성' },
+		{ key: 'jupiter', distFrac: 0.56, e: 0.048, T: 11.86, peri: 0.24, phase0: 4.5, size: 17, color: '#d6b07a', cls: 'jupiter', name: '목성' },
+		{ key: 'saturn',  distFrac: 0.70, e: 0.054, T: 29.46, peri: 1.62, phase0: 3.4, size: 14, color: '#e4cc9c', cls: 'saturn',  name: '토성' }
+	];
+	let planetEls: (HTMLDivElement | null)[] = $state(Array(PLANETS.length).fill(null));
+
+	function keplerXY(t: number, p: Planet) {
+		const M = (t / (p.T * EARTH_PERIOD)) * Math.PI * 2 + p.phase0;
+		let E = M;
+		for (let i = 0; i < 4; i++) E -= (E - p.e * Math.sin(E) - M) / (1 - p.e * Math.cos(E));
+		const X = Math.cos(E) - p.e;
+		const Y = Math.sqrt(1 - p.e * p.e) * Math.sin(E);
+		const c = Math.cos(p.peri);
+		const s = Math.sin(p.peri);
+		return { x: X * c - Y * s, y: X * s + Y * c };
+	}
+
 	function captureStart(el: Element) {
 		const r = el.getBoundingClientRect();
 		startX = Math.round(r.left + r.width / 2 - window.innerWidth / 2);
@@ -76,17 +108,27 @@
 	}
 
 	function frame(t: number) {
-		if (stageEl && earthSystemEl) {
+		if (stageEl) {
 			const m = Math.min(stageEl.clientWidth, stageEl.clientHeight);
-			const er = m * EARTH_R_FRAC;
-			const a = (t / EARTH_PERIOD) * Math.PI * 2;
-			earthSystemEl.style.transform = `translate(${Math.cos(a) * er}px, ${-Math.sin(a) * er * 0.4}px)`;
-			if (moonEl) {
-				const mr = m * 0.065;
-				const ma = (t / MOON_PERIOD) * Math.PI * 2;
-				const my = -Math.sin(ma) * mr * 0.5;
-				moonEl.style.transform = `translate(${Math.cos(ma) * mr}px, ${my}px)`;
-				moonEl.style.zIndex = my < 0 ? '1' : '4';
+			if (earthSystemEl) {
+				const er = m * EARTH_R_FRAC;
+				const a = (t / EARTH_PERIOD) * Math.PI * 2;
+				earthSystemEl.style.transform = `translate(${Math.cos(a) * er}px, ${-Math.sin(a) * er * 0.4}px)`;
+				if (moonEl) {
+					const mr = m * 0.065;
+					const ma = (t / MOON_PERIOD) * Math.PI * 2;
+					const my = -Math.sin(ma) * mr * 0.5;
+					moonEl.style.transform = `translate(${Math.cos(ma) * mr}px, ${my}px)`;
+					moonEl.style.zIndex = my < 0 ? '1' : '4';
+				}
+			}
+			for (let i = 0; i < PLANETS.length; i++) {
+				const p = PLANETS[i];
+				const el = planetEls[i];
+				if (!el) continue;
+				const r = m * p.distFrac;
+				const { x, y } = keplerXY(t, p);
+				el.style.transform = `translate(${x * r}px, ${-y * r * 0.4}px)`;
 			}
 		}
 		raf = requestAnimationFrame(frame);
@@ -103,6 +145,14 @@
 			const m = stageEl ? Math.min(stageEl.clientWidth, stageEl.clientHeight) : 600;
 			earthSystemEl.style.transform = `translate(${m * EARTH_R_FRAC * 0.72}px, ${-m * 0.05}px)`;
 			if (moonEl) moonEl.style.transform = `translate(${m * 0.06}px, ${-m * 0.02}px)`;
+			for (let i = 0; i < PLANETS.length; i++) {
+				const p = PLANETS[i];
+				const el = planetEls[i];
+				if (!el) continue;
+				const r = m * p.distFrac;
+				const { x, y } = keplerXY(0, p);
+				el.style.transform = `translate(${x * r}px, ${-y * r * 0.4}px)`;
+			}
 		}
 		return () => {
 			if (raf) cancelAnimationFrame(raf);
@@ -172,6 +222,13 @@
 			>
 				<span class="dot"></span>
 			</button>
+
+			<!-- 행성: 수성·금성·화성·목성·토성 (실측 이심률·근점방향·주기) -->
+			{#each PLANETS as p, i (p.key)}
+				<div class="planet-wrap" bind:this={planetEls[i]} aria-label={p.name}>
+					<span class="planet-dot {p.cls}" style:--c={p.color} style:--s="{p.size}px"></span>
+				</div>
+			{/each}
 
 			<!-- 지구계 -->
 			<div class="earth-system" bind:this={earthSystemEl}>
@@ -402,6 +459,60 @@
 		width: 5px;
 		height: 5px;
 		background: #c9c9d2;
+	}
+
+	/* 행성들 (수성·금성·화성·목성·토성) */
+	.planet-wrap {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		width: 0;
+		height: 0;
+		z-index: 2;
+		will-change: transform;
+		pointer-events: none;
+	}
+	.planet-dot {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: var(--s);
+		height: var(--s);
+		margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
+		border-radius: 50%;
+		background: var(--c);
+		box-shadow: inset -1px -1px 2px rgba(0, 0, 0, 0.35);
+	}
+	.planet-dot.jupiter {
+		background: linear-gradient(
+			to bottom,
+			#d8b07c 0%,
+			#d8b07c 24%,
+			#a87c50 32%,
+			#d8b07c 42%,
+			#b8946a 52%,
+			#d8b07c 62%,
+			#a87c50 72%,
+			#d8b07c 82%,
+			#b8946a 92%,
+			#d8b07c 100%
+		);
+	}
+	.planet-dot.saturn {
+		background: #e4cc9c;
+		overflow: visible;
+	}
+	.planet-dot.saturn::after {
+		content: '';
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		width: 320%;
+		height: 110%;
+		transform: translate(-50%, -50%) rotate(-18deg);
+		border-radius: 50%;
+		border: 1.2px solid rgba(214, 184, 130, 0.85);
+		pointer-events: none;
 	}
 
 	/* 호버 라벨 — 시적, 화면 아래 */
