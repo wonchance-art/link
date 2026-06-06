@@ -45,8 +45,8 @@
 		essence?: string; // 상징의 의미 한 줄
 	};
 	const PLANETS: Planet[] = [
-		{ key: 'mercury', distFrac: 0.21, e: 0.206, T: 0.241, peri: 1.34, phase0: 0.6, size: 4,  color: '#b9a892', cls: '',        name: '수성' },
-		{ key: 'venus',   distFrac: 0.27, e: 0.007, T: 0.615, peri: 2.29, phase0: 2.1, size: 8,  color: '#f0e7d2', cls: '',        name: '금성', symbol: 'Eros',    essence: '끌림. 어떤 것을 향해 마음이 기우는 일.' },
+		{ key: 'mercury', distFrac: 0.15, e: 0.206, T: 0.241, peri: 1.34, phase0: 0.6, size: 4,  color: '#b9a892', cls: '',        name: '수성' },
+		{ key: 'venus',   distFrac: 0.21, e: 0.007, T: 0.615, peri: 2.29, phase0: 2.1, size: 8,  color: '#f0e7d2', cls: '',        name: '금성', symbol: 'Eros',    essence: '끌림. 어떤 것을 향해 마음이 기우는 일.' },
 		{ key: 'mars',    distFrac: 0.42, e: 0.093, T: 1.881, peri: 5.86, phase0: 1.3, size: 5,  color: '#d2502c', cls: '',        name: '화성', symbol: 'Thymos',  essence: '기개. 나를 앞으로 밀어붙이는 의지.' },
 		{ key: 'jupiter', distFrac: 0.56, e: 0.048, T: 11.86, peri: 0.24, phase0: 4.5, size: 17, color: '#d6b07a', cls: 'jupiter', name: '목성', symbol: 'Nomos',   essence: '질서. 흩어지려는 것들을 붙드는 법.' },
 		{ key: 'saturn',  distFrac: 0.70, e: 0.054, T: 29.46, peri: 1.62, phase0: 3.4, size: 14, color: '#e8d6a4', cls: 'saturn',  name: '토성', symbol: 'Chronos', essence: '시간. 쌓이고 잊히고, 그래도 남는 자리.' }
@@ -443,8 +443,8 @@
 		top: 50%;
 	}
 	.sun .dot {
-		width: 13px;
-		height: 13px;
+		width: 20px;
+		height: 20px;
 		background: #f5cd2e;
 	}
 
@@ -466,7 +466,8 @@
 	.earth .dot {
 		width: 9px;
 		height: 9px;
-		background: #9fc0da;
+		/* 대륙(초록) + 바다(파랑) — 확대 뷰의 land/sea 색과 연결 */
+		background: radial-gradient(circle at 38% 38%, #6faa6e 0%, #6faa6e 34%, #4f86ab 60%, #4a7ba0 100%);
 	}
 	.moon-wrap {
 		position: absolute;
