@@ -13,6 +13,7 @@
 	let openedStar = $state<GratitudeStar | null>(null);
 
 	let zoomedBody = $state<string | null>(null);
+	let ringTexture = $state(''); // 토성 고리 — 스트립을 원형으로 변환한 dataURL(런타임)
 	// 확대 시작 좌표(점이 있던 자리) — 화면 중심 기준 오프셋
 	let startX = $state(0);
 	let startY = $state(0);
@@ -84,6 +85,48 @@
 		}
 	}
 
+	// 토성 고리 — 스트립(반경 프로파일)을 극좌표로 원형 고리 텍스처화(클라이언트, 1회)
+	async function buildRingTexture() {
+		if (ringTexture || typeof document === 'undefined') return;
+		const strip = new Image();
+		strip.src = '/saturn_ring.png';
+		try {
+			await strip.decode();
+		} catch {
+			return;
+		}
+		const sw = strip.width, sh = strip.height;
+		const sc = document.createElement('canvas');
+		sc.width = sw;
+		sc.height = sh;
+		const sctx = sc.getContext('2d');
+		if (!sctx) return;
+		sctx.drawImage(strip, 0, 0);
+		const srow = sctx.getImageData(0, Math.floor(sh / 2), sw, 1).data;
+		const N = 600;
+		const out = document.createElement('canvas');
+		out.width = N;
+		out.height = N;
+		const octx = out.getContext('2d');
+		if (!octx) return;
+		const od = octx.createImageData(N, N);
+		const cx = N / 2, cy = N / 2, rOut = N / 2 - 1, rIn = rOut * 0.42;
+		for (let y = 0; y < N; y++)
+			for (let x = 0; x < N; x++) {
+				const dx = x - cx, dy = y - cy, d = Math.hypot(dx, dy), i = (y * N + x) * 4;
+				if (d >= rIn && d <= rOut) {
+					const t = (d - rIn) / (rOut - rIn);
+					const sx = Math.min(sw - 1, Math.floor(t * sw));
+					od.data[i] = srow[sx * 4];
+					od.data[i + 1] = srow[sx * 4 + 1];
+					od.data[i + 2] = srow[sx * 4 + 2];
+					od.data[i + 3] = srow[sx * 4 + 3];
+				}
+			}
+		octx.putImageData(od, 0, 0);
+		ringTexture = out.toDataURL('image/png');
+	}
+
 	// 지구 자전 — 확대 시에만 d3-geo 동적 import, 저프레임 throttle로 천천히
 	async function startEarthSpin() {
 		liveLandPath = '';
@@ -139,6 +182,7 @@
 	$effect(() => {
 		const prevOf = document.body.style.overflow;
 		document.body.style.overflow = 'hidden';
+		buildRingTexture();
 
 		const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 		if (!reduce && !zoomedBody) {
@@ -281,7 +325,7 @@
 		{:else if zoomedBody === 'saturn'}
 			<!-- 토성 확대 — 고리 포함(clip 없이 고리 노출, 구체만 클릭) → /saturn -->
 			<div class="saturn-obj" style:--sx="{startX}px" style:--sy="{startY}px">
-				<span class="s-ring" aria-hidden="true"></span>
+				<span class="s-ring s-ring-back" style:background-image="url({ringTexture})" aria-hidden="true"></span>
 				<a
 					class="s-globe"
 					href="/saturn"
@@ -292,6 +336,7 @@
 					<span class="surface planet-surface" aria-hidden="true"></span>
 					<span class="sphere" aria-hidden="true"></span>
 				</a>
+				<span class="s-ring s-ring-front" style:background-image="url({ringTexture})" aria-hidden="true"></span>
 			</div>
 		{:else}
 			<!-- 행성 확대 → 각자의 페이지 -->
@@ -753,24 +798,24 @@
 		position: absolute;
 		left: 50%;
 		top: 50%;
-		width: 196%;
+		width: 218%;
 		aspect-ratio: 1 / 1;
-		transform: translate(-50%, -50%) rotateX(75deg) rotate(-16deg);
-		border-radius: 50%;
-		z-index: 1; /* 구체 뒤로만 지남(앞고리 없음) */
+		transform: translate(-50%, -50%) rotateX(67deg) rotate(-16deg);
 		pointer-events: none;
-		/* 미니멀 — 얇은 띠 두 줄, 본체보다 살짝 밝은 크림 */
-		background: radial-gradient(
-			circle closest-side,
-			transparent 57%,
-			rgba(234, 224, 200, 0) 58%,
-			rgba(232, 221, 194, 0.72) 61%,
-			rgba(214, 201, 170, 0.76) 64%,
-			rgba(228, 216, 190, 0) 67.5%,
-			rgba(226, 214, 188, 0.6) 71%,
-			rgba(206, 192, 160, 0.5) 74%,
-			transparent 77%
-		);
+		/* 원형 변환한 실제 고리 텍스처(background-image는 인라인 ringTexture) */
+		background-position: center;
+		background-size: contain;
+		background-repeat: no-repeat;
+	}
+	/* 뒤고리: 구체 뒤(그림자져 어둡게). 앞고리: 구체 앞, 아래 호만(마스크) */
+	.s-ring-back {
+		z-index: 1;
+		filter: brightness(0.78);
+	}
+	.s-ring-front {
+		z-index: 3;
+		-webkit-mask: linear-gradient(to bottom, transparent 50%, #000 52%);
+		mask: linear-gradient(to bottom, transparent 50%, #000 52%);
 	}
 	/* 태양 표면 (자전 스크롤) */
 	.sun-orb {
