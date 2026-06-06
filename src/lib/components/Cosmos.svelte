@@ -12,8 +12,7 @@
 	let hoveredStar = $state<string | null>(null);
 	let openedStar = $state<GratitudeStar | null>(null);
 
-	let zoomedBody = $state<null | 'sun' | 'earth' | 'moon'>(null);
-	let hovered = $state<null | 'sun' | 'earth' | 'moon'>(null);
+	let zoomedBody = $state<string | null>(null);
 	// 확대 시작 좌표(점이 있던 자리) — 화면 중심 기준 오프셋
 	let startX = $state(0);
 	let startY = $state(0);
@@ -41,23 +40,19 @@
 		color: string;
 		cls: '' | 'jupiter' | 'saturn';
 		name: string;
-		symbol?: string;  // 상징 (그리스어) — 있으면 클릭 가능
-		essence?: string; // 상징의 의미 한 줄
+		symbol?: string;  // 상징 (그리스어) — 클릭 시 해당 페이지로
 	};
 	const PLANETS: Planet[] = [
-		{ key: 'mercury', distFrac: 0.09, e: 0.206, T: 0.241, peri: 1.34, phase0: 1.0, size: 5,  color: '#cdbfa6', cls: '',        name: '수성' },
-		{ key: 'venus',   distFrac: 0.21, e: 0.007, T: 0.615, peri: 2.29, phase0: 2.1, size: 8,  color: '#f0e7d2', cls: '',        name: '금성', symbol: 'Eros',    essence: '끌림. 어떤 것을 향해 마음이 기우는 일.' },
-		{ key: 'mars',    distFrac: 0.42, e: 0.093, T: 1.881, peri: 5.86, phase0: 3.3, size: 5,  color: '#d2502c', cls: '',        name: '화성', symbol: 'Thymos',  essence: '기개. 나를 앞으로 밀어붙이는 의지.' },
-		{ key: 'jupiter', distFrac: 0.56, e: 0.048, T: 11.86, peri: 0.24, phase0: 4.4, size: 17, color: '#d6b07a', cls: 'jupiter', name: '목성', symbol: 'Nomos',   essence: '질서. 흩어지려는 것들을 붙드는 법.' },
-		{ key: 'saturn',  distFrac: 0.70, e: 0.054, T: 29.46, peri: 1.62, phase0: 5.5, size: 14, color: '#e8d6a4', cls: 'saturn',  name: '토성', symbol: 'Chronos', essence: '시간. 쌓이고 잊히고, 그래도 남는 자리.' }
+		{ key: 'mercury', distFrac: 0.09, e: 0.206, T: 0.241, peri: 1.34, phase0: 1.0, size: 5,  color: '#cdbfa6', cls: '',        name: '수성', symbol: 'Hermes' },
+		{ key: 'venus',   distFrac: 0.21, e: 0.007, T: 0.615, peri: 2.29, phase0: 2.1, size: 8,  color: '#f0e7d2', cls: '',        name: '금성', symbol: 'Eros' },
+		{ key: 'mars',    distFrac: 0.42, e: 0.093, T: 1.881, peri: 5.86, phase0: 3.3, size: 5,  color: '#d2502c', cls: '',        name: '화성', symbol: 'Thymos' },
+		{ key: 'jupiter', distFrac: 0.56, e: 0.048, T: 11.86, peri: 0.24, phase0: 4.4, size: 17, color: '#d6b07a', cls: 'jupiter', name: '목성', symbol: 'Nomos' },
+		{ key: 'saturn',  distFrac: 0.70, e: 0.054, T: 29.46, peri: 1.62, phase0: 5.5, size: 14, color: '#e8d6a4', cls: 'saturn',  name: '토성', symbol: 'Chronos' }
 	];
 	let planetEls: (HTMLDivElement | null)[] = $state(Array(PLANETS.length).fill(null));
 	// 점 크기 반응형 — 큰 화면은 px 유지, 작은 화면(모바일)은 비례 축소
 	const dsize = (px: number) =>
 		`clamp(${(px * 0.6).toFixed(1)}px, ${(px / 7.5).toFixed(2)}vmin, ${px}px)`;
-	let openedPlanet = $state<Planet | null>(null);
-	let hoveredPlanet = $state<string | null>(null);
-
 	function keplerXY(t: number, p: Planet) {
 		const M = (t / (p.T * EARTH_PERIOD)) * Math.PI * 2 + p.phase0;
 		let E = M;
@@ -75,9 +70,8 @@
 		startY = Math.round(r.top + r.height / 2 - window.innerHeight / 2);
 	}
 
-	function zoomBody(body: 'sun' | 'earth' | 'moon', e: MouseEvent) {
+	function zoomBody(body: string, e: MouseEvent) {
 		captureStart(e.currentTarget as Element);
-		hovered = null;
 		zoomedBody = body;
 		if (body === 'earth') startEarthSpin();
 	}
@@ -221,52 +215,29 @@
 
 		<div class="system">
 			<!-- 태양 = 이성 -->
-			<button
-				class="hit sun"
-				onmouseenter={() => (hovered = 'sun')}
-				onmouseleave={() => (hovered = null)}
-				onclick={(e) => zoomBody('sun', e)}
-				aria-label="태양 · 이성"
-			>
+			<button class="hit sun" onclick={(e) => zoomBody('sun', e)} aria-label="태양 · 이성">
 				<span class="dot"></span>
 			</button>
 
-			<!-- 행성: 수성·금성·화성·목성·토성 (실측 이심률·근점방향·주기) -->
+			<!-- 행성: 수성·금성·화성·목성·토성 — 누르면 각자의 페이지로 -->
 			{#each PLANETS as p, i (p.key)}
-				<div class="planet-wrap" bind:this={planetEls[i]} aria-label={p.name}>
+				<div class="planet-wrap" bind:this={planetEls[i]}>
 					<span class="planet-dot {p.cls}" style:--c={p.color} style:--s={dsize(p.size)}></span>
-					{#if p.symbol}
-						<button
-							class="planet-hit"
-							onmouseenter={() => (hoveredPlanet = p.key)}
-							onmouseleave={() => (hoveredPlanet = null)}
-							onclick={() => (openedPlanet = p)}
-							aria-label="{p.name} · {p.symbol}"
-						></button>
-						<span class="planet-name" class:show={hoveredPlanet === p.key}>{p.symbol}</span>
-					{/if}
+					<button
+						class="planet-hit"
+						onclick={(e) => zoomBody(p.key, e)}
+						aria-label="{p.name} · {p.symbol}"
+					></button>
 				</div>
 			{/each}
 
 			<!-- 지구계 -->
 			<div class="earth-system" bind:this={earthSystemEl}>
-				<button
-					class="hit earth"
-					onmouseenter={() => (hovered = 'earth')}
-					onmouseleave={() => (hovered = null)}
-					onclick={(e) => zoomBody('earth', e)}
-					aria-label="지구 · 자기"
-				>
+				<button class="hit earth" onclick={(e) => zoomBody('earth', e)} aria-label="지구 · 자기">
 					<span class="dot"></span>
 				</button>
 				<div class="moon-wrap" bind:this={moonEl}>
-					<button
-						class="hit moon"
-						onmouseenter={() => (hovered = 'moon')}
-						onmouseleave={() => (hovered = null)}
-						onclick={(e) => zoomBody('moon', e)}
-						aria-label="달 · 감성"
-					>
+					<button class="hit moon" onclick={(e) => zoomBody('moon', e)} aria-label="달 · 감성">
 						<span class="dot"></span>
 					</button>
 				</div>
@@ -280,17 +251,6 @@
 				<p class="sc-name">{openedStar.name}</p>
 				<p class="sc-note">{openedStar.note}</p>
 				<button class="sc-close" onclick={() => (openedStar = null)}>닫기</button>
-			</div>
-		{/if}
-
-		<!-- 행성을 누르면 그 상징이 뜬다 -->
-		{#if openedPlanet}
-			<button class="star-backdrop" onclick={() => (openedPlanet = null)} aria-label="닫기"></button>
-			<div class="star-card planet-card">
-				<span class="pc-dot {openedPlanet.cls}" style:--c={openedPlanet.color}></span>
-				<p class="sc-name">{openedPlanet.name} · {openedPlanet.symbol}</p>
-				<p class="sc-note">{openedPlanet.essence}</p>
-				<button class="sc-close" onclick={() => (openedPlanet = null)}>닫기</button>
 			</div>
 		{/if}
 	{:else}
@@ -318,6 +278,21 @@
 				<span class="surface moon-surface" aria-hidden="true"></span>
 				<span class="sphere" aria-hidden="true"></span>
 			</a>
+		{:else}
+			<!-- 행성 확대 → 각자의 페이지 -->
+			{@const p = PLANETS.find((x) => x.key === zoomedBody)}
+			{#if p}
+				<a
+					class="zoom-obj orb planet-orb"
+					href="/{p.key}"
+					style:--c={p.color}
+					style:--sx="{startX}px"
+					style:--sy="{startY}px"
+					aria-label="{p.name} · {p.symbol}"
+				>
+					<span class="sphere" aria-hidden="true"></span>
+				</a>
+			{/if}
 		{/if}
 	{/if}
 </div>
@@ -565,59 +540,6 @@
 		pointer-events: auto;
 		z-index: 5;
 	}
-	/* 호버 시 상징(그리스어) 라벨 — 점 아래 */
-	.planet-name {
-		position: absolute;
-		left: 0;
-		top: 0;
-		transform: translate(-50%, 13px);
-		white-space: nowrap;
-		font-family: var(--font-serif);
-		font-style: italic;
-		font-size: 13px;
-		letter-spacing: 0.06em;
-		color: rgba(233, 236, 242, 0.92);
-		opacity: 0;
-		transition: opacity 240ms ease;
-		pointer-events: none;
-		text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
-	}
-	.planet-name.show {
-		opacity: 1;
-	}
-	/* 상징 카드의 행성 색 점 */
-	.pc-dot {
-		display: block;
-		width: 16px;
-		height: 16px;
-		border-radius: 50%;
-		background: var(--c);
-		margin: 0 0 16px;
-		box-shadow: 0 0 12px rgba(255, 255, 255, 0.22);
-	}
-	.pc-dot.jupiter {
-		background: linear-gradient(to bottom, #e2c48e, #9a6a3e, #e0bd86, #b07a4a, #e2c48e);
-	}
-
-	/* 호버 라벨 — 시적, 화면 아래 */
-	.label {
-		position: absolute;
-		left: 50%;
-		bottom: 64px;
-		transform: translateX(-50%);
-		font-family: var(--font-serif);
-		font-style: italic;
-		font-size: 17px;
-		letter-spacing: 0.04em;
-		color: rgba(233, 236, 242, 0.7);
-		opacity: 0;
-		transition: opacity 260ms ease;
-		pointer-events: none;
-		min-height: 1em;
-	}
-	.label.show {
-		opacity: 1;
-	}
 
 
 	/* === 감사의 별 — 누르면 글 === */
@@ -772,6 +694,10 @@
 	.orb {
 		display: block;
 		cursor: pointer;
+	}
+	/* 행성 확대 — 행성 색 단색 구체(.sphere 음영으로 입체감) */
+	.planet-orb {
+		background: var(--c);
 	}
 	/* 태양 표면 (자전 스크롤) */
 	.sun-orb {
