@@ -80,11 +80,11 @@
 			const m = Math.min(stageEl.clientWidth, stageEl.clientHeight);
 			const er = m * EARTH_R_FRAC;
 			const a = (t / EARTH_PERIOD) * Math.PI * 2;
-			earthSystemEl.style.transform = `translate(${Math.cos(a) * er}px, ${Math.sin(a) * er * 0.4}px)`;
+			earthSystemEl.style.transform = `translate(${Math.cos(a) * er}px, ${-Math.sin(a) * er * 0.4}px)`;
 			if (moonEl) {
 				const mr = m * 0.065;
 				const ma = (t / MOON_PERIOD) * Math.PI * 2;
-				const my = Math.sin(ma) * mr * 0.5;
+				const my = -Math.sin(ma) * mr * 0.5;
 				moonEl.style.transform = `translate(${Math.cos(ma) * mr}px, ${my}px)`;
 				moonEl.style.zIndex = my < 0 ? '1' : '4';
 			}
