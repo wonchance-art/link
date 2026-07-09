@@ -8,8 +8,7 @@
 	const stars = makeStars(64);
 	const bandStars = makeBandStars(150);
 
-	// 감사의 별 — 호버/클릭
-	let hoveredStar = $state<string | null>(null);
+	// 감사의 별 — 클릭 시 글 카드
 	let openedStar = $state<GratitudeStar | null>(null);
 
 	let zoomedBody = $state<string | null>(null);
@@ -28,7 +27,11 @@
 	const EARTH_PERIOD = 60000;
 	const MOON_PERIOD = 12000;
 	const EARTH_R_FRAC = 0.34;
+	const MOON_R_FRAC = 0.05;
 	const ORBIT_TILT = 0.52; // 황도면을 비스듬히 본 y축 압축(지구·행성 공용)
+	// reduced-motion 정지 화면에서의 지구·달 위치(화면 최소변 대비 비율)
+	const STATIC_EARTH = { x: EARTH_R_FRAC * 0.72, y: -0.05 };
+	const STATIC_MOON = { x: 0.046, y: -0.015 };
 
 	type Planet = {
 		key: string;
@@ -41,7 +44,7 @@
 		color: string;
 		cls: '' | 'jupiter' | 'saturn';
 		name: string;
-		symbol?: string;  // 상징 (그리스어) — 클릭 시 해당 페이지로
+		symbol: string;   // 상징 (그리스어) — 클릭 시 해당 페이지로
 	};
 	const PLANETS: Planet[] = [
 		{ key: 'mercury', distFrac: 0.09, e: 0.206, T: 0.241, peri: 1.34, phase0: 1.0, size: 5,  color: '#9a9893', cls: '',        name: '수성', symbol: 'Hermes' },
@@ -75,6 +78,7 @@
 		captureStart(e.currentTarget as Element);
 		zoomedBody = body;
 		if (body === 'earth') startEarthSpin();
+		if (body === 'saturn') buildRingTexture(); // 고리 텍스처는 토성 확대 시에만 lazy 빌드
 	}
 
 	function closeZoom() {
@@ -85,46 +89,68 @@
 		}
 	}
 
-	// 토성 고리 — 스트립(반경 프로파일)을 극좌표로 원형 고리 텍스처화(클라이언트, 1회)
+	// Escape — 카드 먼저, 다음 확대뷰 (키보드 탈출 경로)
+	function onKeydown(e: KeyboardEvent) {
+		if (e.key !== 'Escape') return;
+		if (openedStar) openedStar = null;
+		else if (zoomedBody) closeZoom();
+	}
+
+	// 토성 고리 — 스트립(반경 프로파일)을 극좌표로 원형 고리 텍스처화.
+	// 토성 확대 시에만 lazy 빌드(1회). 픽셀 루프는 행 청크로 나눠 메인스레드 블로킹 방지.
+	let ringBuilding = false;
 	async function buildRingTexture() {
-		if (ringTexture || typeof document === 'undefined') return;
-		const strip = new Image();
-		strip.src = '/saturn_ring.png';
+		if (ringTexture || ringBuilding || typeof document === 'undefined') return;
+		ringBuilding = true;
 		try {
-			await strip.decode();
-		} catch {
-			return;
-		}
-		const sw = strip.width, sh = strip.height;
-		const sc = document.createElement('canvas');
-		sc.width = sw;
-		sc.height = sh;
-		const sctx = sc.getContext('2d');
-		if (!sctx) return;
-		sctx.drawImage(strip, 0, 0);
-		const srow = sctx.getImageData(0, Math.floor(sh / 2), sw, 1).data;
-		const N = 1280;
-		const out = document.createElement('canvas');
-		out.width = N;
-		out.height = N;
-		const octx = out.getContext('2d');
-		if (!octx) return;
-		const od = octx.createImageData(N, N);
-		const cx = N / 2, cy = N / 2, rOut = N / 2 - 1, rIn = rOut * 0.42;
-		for (let y = 0; y < N; y++)
-			for (let x = 0; x < N; x++) {
-				const dx = x - cx, dy = y - cy, d = Math.hypot(dx, dy), i = (y * N + x) * 4;
-				if (d >= rIn && d <= rOut) {
-					const t = (d - rIn) / (rOut - rIn);
-					const sx = Math.min(sw - 1, Math.floor(t * sw));
-					od.data[i] = srow[sx * 4];
-					od.data[i + 1] = srow[sx * 4 + 1];
-					od.data[i + 2] = srow[sx * 4 + 2];
-					od.data[i + 3] = srow[sx * 4 + 3];
-				}
+			const strip = new Image();
+			strip.src = '/saturn_ring.png';
+			// decode()는 숨김 탭에서 보류될 수 있어 load 이벤트로 대기
+			await new Promise<void>((resolve, reject) => {
+				if (strip.complete && strip.naturalWidth) return resolve();
+				strip.onload = () => resolve();
+				strip.onerror = () => reject(new Error('saturn_ring.png load failed'));
+			});
+			const sw = strip.width, sh = strip.height;
+			const sc = document.createElement('canvas');
+			sc.width = sw;
+			sc.height = sh;
+			const sctx = sc.getContext('2d');
+			if (!sctx) return;
+			sctx.drawImage(strip, 0, 0);
+			const srow = sctx.getImageData(0, Math.floor(sh / 2), sw, 1).data;
+			const N = 1280;
+			const CHUNK = 160; // 행 단위 청크 — 사이마다 태스크 양보
+			const out = document.createElement('canvas');
+			out.width = N;
+			out.height = N;
+			const octx = out.getContext('2d');
+			if (!octx) return;
+			const od = octx.createImageData(N, N);
+			const cx = N / 2, cy = N / 2, rOut = N / 2 - 1, rIn = rOut * 0.42;
+			for (let y0 = 0; y0 < N; y0 += CHUNK) {
+				const yEnd = Math.min(N, y0 + CHUNK);
+				for (let y = y0; y < yEnd; y++)
+					for (let x = 0; x < N; x++) {
+						const dx = x - cx, dy = y - cy, d = Math.hypot(dx, dy), i = (y * N + x) * 4;
+						if (d >= rIn && d <= rOut) {
+							const t = (d - rIn) / (rOut - rIn);
+							const sx = Math.min(sw - 1, Math.floor(t * sw));
+							od.data[i] = srow[sx * 4];
+							od.data[i + 1] = srow[sx * 4 + 1];
+							od.data[i + 2] = srow[sx * 4 + 2];
+							od.data[i + 3] = srow[sx * 4 + 3];
+						}
+					}
+				await new Promise((r) => setTimeout(r, 0));
 			}
-		octx.putImageData(od, 0, 0);
-		ringTexture = out.toDataURL('image/png');
+			octx.putImageData(od, 0, 0);
+			ringTexture = out.toDataURL('image/png');
+		} catch (err) {
+			console.warn('토성 고리 텍스처 생성 실패 — 고리 없이 렌더링:', err);
+		} finally {
+			ringBuilding = false;
+		}
 	}
 
 	// 지구 자전 — 확대 시에만 d3-geo 동적 import, 저프레임 throttle로 천천히
@@ -160,7 +186,7 @@
 				const a = (t / EARTH_PERIOD) * Math.PI * 2;
 				earthSystemEl.style.transform = `translate(${Math.cos(a) * er}px, ${-Math.sin(a) * er * ORBIT_TILT}px)`;
 				if (moonEl) {
-					const mr = m * 0.05;
+					const mr = m * MOON_R_FRAC;
 					const ma = (t / MOON_PERIOD) * Math.PI * 2;
 					const my = -Math.sin(ma) * mr * 0.5;
 					moonEl.style.transform = `translate(${Math.cos(ma) * mr}px, ${my}px)`;
@@ -182,15 +208,24 @@
 	$effect(() => {
 		const prevOf = document.body.style.overflow;
 		document.body.style.overflow = 'hidden';
-		buildRingTexture();
 
 		const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		// 탭 비활성 시 rAF 정지, 복귀 시 재개 — 백그라운드 CPU 소비 제거
+		const onVisibility = () => {
+			if (document.hidden) {
+				if (raf) cancelAnimationFrame(raf);
+				raf = null;
+			} else if (!reduce && !zoomedBody && !raf) {
+				raf = requestAnimationFrame(frame);
+			}
+		};
+		document.addEventListener('visibilitychange', onVisibility);
 		if (!reduce && !zoomedBody) {
 			raf = requestAnimationFrame(frame);
 		} else if (earthSystemEl) {
 			const m = stageEl ? Math.min(stageEl.clientWidth, stageEl.clientHeight) : 600;
-			earthSystemEl.style.transform = `translate(${m * EARTH_R_FRAC * 0.72}px, ${-m * 0.05}px)`;
-			if (moonEl) moonEl.style.transform = `translate(${m * 0.046}px, ${-m * 0.015}px)`;
+			earthSystemEl.style.transform = `translate(${m * STATIC_EARTH.x}px, ${m * STATIC_EARTH.y}px)`;
+			if (moonEl) moonEl.style.transform = `translate(${m * STATIC_MOON.x}px, ${m * STATIC_MOON.y}px)`;
 			for (let i = 0; i < PLANETS.length; i++) {
 				const p = PLANETS[i];
 				const el = planetEls[i];
@@ -205,10 +240,13 @@
 			raf = null;
 			if (earthRaf) cancelAnimationFrame(earthRaf);
 			earthRaf = null;
+			document.removeEventListener('visibilitychange', onVisibility);
 			document.body.style.overflow = prevOf;
 		};
 	});
 </script>
+
+<svelte:window onkeydown={onKeydown} />
 
 <div class="stage" bind:this={stageEl} class:zoomed={zoomedBody}>
 	<div class="milkyway" aria-hidden="true"></div>
@@ -247,8 +285,6 @@
 					class:active={openedStar?.id === g.id}
 					style:left="{g.x}%"
 					style:top="{g.y}%"
-					onmouseenter={() => (hoveredStar = g.id)}
-					onmouseleave={() => (hoveredStar = null)}
 					onclick={() => (openedStar = g)}
 					aria-label={g.name}
 				>
@@ -455,14 +491,14 @@
 	}
 
 
-	/* 클릭 히트영역(투명) + 점 */
+	/* 클릭 히트영역(투명, 44px — 터치 권장) + 점 */
 	.hit {
 		position: absolute;
 		display: grid;
 		place-items: center;
-		width: 30px;
-		height: 30px;
-		margin: -15px 0 0 -15px;
+		width: 44px;
+		height: 44px;
+		margin: -22px 0 0 -22px;
 		background: transparent;
 		border: 0;
 		padding: 0;
@@ -588,14 +624,14 @@
 		border: 1.2px solid rgba(206, 190, 158, 0.85);
 		pointer-events: none;
 	}
-	/* 행성 클릭 히트영역(투명) — 점이 작아도 누르기 쉽게 */
+	/* 행성 클릭 히트영역(투명, 44px) — 점이 작아도 누르기 쉽게 */
 	.planet-hit {
 		position: absolute;
 		left: 0;
 		top: 0;
 		transform: translate(-50%, -50%);
-		width: 30px;
-		height: 30px;
+		width: 44px;
+		height: 44px;
 		border: 0;
 		padding: 0;
 		background: transparent;
@@ -612,8 +648,8 @@
 	.gstar {
 		position: absolute;
 		transform: translate(-50%, -50%);
-		width: 30px;
-		height: 30px;
+		width: 44px;
+		height: 44px;
 		display: grid;
 		place-items: center;
 		border: 0;
@@ -633,27 +669,6 @@
 	.gstar.active .g-dot {
 		transform: scale(2);
 	}
-	.g-name {
-		position: absolute;
-		top: 100%;
-		left: 50%;
-		/* 프레임이 -40도 회전하므로 +40도로 라벨을 바로 세움 */
-		transform: translate(-50%, 4px) rotate(40deg);
-		transform-origin: top center;
-		white-space: nowrap;
-		font-family: var(--font-serif);
-		font-style: italic;
-		font-size: 14px;
-		color: rgba(233, 236, 242, 0.92);
-		opacity: 0;
-		transition: opacity 240ms ease;
-		pointer-events: none;
-		text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
-	}
-	.g-name.show {
-		opacity: 1;
-	}
-
 	/* 별의 글 카드 */
 	.star-backdrop {
 		position: absolute;
@@ -866,6 +881,15 @@
 		.sun-surface,
 		.moon-surface {
 			animation: none;
+		}
+		/* 확대 진입 스케일 애니메이션도 정지 — 전정기관 민감 사용자 보호 */
+		.zoom-obj,
+		.saturn-obj {
+			animation: none;
+		}
+		.hit .dot,
+		.g-dot {
+			transition: none;
 		}
 	}
 	@keyframes world-in {
