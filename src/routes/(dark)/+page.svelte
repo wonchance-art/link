@@ -19,7 +19,8 @@
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
 	<meta property="og:site_name" content="Open Chaence" />
-	<meta property="og:url" content={page.url.toString()} />
+	<meta property="og:url" content="{page.url.origin}{page.url.pathname}" />
+	<link rel="canonical" href="{page.url.origin}{page.url.pathname}" />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:image" content={ogUrl} />
 </svelte:head>

@@ -9,6 +9,7 @@
 	import Works from '$lib/components/Works.svelte';
 	import Links from '$lib/components/Links.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+	import Seo from '$lib/components/Seo.svelte';
 
 	import { fadeIn } from '$lib/actions/fadeIn';
 
@@ -17,10 +18,7 @@
 	const l = $derived(links[lang]);
 </script>
 
-<svelte:head>
-	<title>Wonnit — 원채연</title>
-	<meta name="description" content="원채연이 빚어낸 것들. Won — we won it." />
-</svelte:head>
+<Seo title="Wonnit — 원채연" description="원채연이 빚어낸 것들. Won — we won it." />
 
 <main class="page">
 	<header class="hero">
