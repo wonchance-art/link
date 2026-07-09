@@ -1,11 +1,11 @@
 <script lang="ts">
 	import Seo from '$lib/components/Seo.svelte';
 	import MoonSystem from '$lib/components/MoonSystem.svelte';
-	import { moons } from '$lib/content/chronicle';
+	import { principles } from '$lib/content/principles';
 	import { planetBySlug } from '$lib/content/planets';
 
-	// Chronos의 서가 — 시간 주위를 잊힌 티탄들이 돌고, 위성마다 주제의 서랍.
-	const p = planetBySlug('saturn')!;
+	// Nomos의 법전 — 1:2:4 라플라스 공명이 궤도를 지배하고, 위성마다 원칙의 서랍.
+	const p = planetBySlug('jupiter')!;
 </script>
 
 <Seo title="{p.name} · {p.symbol} — Open Chaence" description={p.poem} />
@@ -15,8 +15,7 @@
 	title={p.name}
 	poem={p.poem}
 	accent={p.color}
-	texture="/saturn.webp"
-	globeVmin={16}
-	ring
-	{moons}
+	texture="/jupiter.webp"
+	globeVmin={20}
+	moons={principles}
 />
