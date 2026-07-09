@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { makeStars, makeBandStars } from '$lib/cosmos/stars';
 	import { gratitudeStars, type GratitudeStar } from '$lib/cosmos/gratitude';
+	import { planetContent } from '$lib/content/planets';
 
 	type Props = { landPath: string };
 	let { landPath }: Props = $props();
@@ -33,26 +34,25 @@
 	const STATIC_EARTH = { x: EARTH_R_FRAC * 0.72, y: -0.05 };
 	const STATIC_MOON = { x: 0.046, y: -0.015 };
 
-	type Planet = {
-		key: string;
+	// 궤도·렌더링 파라미터(이 컴포넌트 전용). 이름·상징·색은 content/planets.ts가 단일 소스.
+	type Orbit = {
 		distFrac: number; // 시각 거리(m 기준). 실제 AU의 ≈a^0.45 압축
 		e: number;        // 이심률 (J2000.0)
 		T: number;        // 공전주기 (지구년)
 		peri: number;     // 근점경도 ϖ (rad)
 		phase0: number;   // 초기 평균근점이각 — 시각 분산용
 		size: number;
-		color: string;
 		cls: '' | 'jupiter' | 'saturn';
-		name: string;
-		symbol: string;   // 상징 (그리스어) — 클릭 시 해당 페이지로
 	};
-	const PLANETS: Planet[] = [
-		{ key: 'mercury', distFrac: 0.09, e: 0.206, T: 0.241, peri: 1.34, phase0: 1.0, size: 5,  color: '#9a9893', cls: '',        name: '수성', symbol: 'Hermes' },
-		{ key: 'venus',   distFrac: 0.21, e: 0.007, T: 0.615, peri: 2.29, phase0: 2.1, size: 8,  color: '#e5be80', cls: '',        name: '금성', symbol: 'Eros' },
-		{ key: 'mars',    distFrac: 0.42, e: 0.093, T: 1.881, peri: 5.86, phase0: 3.3, size: 5,  color: '#b76248', cls: '',        name: '화성', symbol: 'Thymos' },
-		{ key: 'jupiter', distFrac: 0.56, e: 0.048, T: 11.86, peri: 0.24, phase0: 4.4, size: 17, color: '#b3ac9f', cls: 'jupiter', name: '목성', symbol: 'Nomos' },
-		{ key: 'saturn',  distFrac: 0.70, e: 0.054, T: 29.46, peri: 1.62, phase0: 5.5, size: 14, color: '#d0c0a4', cls: 'saturn',  name: '토성', symbol: 'Chronos' }
-	];
+	const ORBITS: Record<string, Orbit> = {
+		mercury: { distFrac: 0.09, e: 0.206, T: 0.241, peri: 1.34, phase0: 1.0, size: 5,  cls: '' },
+		venus:   { distFrac: 0.21, e: 0.007, T: 0.615, peri: 2.29, phase0: 2.1, size: 8,  cls: '' },
+		mars:    { distFrac: 0.42, e: 0.093, T: 1.881, peri: 5.86, phase0: 3.3, size: 5,  cls: '' },
+		jupiter: { distFrac: 0.56, e: 0.048, T: 11.86, peri: 0.24, phase0: 4.4, size: 17, cls: 'jupiter' },
+		saturn:  { distFrac: 0.70, e: 0.054, T: 29.46, peri: 1.62, phase0: 5.5, size: 14, cls: 'saturn' }
+	};
+	type Planet = (typeof planetContent)[number] & Orbit;
+	const PLANETS: Planet[] = planetContent.map((c) => ({ ...c, ...ORBITS[c.key] }));
 	let planetEls: (HTMLDivElement | null)[] = $state(Array(PLANETS.length).fill(null));
 	// 점 크기 반응형 — 큰 화면은 px 유지, 작은 화면(모바일)은 비례 축소
 	const dsize = (px: number) =>
