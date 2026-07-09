@@ -27,7 +27,7 @@
   /* ===== Typography ===== */
   --font-sans: 'Pretendard Variable', -apple-system, BlinkMacSystemFont,
                system-ui, 'Segoe UI', Roboto, sans-serif;
-  --font-serif: 'Fraunces', 'IBM Plex Serif', Georgia, 'Noto Serif KR', serif;
+  --font-serif: 'Fraunces Variable', 'Fraunces', 'IBM Plex Serif', Georgia, 'Noto Serif KR', serif;
 
   /* sizes — 1.250 (Major Third) scale */
   --t-xs:   0.75rem;     /* 12 */

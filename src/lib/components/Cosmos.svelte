@@ -9,8 +9,35 @@
 	const stars = makeStars(64);
 	const bandStars = makeBandStars(150);
 
-	// 감사의 별 — 클릭 시 글 카드
+	// 감사의 별 — 클릭 시 글 카드 (다이얼로그: 포커스 이동·복귀)
 	let openedStar = $state<GratitudeStar | null>(null);
+	let starCardEl: HTMLDivElement | null = $state(null);
+	let lastFocused: HTMLElement | null = null;
+
+	function openStar(g: GratitudeStar, e: MouseEvent) {
+		lastFocused = e.currentTarget as HTMLElement;
+		openedStar = g;
+	}
+	function closeStar() {
+		openedStar = null;
+		lastFocused?.focus();
+		lastFocused = null;
+	}
+	// Tab을 카드 안에서 순환 — 배경으로 새지 않게
+	function trapTab(e: KeyboardEvent) {
+		if (e.key !== 'Tab' || !starCardEl) return;
+		const f = starCardEl.querySelectorAll<HTMLElement>('button, a[href]');
+		if (!f.length) return;
+		const first = f[0];
+		const last = f[f.length - 1];
+		if (e.shiftKey && document.activeElement === first) {
+			e.preventDefault();
+			last.focus();
+		} else if (!e.shiftKey && document.activeElement === last) {
+			e.preventDefault();
+			first.focus();
+		}
+	}
 
 	let zoomedBody = $state<string | null>(null);
 	let ringTexture = $state(''); // 토성 고리 — 스트립을 원형으로 변환한 dataURL(런타임)
@@ -92,9 +119,16 @@
 	// Escape — 카드 먼저, 다음 확대뷰 (키보드 탈출 경로)
 	function onKeydown(e: KeyboardEvent) {
 		if (e.key !== 'Escape') return;
-		if (openedStar) openedStar = null;
+		if (openedStar) closeStar();
 		else if (zoomedBody) closeZoom();
 	}
+
+	// 카드가 열리면 포커스를 닫기 버튼으로 — 스크린리더·키보드 진입점
+	$effect(() => {
+		if (openedStar && starCardEl) {
+			starCardEl.querySelector<HTMLButtonElement>('.sc-close')?.focus();
+		}
+	});
 
 	// 토성 고리 — 스트립(반경 프로파일)을 극좌표로 원형 고리 텍스처화.
 	// 토성 확대 시에만 lazy 빌드(1회). 픽셀 루프는 행 청크로 나눠 메인스레드 블로킹 방지.
@@ -285,7 +319,7 @@
 					class:active={openedStar?.id === g.id}
 					style:left="{g.x}%"
 					style:top="{g.y}%"
-					onclick={() => (openedStar = g)}
+					onclick={(e) => openStar(g, e)}
 					aria-label={g.name}
 				>
 					<span class="g-dot"></span>
@@ -326,11 +360,19 @@
 
 		<!-- 별을 누르면 그 글이 뜬다 -->
 		{#if openedStar}
-			<button class="star-backdrop" onclick={() => (openedStar = null)} aria-label="닫기"></button>
-			<div class="star-card">
+			<button class="star-backdrop" onclick={closeStar} aria-label="닫기"></button>
+			<div
+				class="star-card"
+				bind:this={starCardEl}
+				role="dialog"
+				aria-modal="true"
+				aria-label={openedStar.name}
+				tabindex="-1"
+				onkeydown={trapTab}
+			>
 				<p class="sc-name">{openedStar.name}</p>
 				<p class="sc-note">{openedStar.note}</p>
-				<button class="sc-close" onclick={() => (openedStar = null)}>닫기</button>
+				<button class="sc-close" onclick={closeStar}>닫기</button>
 			</div>
 		{/if}
 	{:else}
@@ -510,7 +552,13 @@
 			transform 300ms ease,
 			background 300ms ease;
 	}
-	.hit:hover .dot {
+	/* 마우스 호버만(터치의 유령 호버 방지) + 터치는 :active로 즉시 반응 */
+	@media (hover: hover) {
+		.hit:hover .dot {
+			transform: scale(1.35);
+		}
+	}
+	.hit:active .dot {
 		transform: scale(1.35);
 	}
 
@@ -665,7 +713,12 @@
 		background: #eaf0ff;
 		transition: transform 300ms ease;
 	}
-	.gstar:hover .g-dot,
+	@media (hover: hover) {
+		.gstar:hover .g-dot {
+			transform: scale(2);
+		}
+	}
+	.gstar:active .g-dot,
 	.gstar.active .g-dot {
 		transform: scale(2);
 	}
@@ -753,6 +806,10 @@
 		background: transparent;
 		cursor: zoom-out;
 		z-index: 1;
+	}
+	/* 배경에 손을 얹으면 별들이 살짝 깨어남 — "바깥이 우주"라는 암시 */
+	.stage.zoomed:has(.zoom-backdrop:hover) .stars span {
+		--o: 0.85 !important;
 	}
 	.zoom-obj {
 		position: absolute;
