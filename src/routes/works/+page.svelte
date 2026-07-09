@@ -13,7 +13,8 @@
 
 	import { fadeIn } from '$lib/actions/fadeIn';
 
-	const lang = $derived(resolveLang(page.url.searchParams.get('lang')));
+	// 쿼리 우선, 없으면 서버가 Accept-Language로 정한 기본 언어
+	const lang = $derived(resolveLang(page.url.searchParams.get('lang'), page.data.lang ?? 'ko'));
 	const w = $derived(works[lang]);
 	const l = $derived(links[lang]);
 </script>

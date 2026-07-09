@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onNavigate } from '$app/navigation';
+	import { page } from '$app/state';
+	import { resolveLang } from '$lib/i18n/lang';
 	// 폰트 self-host — CDN 3곳 의존 제거, 같은 오리진에서 immutable 캐시로 서빙
 	import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
 	import '@fontsource-variable/fraunces/opsz.css';
@@ -37,6 +39,14 @@
 
 	// 스크롤에 따라 --scroll-progress 갱신 → 배경 그라데이션 미세 시프트.
 	$effect(() => scrollProgress());
+
+	// 클라이언트 라우팅 시에도 html lang을 현재 언어와 동기화 (SSR은 hooks가 처리)
+	$effect(() => {
+		document.documentElement.lang = resolveLang(
+			page.url.searchParams.get('lang'),
+			page.data.lang ?? 'ko'
+		);
+	});
 </script>
 
 <svelte:head>
