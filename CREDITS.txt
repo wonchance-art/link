@@ -1,13 +1,13 @@
 Image Credits / 이미지 출처
 ============================
 
-Planet & Sun textures — mercury.jpg, venus.jpg, mars.jpg, jupiter.jpg,
-saturn.jpg, sun.jpg
+Planet & Sun textures — mercury.webp, venus.webp, mars.webp, jupiter.webp,
+saturn.webp, sun.webp
   Solar System Scope — https://www.solarsystemscope.com/textures/
   Licensed under CC BY 4.0
   (https://creativecommons.org/licenses/by/4.0/)
   Based on NASA / USGS / ESO / Hubble elevation and imagery data.
   확대 뷰에서 블러 처리되어 색·결만 노출됨.
 
-Milky Way — milkyway.jpg
+Milky Way — milkyway.webp
   NASA/ESO Deep Star Maps (public domain).
