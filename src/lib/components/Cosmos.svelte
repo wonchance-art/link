@@ -366,7 +366,7 @@
 					class="s-globe"
 					href="/saturn"
 					style:--c="#d0c0a4"
-					style:--tex="url(/saturn.jpg)"
+					style:--tex="url(/saturn.webp)"
 					aria-label="토성 · Chronos"
 				>
 					<span class="surface planet-surface" aria-hidden="true"></span>
@@ -382,7 +382,7 @@
 					class="zoom-obj orb planet-orb"
 					href="/{p.key}"
 					style:--c={p.color}
-					style:--tex="url(/{p.key}.jpg)"
+					style:--tex="url(/{p.key}.webp)"
 					style:--sx="{startX}px"
 					style:--sy="{startY}px"
 					aria-label="{p.name} · {p.symbol}"
@@ -418,7 +418,7 @@
 		top: 18%;
 		height: 64%;
 		pointer-events: none;
-		background: url('/milkyway.jpg') center / 100% 100% no-repeat;
+		background: url('/milkyway.webp') center / 100% 100% no-repeat;
 		transform: rotate(-40deg);
 		transform-origin: center;
 		/* 남보라로 물들이고 은은하게 */
@@ -841,7 +841,7 @@
 	.sun-surface {
 		position: absolute;
 		inset: 0;
-		background: url('/sun.jpg') 0 center / 200% 100% repeat-x;
+		background: url('/sun.webp') 0 center / 200% 100% repeat-x;
 		/* 흐릿·매끈하게(scaleY로 blur 위아래 가장자리 채움) */
 		filter: blur(11px) saturate(1.1) brightness(1.03);
 		transform: scaleY(1.3);
@@ -869,7 +869,7 @@
 	.moon-surface {
 		position: absolute;
 		inset: 0;
-		background: url('/moon.jpg') 0 center / 200% 100% repeat-x;
+		background: url('/moon.webp') 0 center / 200% 100% repeat-x;
 		animation: surf 72s linear infinite;
 	}
 	@keyframes surf {
