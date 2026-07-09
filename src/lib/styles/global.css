@@ -219,6 +219,61 @@ svg {
 	animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* === 우주 ↔ 지상(works) — 대기권 통과 의례 === */
+html[data-vt='descend']::view-transition-old(root),
+html[data-vt='descend']::view-transition-new(root),
+html[data-vt='ascend']::view-transition-old(root),
+html[data-vt='ascend']::view-transition-new(root) {
+	animation-duration: 700ms;
+	animation-timing-function: cubic-bezier(0.33, 0, 0.2, 1);
+}
+/* 하강: 어둠이 새벽빛에 씻겨나가고, 지상이 아침 톤에서 제 색을 찾는다 */
+html[data-vt='descend']::view-transition-old(root) {
+	animation-name: vt-dawn-out;
+}
+html[data-vt='descend']::view-transition-new(root) {
+	animation-name: vt-dawn-in;
+}
+/* 상승: 빛이 걷히고, 어둠 속에서 별이 돋는다 */
+html[data-vt='ascend']::view-transition-old(root) {
+	animation-name: vt-dusk-out;
+}
+html[data-vt='ascend']::view-transition-new(root) {
+	animation-name: vt-dusk-in;
+}
+@keyframes vt-dawn-out {
+	to {
+		opacity: 0;
+		filter: brightness(1.8);
+	}
+}
+@keyframes vt-dawn-in {
+	from {
+		opacity: 0;
+		filter: brightness(1.25) saturate(0.85);
+	}
+	to {
+		opacity: 1;
+		filter: brightness(1) saturate(1);
+	}
+}
+@keyframes vt-dusk-out {
+	to {
+		opacity: 0;
+		filter: brightness(0.55) saturate(0.8);
+	}
+}
+@keyframes vt-dusk-in {
+	from {
+		opacity: 0;
+		filter: brightness(0.4);
+	}
+	to {
+		opacity: 1;
+		filter: brightness(1);
+	}
+}
+
 /* 모션 약화 환경 존중 */
 @media (prefers-reduced-motion: reduce) {
 	*,

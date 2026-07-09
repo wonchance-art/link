@@ -15,13 +15,22 @@
 
 	let { children } = $props();
 
-	// 언어 토글 시 부드러운 cross-fade. Chromium 지원, 그 외는 자동 폴백.
+	// View transition — 기본은 부드러운 cross-fade(언어 토글 등).
+	// 우주(암흑) ↔ 지상(works, 풀숲) 사이는 '대기권 통과'로 연출:
+	// 내려갈 땐 어둠이 새벽빛에 씻기고(descend), 올라갈 땐 빛이 걷히며 별이 돋는다(ascend).
 	onNavigate((navigation) => {
 		if (!document.startViewTransition) return;
+		const toWorks = navigation.to?.url.pathname === '/works';
+		const fromWorks = navigation.from?.url.pathname === '/works';
+		const dir = toWorks ? 'descend' : fromWorks ? 'ascend' : null;
+		if (dir) document.documentElement.dataset.vt = dir;
 		return new Promise((resolve) => {
-			document.startViewTransition(async () => {
+			const transition = document.startViewTransition(async () => {
 				resolve();
 				await navigation.complete;
+			});
+			transition.finished.finally(() => {
+				delete document.documentElement.dataset.vt;
 			});
 		});
 	});
