@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Realm from '$lib/components/Realm.svelte';
+	import Seo from '$lib/components/Seo.svelte';
 
 	const fragments = [
 		'어떤 문장은 오래 두어야 비로소 자기 빛깔을 낸다.',
@@ -8,7 +9,7 @@
 	];
 </script>
 
-<svelte:head><title>바다 · 나의 안 — Open Chaence</title></svelte:head>
+<Seo title="바다 · 나의 안 — Open Chaence" description="내면과 심연. 가라앉은 것들이 오래 머무는 곳." />
 
 <Realm
 	title="바다"
