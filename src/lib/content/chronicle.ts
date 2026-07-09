@@ -7,25 +7,12 @@
 // theme(키워드)는 각 위성의 실제 성격에서 딴 기본값 — 자유롭게 바꿔도 됨.
 // 글 추가: 해당 위성의 entries 배열에 { date, text } (title은 선택).
 
-export type ChronicleEntry = {
-	date?: string; // 'YYYY.MM' 등 자유 형식
-	title?: string;
-	text: string;
-};
+import type { MoonDef, MoonEntry } from './moonSystem';
 
-export type Moon = {
-	key: string;
-	name: string; // 실제 위성명
-	theme: string; // 주제 키워드 — 글들이 담기는 서랍의 이름
-	note: string; // 위성의 실제 성격 한 줄 (카드 상단에 시처럼 놓임)
-	distFrac: number; // 시각 궤도 반경 (화면 최소변 대비) — 실측 a^0.45 압축
-	T: number; // 공전 주기(초) — 실제 일수 비율 (Mimas 0.94일 = 14초)
-	size: number; // 점 지름 px — 실제 크기 순서 유지 (Titan이 압도적)
-	color: string; // 실제 표면 인상
-	entries: ChronicleEntry[];
-};
+export type ChronicleEntry = MoonEntry;
+export type Moon = MoonDef;
 
-export const moons: Moon[] = [
+export const moons: MoonDef[] = [
 	{
 		key: 'mimas',
 		name: 'Mimas',
