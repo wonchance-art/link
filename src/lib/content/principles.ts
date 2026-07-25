@@ -8,8 +8,10 @@
 // 원칙 추가: 해당 위성의 entries 배열에 { date, text } (title은 선택).
 
 import type { MoonDef } from './moonSystem';
+import { principlesByMoon } from './records';
 
-export const principles: MoonDef[] = [
+// 원칙 글은 src/content/principles/*.md (CMS가 쓰는 곳) — 여기선 위성 구조만 정의하고 병합
+const defs: MoonDef[] = [
 	{
 		key: 'io',
 		name: 'Io',
@@ -55,3 +57,5 @@ export const principles: MoonDef[] = [
 		entries: []
 	}
 ];
+
+export const principles: MoonDef[] = defs.map((m) => ({ ...m, entries: principlesByMoon(m.key) }));

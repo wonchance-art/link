@@ -6,7 +6,8 @@
 export type MoonEntry = {
 	date?: string; // 'YYYY.MM' 등 자유 형식
 	title?: string;
-	text: string;
+	text?: string; // 평문 (구형)
+	html?: string; // 마크다운 렌더 결과 (CMS 글) — text보다 우선
 };
 
 export type MoonDef = {
