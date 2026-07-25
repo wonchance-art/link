@@ -159,7 +159,12 @@
 								{#if en.date || en.title}
 									<p class="mc-meta">{[en.date, en.title].filter(Boolean).join(' · ')}</p>
 								{/if}
-								<p class="mc-text">{en.text}</p>
+								{#if en.html}
+									<!-- 인증된 CMS로 본인이 쓴 마크다운만 렌더 -->
+									<div class="mc-text">{@html en.html}</div>
+								{:else}
+									<p class="mc-text">{en.text}</p>
+								{/if}
 							</article>
 						{/each}
 					</div>
@@ -420,6 +425,32 @@
 		color: #eef1f7;
 		margin: 0;
 		white-space: pre-line;
+	}
+	/* 마크다운 렌더 본문 (CMS 글) */
+	div.mc-text {
+		white-space: normal;
+	}
+	.mc-text :global(p) {
+		margin: 0 0 12px;
+	}
+	.mc-text :global(p:last-child) {
+		margin-bottom: 0;
+	}
+	.mc-text :global(img) {
+		max-width: 100%;
+		border-radius: 10px;
+		margin: 6px 0;
+	}
+	.mc-text :global(a) {
+		color: var(--accent);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+	.mc-text :global(blockquote) {
+		margin: 0 0 12px;
+		padding-left: 12px;
+		border-left: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
+		color: rgba(233, 236, 242, 0.75);
 	}
 	.mc-empty {
 		font-family: var(--font-serif);

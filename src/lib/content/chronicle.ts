@@ -8,11 +8,13 @@
 // 글 추가: 해당 위성의 entries 배열에 { date, text } (title은 선택).
 
 import type { MoonDef, MoonEntry } from './moonSystem';
+import { recordsByMoon } from './records';
 
 export type ChronicleEntry = MoonEntry;
 export type Moon = MoonDef;
 
-export const moons: MoonDef[] = [
+// 글은 src/content/records/*.md (CMS가 쓰는 곳) — 여기선 위성 구조만 정의하고 병합
+const defs: MoonDef[] = [
 	{
 		key: 'mimas',
 		name: 'Mimas',
@@ -33,12 +35,7 @@ export const moons: MoonDef[] = [
 		T: 20, // 1.37일
 		size: 4,
 		color: '#e8f0f2', // 태양계에서 가장 밝은 표면
-		entries: [
-			// 옛 바다(나의 안)에서 이주해 온 단상들
-			{ text: '어떤 문장은 오래 두어야 비로소 자기 빛깔을 낸다.' },
-			{ text: '바다는 깊을수록 고요하다. 안을 들여다보는 일은 늘 조용하다.' },
-			{ text: '사람과 사람 사이, 그 옅은 그늘에서 가장 다정한 말이 자란다.' }
-		]
+		entries: []
 	},
 	{
 		key: 'tethys',
@@ -96,3 +93,5 @@ export const moons: MoonDef[] = [
 		entries: []
 	}
 ];
+
+export const moons: MoonDef[] = defs.map((m) => ({ ...m, entries: recordsByMoon(m.key) }));
